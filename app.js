@@ -3,6 +3,7 @@ const app = express()
 const userRouter = require('./routes/userRoutes')
 
 // Middlewares
+app.use(express.static('public')); // Serves Static files
 app.use("/", userRouter);
 
 // Set EJS as templating engine
