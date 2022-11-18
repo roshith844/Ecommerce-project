@@ -135,9 +135,9 @@ table {
 }
 
 /* */
-nav {
+nav, main {
     background-color: #FCEDDA;
 }
-.signup-navigation{
+.signup-navigation, .login-navigation{
     background-color: #EE4E34;
 }

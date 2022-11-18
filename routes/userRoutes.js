@@ -5,7 +5,8 @@ const userController = require('../controllers/userController')
 
 router.use(expressLayouts);
 
-router.get('/',userController.getLogin)
-router.get('/login', userController.getLogin)
+router.get('/',userController.goToLogin)
+router.get('/login', userController.goToLogin)
+router.get('/signup', userController.goTosignUp)
 
 module.exports = router
