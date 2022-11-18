@@ -1,6 +1,7 @@
 const express = require("express")
 const app = express()
 const userRouter = require('./routes/userRoutes')
+require('./model/database-connection')
 
 // Middlewares
 app.use(express.static('public')); // Serves Static files
