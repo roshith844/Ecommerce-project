@@ -44,6 +44,24 @@ module.exports = {
         } else {
             res.render("login");
         }
+    },
+    goHome: (req, res)=>{
+        if (req.session.user) {
+            res.render('home');
+          } else {
+            res.redirect('/login');
+          }
+    },
+    doLogout: (req, res)=>{
+          // Destroys session
+  req.session.destroy((error) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("logout successfully");
+      res.redirect("/login");
+    }
+  });
     }
 }
 

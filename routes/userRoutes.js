@@ -36,10 +36,11 @@ router.use(
 );
 
 // Routes
-router.get('/', userController.goToLogin)
+router.get('/', userController.goHome)
 router.get('/login', userController.goToLogin)
 router.get('/signup', userController.goTosignUp)
 router.post('/signup', userController.sendToDatabase)
 router.post('/login', userController.doLogin)
+router.get('/logout',userController.doLogout)
 
 module.exports = router
