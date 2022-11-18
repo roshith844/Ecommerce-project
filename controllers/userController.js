@@ -1,3 +1,6 @@
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+const UserModel = require('../model/userSchema')
 module.exports = {
 
     // Renders Login Page
@@ -10,7 +13,6 @@ module.exports = {
     },
     // Sends user data to database for Registration
     sendToDatabase: (req, res) => {
-        const UserModel = require('../model/userSchema')
         // Validates User input
         if (req.body.password === req.body.repeatPassword) {
 
@@ -30,6 +32,17 @@ module.exports = {
         } else {
             console.log("password doesn't match")
             res.render('signup', { msg: "password doesn't match. Try Again" })
+        }
+    },
+    doLogin: async (req, res) => {
+        const userDoc = await UserModel.findOne({ email: req.body.email });
+        if (
+            userDoc.password == req.body.password
+        ) {
+            req.session.user = req.body.email;
+            res.redirect("/");
+        } else {
+            res.render("login");
         }
     }
 }
