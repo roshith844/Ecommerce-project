@@ -1,25 +1,32 @@
 <main>
-  <div class="container">
-    <div class="d-flex">
-      <div class="signup-navigation col-6 ">
-        <h1>New to Our Website?</h1>
-        <p>We make Premium Quality Cakes. Experianced Chefs and Unique Recipies Makes Our Cakes Best On Market!!</p>
-        <button type="button" class="btn btn-primary">Create An Account</button>
-      </div>
-      <div class="login-form">
-        <form action="/login" method="POST">
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Email address</label>
-            <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Password</label>
-            <input name="password" type="password" class="form-control" id="exampleInputPassword1">
-          </div>
-          <button type="submit" class="btn btn-primary">Log In</button>
-        </form>
-      </div>
+  <!-- Alert messege for validation -->
+  <% if(msg.length> 0){ %>
+    <div class="alert alert-danger" role="alert">
+      <%= msg %>
     </div>
-  </div>
+    <% } %>
+      <div class="container">
+        <div class="d-flex">
+          <div class="signup-navigation col-6 ">
+            <h1>New to Our Website?</h1>
+            <p>We make Premium Quality Cakes. Experianced Chefs and Unique Recipies Makes Our Cakes Best On Market!!</p>
+            <button type="button" class="btn btn-primary">Create An Account</button>
+          </div>
+          <div class="login-form">
+            <form action="/login" method="POST" novalidate>
+              <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email address</label>
+                <input name="email" type="email" class="form-control" id="exampleInputEmail1"
+                  aria-describedby="emailHelp">
+                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input name="password" type="password" class="form-control" id="exampleInputPassword1">
+              </div>
+              <button type="submit" class="btn btn-primary">Log In</button>
+            </form>
+          </div>
+        </div>
+      </div>
 </main>
