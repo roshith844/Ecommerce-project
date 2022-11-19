@@ -8,11 +8,11 @@ module.exports = {
 
     // Renders Login Page
     goToLogin: (req, res) => {
-        res.render('login', { msg: '' })
+        res.render('userViews/login', { msg: '' })
     },
     // Renders Signup page
     goTosignUp: (req, res) => {
-        res.render('signup', { msg: '' })
+        res.render('userViews/signup', { msg: '' })
     },
     // Sends user data to database for Registration
     sendToDatabase: (req, res) => {
@@ -27,12 +27,12 @@ module.exports = {
                     res.redirect("/");
                 })
             } else {
-                res.render('signup', { msg: "Invalid credentials!! 1. Email should be in proper form  2. password should be Minimum eight characters, at least one letter, one number and one special character 3. Password should match" })
+                res.render('userViews/signup', { msg: "Invalid credentials!! 1. Email should be in proper form  2. password should be Minimum eight characters, at least one letter, one number and one special character 3. Password should match" })
             }
 
         } else {
             console.log("password doesn't match")
-            res.render('signup', { msg: "password doesn't match. Try Again" })
+            res.render('userViews/signup', { msg: "password doesn't match. Try Again" })
         }
     },
     doLogin: async (req, res) => {
@@ -46,26 +46,26 @@ module.exports = {
                     req.session.user = req.body.email;
                     res.redirect("/");
                 } else {
-                    res.render("login", { msg: "Invalid credentials!!" });
+                    res.render("userViews/login", { msg: "Invalid credentials!!" });
                 }
             } else {
                 if (emailRegex.test(req.body.email) == false && (passwordRegex.test(req.body.password) == false)) {
-                    res.render('login', { msg: "Invalid email or Password" })
+                    res.render('userViews/login', { msg: "Invalid email or Password" })
                 } else if (emailRegex.test(req.body.email) == false) {
-                    res.render('login', { msg: "Invalid credentials!! Enter a valid email Address" })
+                    res.render('userViews/login', { msg: "Invalid credentials!! Enter a valid email Address" })
                 } else if ((passwordRegex.test(req.body.password) == false)) {
-                    res.render('login', { msg: "password should be Minimum eight characters, at least one letter, one number and one special character" })
+                    res.render('userViews/login', { msg: "password should be Minimum eight characters, at least one letter, one number and one special character" })
                 } else {
-                    res.render('login', { msg: "Something went wrong" })
+                    res.render('userViews/login', { msg: "Something went wrong" })
                 }
             }
         } catch {
-            res.status(400).render("login", { msg: "invalid credentials!! Try Again" });
+            res.status(400).render("userViews/login", { msg: "invalid credentials!! Try Again" });
         }
     },
     goHome: (req, res) => {
         if (req.session.user) {
-            res.render('home');
+            res.render('userViews/home');
         } else {
             res.redirect('/login');
         }

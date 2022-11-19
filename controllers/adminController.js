@@ -1,5 +1,5 @@
-module.exports={
+module.exports = {
     goToAdminHome: (req, res) => {
-        res.render('adminHome', { layout: false })
+        res.render('adminViews/adminHome', { layout: false })
     },
 }
