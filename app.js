@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 const userRouter = require('./routes/userRoutes')
-const adminRouter = require('./routes/adminRouter')
+const adminRouter = require('./routes/adminRoutes')
 require('./model/database-connection')
 
 // Middlewares

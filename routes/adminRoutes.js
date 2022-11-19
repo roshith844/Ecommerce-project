@@ -5,8 +5,6 @@ const expressLayouts = require('express-ejs-layouts')
 const adminController = require('../controllers/adminController')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const { goToAdminHome } = require('../controllers/userController')
-
 
 // Middlewares
 router.use(expressLayouts);
@@ -39,5 +37,7 @@ router.use(
 
 // Routes
 router.get('/', adminController.goToAdminHome)
+router.get('/login', adminController.goToAdminLogin)
+router.post('/login', adminController.doAdminLogin)
 
 module.exports = router
