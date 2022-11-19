@@ -28,5 +28,16 @@ module.exports = {
         } catch (error) {
             res.status(400).render('adminViews/adminLogin', { layout: 'layouts/adminLayout' })
         }
+    },
+    doAdminLogout: (req, res) => {
+        // Destroys session
+        req.session.destroy((error) => {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("logout successfully");
+                res.redirect("admin/login");
+            }
+        })
     }
 }

@@ -39,5 +39,6 @@ router.use(
 router.get('/', adminController.goToAdminHome)
 router.get('/login', adminController.goToAdminLogin)
 router.post('/login', adminController.doAdminLogin)
+router.get('/logout', adminController.doAdminLogout )
 
 module.exports = router
