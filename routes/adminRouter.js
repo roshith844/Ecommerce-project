@@ -1,10 +1,12 @@
 "use strict"
 const express = require('express')
 const router = express.Router()
-const expressLayouts = require('express-ejs-layouts');
-const userController = require('../controllers/userController')
+const expressLayouts = require('express-ejs-layouts')
+const adminController = require('../controllers/adminController')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const { goToAdminHome } = require('../controllers/userController')
+
 
 // Middlewares
 router.use(expressLayouts);
@@ -36,11 +38,6 @@ router.use(
 );
 
 // Routes
-router.get('/', userController.goHome)
-router.get('/login', userController.goToLogin)
-router.get('/signup', userController.goTosignUp)
-router.post('/signup', userController.sendToDatabase)
-router.post('/login', userController.doLogin)
-router.get('/logout', userController.doLogout)
+router.get('/', adminController.goToAdminHome)
 
 module.exports = router
