@@ -1,6 +1,7 @@
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const UserModel = require('../model/userSchema')
+const otpLoginModel = require('../model/otpLoginSchema')
 const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/ // Pattern for Minimum eight characters, at least one letter, one number and one special character
 
@@ -63,6 +64,45 @@ module.exports = {
             res.status(400).render("userViews/login", { msg: "invalid credentials!! Try Again" });
         }
     },
+    getEmailForOTP: (req, res) => {
+        res.render('userViews/otpLogin')
+    },
+    generateOtp: async (req, res) => {
+        console.log(req.body.email)
+        try {
+            // checks email exists on database
+            async function emailExists(userEmail) {
+                const Userfound = await UserModel.findOne({ email: userEmail })
+                if (Userfound) {
+                    return true // Email Exists
+                } else {
+                    return false // Email Doesnot Exists
+                }
+            }
+
+            const userExist = await emailExists(req.body.email)
+
+            // Generates random code if user Exists
+            const randomCode = function getRandomCode() {
+                if (!userExist) {
+                    res.render('userViews/otpLogin')
+                } else {
+                    console.log('user exists')
+                    // Generates Random 4 digit Code
+                    return (() => {
+                        return Math.floor(1000 + Math.random() * 9000)
+                    })()
+                }
+                return false;
+            }()
+
+            if (randomCode != false) {
+                otpLoginModel.insertMany([{ email: req.body.email, code: randomCode }]) // Stores Random code to database
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    },
     goHome: (req, res) => {
         if (req.session.user) {
             res.render('userViews/home');
@@ -83,5 +123,3 @@ module.exports = {
     }
 
 }
-
-

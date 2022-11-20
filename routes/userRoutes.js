@@ -41,6 +41,8 @@ router.get('/login', userController.goToLogin)
 router.get('/signup', userController.goTosignUp)
 router.post('/signup', userController.sendToDatabase)
 router.post('/login', userController.doLogin)
+router.get('/otp-login',userController.getEmailForOTP)
+router.post('/otp-login', userController.generateOtp)
 router.get('/logout', userController.doLogout)
 
 module.exports = router
