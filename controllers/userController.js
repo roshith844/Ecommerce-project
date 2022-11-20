@@ -1,5 +1,7 @@
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const nodemailer = require('nodemailer')
+const myEmailSender = require('../model/SendEmail')
 const UserModel = require('../model/userSchema')
 const otpLoginModel = require('../model/otpLoginSchema')
 const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/
@@ -70,6 +72,7 @@ module.exports = {
     generateOtp: async (req, res) => {
         console.log(req.body.email)
         try {
+
             // checks email exists on database
             async function emailExists(userEmail) {
                 const Userfound = await UserModel.findOne({ email: userEmail })
@@ -98,6 +101,9 @@ module.exports = {
 
             if (randomCode != false) {
                 otpLoginModel.insertMany([{ email: req.body.email, code: randomCode }]) // Stores Random code to database
+                
+                myEmailSender(randomCode, req.body.email) // Sends email to user
+                
             }
         } catch (error) {
             console.log(error)

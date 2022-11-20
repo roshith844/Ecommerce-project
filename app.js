@@ -3,6 +3,7 @@ const app = express()
 const userRouter = require('./routes/userRoutes')
 const adminRouter = require('./routes/adminRoutes')
 require('./model/database-connection')
+// const nodemailer = require('nodemailer')
 
 // Middlewares
 app.use(express.static('public')); // Serves Static files
