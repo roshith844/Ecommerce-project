@@ -100,18 +100,45 @@ module.exports = {
             }()
 
             if (randomCode != false) {
+                // otpLoginModel.findOneAndUpdate(
+                //     { email: req.body.email },
+                //     { $set: { age: 59 } },
+                //     { upsert: true, new: true }
+                //   )
                 otpLoginModel.insertMany([{ email: req.body.email, code: randomCode }]) // Stores Random code to database
 
                 myEmailSender(randomCode, req.body.email) // Sends email to user
                 res.render('userViews/verify-otp', { data: req.body.email })
+                otpLoginModel.remove({ email: req.body.email })
 
             }
         } catch (error) {
             console.log(error)
         }
     },
+    verifyOtp: async (req, res) => {
+        try {
+            console.log(req.body.email)
+            console.log(req.body.otp)
+            const userCodeObj = await otpLoginModel.findOne({ email: req.body.email })
+            console.log("code from db Is:" + userCodeObj.code)
+            if (req.body.otp == userCodeObj.code) {
+                req.session.user = req.body.email;
+                res.redirect("/");
+            } else {
+                console.log("otp is Invalid")
+                res.redirect('/login')
+            }
+
+        } catch (error) {
+
+        }
+
+
+    },
     goHome: (req, res) => {
         if (req.session.user) {
+
             res.render('userViews/home');
         } else {
             res.redirect('/login');

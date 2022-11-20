@@ -4,4 +4,4 @@ const otpLoginSchema = new mongoose.Schema({
     code: String
 })
 
-module.exports = mongoose.model('otp-login', otpLoginSchema)
+module.exports = mongoose.model('otpLogins', otpLoginSchema)
