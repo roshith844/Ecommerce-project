@@ -101,9 +101,10 @@ module.exports = {
 
             if (randomCode != false) {
                 otpLoginModel.insertMany([{ email: req.body.email, code: randomCode }]) // Stores Random code to database
-                
+
                 myEmailSender(randomCode, req.body.email) // Sends email to user
-                
+                res.render('userViews/verify-otp', { data: req.body.email })
+
             }
         } catch (error) {
             console.log(error)
