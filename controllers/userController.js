@@ -8,6 +8,16 @@ const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const passwordRegex =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 
+   // checks email exists on database
+   async function emailExists(userEmail) {
+    const Userfound = await UserModel.findOne({ email: userEmail });
+    if (Userfound) {
+      return true; // Email Exists
+    } else {
+      return false; // Email Doesnot Exists
+    }
+  }
+
 module.exports = {
   // Renders Login Page
   goToLogin: (req, res) => {
@@ -18,10 +28,24 @@ module.exports = {
     res.render("userViews/signup", { msg: "" });
   },
   // Sends user data to database for Registration
-  sendToDatabase: (req, res) => {
+  sendToDatabase: async (req, res) => {
+    try {
+      const validEmail = emailRegex.test(req.body.email)
+      const validPassword = passwordRegex.test(req.body.password)
+
+      const userExist = await emailExists(req.body.email);
+      if(userExist == true){
+        res.render('userViews/signup',{msg: 'email already exists! Try again'})
+      }
     // Validates User input
     if (req.body.password === req.body.repeatPassword) {
-      // Checks with regex patterns
+      if(!validEmail && !validPassword){
+        res.render("userViews/signup",{msg: 'Invalid Email Format & Password'})
+      }else if(!validEmail){
+        res.render("userViews/signup",{msg: 'Invalid Email Format'})
+      }else if(!validPassword){
+        res.render("userViews/signup",{msg: 'password should be Minimum eight characters, at least one letter, one number and one special character'})
+      }
       if (
         emailRegex.test(req.body.email) &&
         passwordRegex.test(req.body.password)
@@ -37,7 +61,7 @@ module.exports = {
         });
       } else {
         res.render("userViews/signup", {
-          msg: "Invalid credentials!! 1. Email should be in proper form  2. password should be Minimum eight characters, at least one letter, one number and one special character 3. Password should match",
+          msg: "Something went wrong!! Try Again",
         });
       }
     } else {
@@ -45,7 +69,11 @@ module.exports = {
       res.render("userViews/signup", {
         msg: "password doesn't match. Try Again",
       });
+    }   
+    } catch (error) {
+      res.render('userViews/signup',{msg: error})
     }
+   
   },
   doLogin: async (req, res) => {
     try {
@@ -91,16 +119,6 @@ module.exports = {
   generateOtp: async (req, res) => {
     console.log(req.body.email);
     try {
-      // checks email exists on database
-      async function emailExists(userEmail) {
-        const Userfound = await UserModel.findOne({ email: userEmail });
-        if (Userfound) {
-          return true; // Email Exists
-        } else {
-          return false; // Email Doesnot Exists
-        }
-      }
-
       const userExist = await emailExists(req.body.email);
 
       // Generates random code if user Exists
