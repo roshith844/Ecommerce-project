@@ -8,15 +8,15 @@ const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const passwordRegex =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 
-   // checks email exists on database
-   async function emailExists(userEmail) {
-    const Userfound = await UserModel.findOne({ email: userEmail });
-    if (Userfound) {
-      return true; // Email Exists
-    } else {
-      return false; // Email Doesnot Exists
-    }
+// checks email exists on database
+async function emailExists(userEmail) {
+  const Userfound = await UserModel.findOne({ email: userEmail });
+  if (Userfound) {
+    return true; // Email Exists
+  } else {
+    return false; // Email Doesnot Exists
   }
+}
 
 module.exports = {
   // Renders Login Page
@@ -33,47 +33,58 @@ module.exports = {
       const validEmail = emailRegex.test(req.body.email)
       const validPassword = passwordRegex.test(req.body.password)
 
-      const userExist = await emailExists(req.body.email);
-      if(userExist == true){
-        res.render('userViews/signup',{msg: 'email already exists! Try again'})
-      }
-    // Validates User input
-    if (req.body.password === req.body.repeatPassword) {
-      if(!validEmail && !validPassword){
-        res.render("userViews/signup",{msg: 'Invalid Email Format & Password'})
-      }else if(!validEmail){
-        res.render("userViews/signup",{msg: 'Invalid Email Format'})
-      }else if(!validPassword){
-        res.render("userViews/signup",{msg: 'password should be Minimum eight characters, at least one letter, one number and one special character'})
-      }
-      if (
-        emailRegex.test(req.body.email) &&
-        passwordRegex.test(req.body.password)
-      ) {
-        const newUser = new UserModel({
-          name: req.body.name,
-          email: req.body.email,
-          password: req.body.password,
-        });
-        newUser.save().then(() => {
-          console.log("user added to database");
-          res.redirect("/");
-        });
+      // Validates User input
+      if (req.body.password === req.body.repeatPassword) {
+
+        const userExist = await emailExists(req.body.email);
+
+        if (userExist == true) {
+          res.render('userViews/signup', { msg: 'email already exists! Try again' })
+        } else {
+
+          if (!validEmail && !validPassword) {
+            res.render("userViews/signup", { msg: 'Invalid Email Format & Password' })
+          } else if (!validEmail) {
+            res.render("userViews/signup", { msg: 'Invalid Email Format' })
+          } else if (!validPassword) {
+            res.render("userViews/signup", { msg: 'password= should be Minimum eight characters, at least one letter, one number and one special character' })
+          } else {
+            if (
+              emailRegex.test(req.body.email) &&
+              passwordRegex.test(req.body.password)
+            ) {
+              const newUser = new UserModel({
+                name: req.body.name,
+                email: req.body.email,
+                password: req.body.password,
+              });
+              newUser.save().then(() => {
+                console.log("user added to database");
+                res.redirect("/");
+              });
+
+            } else {
+              res.render("userViews/signup", {
+                msg: "Something went wrong!! Try Again",
+              });
+            }
+
+          }
+
+
+
+        }
       } else {
+        console.log("password doesn't match");
         res.render("userViews/signup", {
-          msg: "Something went wrong!! Try Again",
+          msg: "password doesn't match. Try Again",
         });
       }
-    } else {
-      console.log("password doesn't match");
-      res.render("userViews/signup", {
-        msg: "password doesn't match. Try Again",
-      });
-    }   
+
     } catch (error) {
-      res.render('userViews/signup',{msg: error})
+      res.render('userViews/signup', { msg: error })
     }
-   
+
   },
   doLogin: async (req, res) => {
     try {
@@ -167,7 +178,7 @@ module.exports = {
         console.log("otp is Invalid");
         res.redirect("/login");
       }
-    } catch (error) {}
+    } catch (error) { }
   },
   goHome: (req, res) => {
     if (req.session.user) {
