@@ -34,18 +34,14 @@ module.exports = {
         try {
             await UserModel.find({}).then((users) => {
                 if (req.session.blockInfo == true) {
-                    res.render('adminViews/users', { users: users, msg: "blocked succusfully", unblockmsg: "" })
                     req.session.blockInfo = false;
-                } else if (req.session.blockInfo == false) {
-                    res.render('adminViews/users', { users: users, msg: "", unblockmsg: "" })
+                    res.render('adminViews/users', { users: users, msg: "blocked succusfully", unblockmsg: "" })
                 } else if (req.session.unblockInfo == true) {
-                    res.render('adminViews/users', { users: users, unblockmsg: "Unblocked succusfully", msg: "" })
                     req.session.unblockInfo = false;
-                } else {
+                    res.render('adminViews/users', { users: users, unblockmsg: "Unblocked succusfully", msg: "" })
+                }else{
                     res.render('adminViews/users', { users: users, unblockmsg: "", msg: "" })
                 }
-
-
             })
         } catch (error) {
             console.log(error)
@@ -54,16 +50,19 @@ module.exports = {
     blockUser: async (req, res) => {
         console.log(req.params.id)
         const updated = await UserModel.findOneAndUpdate({ _id: req.params.id }, { $set: { blockStatus: true } }).then(() => {
-            console.log('updated')
+            console.log('user block on db')
             req.session.blockInfo = true;
+            req.session.unblockInfo = false;
         })
 
         res.redirect('/admin/users')
     },
     unblockUser: async (req, res) => {
         await UserModel.findOneAndUpdate({ _id: req.params.id }, { $set: { blockStatus: false } }).then(() => {
-            console.log('updated block status to false')
+            console.log('user unblock on db')
             req.session.unblockInfo = true;
+            req.session.blockInfo = false;
+
         })
         res.redirect('/admin/users')
     },
