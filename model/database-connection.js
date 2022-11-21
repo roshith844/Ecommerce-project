@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-mongoose.connect('mongodb+srv://roshith:7906@cluster0.kvhy0l1.mongodb.net/ecommerce?retryWrites=true&w=majority').then(() => {
+require('dotenv').config()
+mongoose.connect(process.env.MONGODB_CONNECTION).then(() => {
     console.log("connection success");
 })
     .catch((err) => {

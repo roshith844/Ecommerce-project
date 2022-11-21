@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer')
+require('dotenv').config()
 
 function sendMail(randomCode, UserEmail){
 
@@ -6,8 +7,8 @@ function sendMail(randomCode, UserEmail){
 const mailTransporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'roshith844@gmail.com',
-        pass: 'myjzyvdvuwubbfby'
+        user: process.env.FROM_EMAIL,
+        pass: process.env.APP_PASSWORD
     }
 })
 
