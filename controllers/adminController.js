@@ -19,7 +19,7 @@ module.exports = {
             const adminDoc = await adminModel.findOne({ email: req.body.email })
             if (adminDoc.password == req.body.password) {
                 console.log(adminDoc.password)
-                console.log("Pasword checked")
+                console.log("Password checked")
                 req.session.admin = req.body.email;
                 res.redirect("/admin");
             } else {
@@ -32,14 +32,42 @@ module.exports = {
     },
     listUsers: async (req, res) => {
         try {
-            const users = await UserModel.find({})
-            res.render('adminViews/users', { users: users })
+            await UserModel.find({}).then((users) => {
+                if (req.session.blockInfo == true) {
+                    res.render('adminViews/users', { users: users, msg: "blocked succusfully", unblockmsg: "" })
+                    req.session.blockInfo = false;
+                } else if (req.session.blockInfo == false) {
+                    res.render('adminViews/users', { users: users, msg: "", unblockmsg: "" })
+                } else if (req.session.unblockInfo == true) {
+                    res.render('adminViews/users', { users: users, unblockmsg: "Unblocked succusfully", msg: "" })
+                    req.session.unblockInfo = false;
+                } else {
+                    res.render('adminViews/users', { users: users, unblockmsg: "", msg: "" })
+                }
 
+
+            })
         } catch (error) {
             console.log(error)
-
         }
     },
+    blockUser: async (req, res) => {
+        console.log(req.params.id)
+        const updated = await UserModel.findOneAndUpdate({ _id: req.params.id }, { $set: { blockStatus: true } }).then(() => {
+            console.log('updated')
+            req.session.blockInfo = true;
+        })
+
+        res.redirect('/admin/users')
+    },
+    unblockUser: async (req, res) => {
+        await UserModel.findOneAndUpdate({ _id: req.params.id }, { $set: { blockStatus: false } }).then(() => {
+            console.log('updated block status to false')
+            req.session.unblockInfo = true;
+        })
+        res.redirect('/admin/users')
+    },
+
     doAdminLogout: (req, res) => {
         // Destroys session
         req.session.destroy((error) => {

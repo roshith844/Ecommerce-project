@@ -1,27 +1,49 @@
-<h1>Users list</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">No</th>
-            <th scope="col">Email</th>
-            <th scope="col">Password</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% let count=1; %>
-            <% users.forEach((user)=>{%>
-                <tr>
-                    <td>
-                        <%= count %>
-                    </td>
-                    <td>
-                        <%= user.email %>
-                    </td>
-                    <td>
-                        <%= user.password %>
-                    </td>
-                </tr>
-                <% count++; %>
-                    <% }) %>
-    </tbody>
-</table>
+<% if(msg.length> 0){ %>
+    <div class="alert alert-info" role="alert">
+        <p>User Blocked Succesfully</p>
+    </div>
+    <% }else{ %>
+        <% } %>
+
+            <% if(unblockmsg.length> 0){ %>
+                <div class="alert alert-danger" role="alert">
+                    <p>User Un Blocked Succesfully</p>
+                </div>
+                <% }else{ %>
+                    <% } %>
+
+                        <h1>Users list</h1>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">No</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Password</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% let count=1; %>
+                                    <% users.forEach((user)=>{%>
+                                        <tr>
+                                            <td>
+                                                <%= count %>
+                                            </td>
+                                            <td>
+                                                <%= user.email %>
+                                            </td>
+                                            <td>
+                                                <%= user.password %>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/users/block/<%=user._id%>"
+                                                    class="btn btn-danger">Block</a>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/users/unblock/<%=user._id%>"
+                                                    class="btn btn-primary">Unblock</a>
+                                            </td>
+                                        </tr>
+                                        <% count++; %>
+                                            <% }) %>
+                            </tbody>
+                        </table>

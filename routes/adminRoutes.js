@@ -40,6 +40,8 @@ router.get('/', adminController.goToAdminHome)
 router.get('/login', adminController.goToAdminLogin)
 router.post('/login', adminController.doAdminLogin)
 router.get('/users', adminController.listUsers)
+router.get('/users/block/:id', adminController.blockUser)
+router.get('/users/unblock/:id', adminController.unblockUser)
 router.get('/logout', adminController.doAdminLogout)
 
 module.exports = router
