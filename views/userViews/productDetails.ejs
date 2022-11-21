@@ -1,0 +1,15 @@
+<div class="container">
+    <% info.forEach((info)=>{ %>
+        <div class="row">
+            <div class="col-6">
+                <img src="<%= info.image %>" alt="">
+            </div>
+            <div class="col-6">
+                <h1><%= info.name %></h1>
+                <h2>Rs. <%= info.price %></h2>
+                <p><%= info.description %></p>
+                <button>Add to Cart</button>
+            </div>
+        </div>
+        <% }) %>
+</div>

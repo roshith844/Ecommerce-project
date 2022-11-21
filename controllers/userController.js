@@ -189,6 +189,13 @@ module.exports = {
       res.redirect("/login");
     }
   },
+  getProductInfo: (req, res)=>{
+    productModel.find( {_id: req.params.id}).then((info)=>{
+      console.log(info)
+      res.render('userViews/productDetails',{info: info})
+    })
+
+  },
   doLogout: (req, res) => {
     // Destroys session
     req.session.destroy((error) => {
