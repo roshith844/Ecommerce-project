@@ -4,6 +4,7 @@ const nodemailer = require("nodemailer");
 const myEmailSender = require("../model/SendEmail");
 const UserModel = require("../model/userSchema");
 const otpLoginModel = require("../model/otpLoginSchema");
+const productModel = require('../model/productSchema')
 const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const passwordRegex =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
@@ -180,9 +181,10 @@ module.exports = {
       }
     } catch (error) { }
   },
-  goHome: (req, res) => {
+  goHome: async (req, res) => {
     if (req.session.user) {
-      res.render("userViews/home");
+      const products = await productModel.find({})
+      res.render("userViews/home", { products: products });
     } else {
       res.redirect("/login");
     }
