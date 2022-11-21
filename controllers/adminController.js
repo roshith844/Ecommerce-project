@@ -1,4 +1,5 @@
 const adminModel = require('../model/adminSchema')
+const UserModel = require("../model/userSchema");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
@@ -27,6 +28,16 @@ module.exports = {
 
         } catch (error) {
             res.status(400).render('adminViews/adminLogin', { layout: 'layouts/adminLayout' })
+        }
+    },
+    listUsers: async (req, res) => {
+        try {
+            const users = await UserModel.find({})
+            res.render('adminViews/users', { users: users })
+
+        } catch (error) {
+            console.log(error)
+
         }
     },
     doAdminLogout: (req, res) => {
