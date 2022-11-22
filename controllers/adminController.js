@@ -40,7 +40,7 @@ module.exports = {
                 } else if (req.session.unblockInfo == true) {
                     req.session.unblockInfo = false;
                     res.render('adminViews/users', { users: users, unblockmsg: "Unblocked succusfully", msg: "" })
-                }else{
+                } else {
                     res.render('adminViews/users', { users: users, unblockmsg: "", msg: "" })
                 }
             })
@@ -66,14 +66,24 @@ module.exports = {
         })
         res.redirect('/admin/users')
     },
-    listProducts:async (req, res)=>{
+    listProducts: async (req, res) => {
         try {
-            await productModel.find({}).then((products)=>{
-                res.render('adminViews/products', { products: products})
+            await productModel.find({}).then((products) => {
+                res.render('adminViews/products', { products: products })
             })
         } catch (error) {
             console.log(error)
         }
+    },
+    goToEditProduct: (req, res) => {
+        productModel.find({ _id: req.params.id }).then((info) => {
+            console.log(info)
+            res.render('adminViews/edit-product', { info: info })
+        })
+    },
+    editProduct: (req, res) => {
+        console.log('updation will happening here')
+        res.redirect('/admin/products')
     },
     doAdminLogout: (req, res) => {
         // Destroys session
