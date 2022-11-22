@@ -1,5 +1,6 @@
 const adminModel = require('../model/adminSchema')
 const UserModel = require("../model/userSchema");
+const productModel = require('../model/productSchema')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
@@ -62,11 +63,18 @@ module.exports = {
             console.log('user unblock on db')
             req.session.unblockInfo = true;
             req.session.blockInfo = false;
-
         })
         res.redirect('/admin/users')
     },
-
+    listProducts:async (req, res)=>{
+        try {
+            await productModel.find({}).then((products)=>{
+                res.render('adminViews/products', { products: products})
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    },
     doAdminLogout: (req, res) => {
         // Destroys session
         req.session.destroy((error) => {
