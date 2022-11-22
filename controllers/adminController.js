@@ -69,10 +69,10 @@ module.exports = {
     listProducts: async (req, res) => {
         try {
             await productModel.find({}).then((products) => {
-                if(req.session.editProduct == true){
+                if (req.session.editProduct == true) {
                     req.session.editProduct = false
                     res.render('adminViews/products', { products: products, msg: "Product Details Updated" })
-                }else{
+                } else {
                     res.render('adminViews/products', { products: products, msg: "" })
                 }
 
@@ -89,7 +89,7 @@ module.exports = {
         })
     },
     editProduct: async (req, res) => {
-        await productModel.replaceOne({_id: req.params.id},{name: req.body.name, image: req.body.image, description: req.body.description, price: req.body.price}).then(()=>{
+        await productModel.replaceOne({ _id: req.params.id }, { name: req.body.name, image: req.body.image, description: req.body.description, price: req.body.price }).then(() => {
             req.session.editProduct = true;
             console.log("replaced")
         })
