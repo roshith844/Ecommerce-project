@@ -83,6 +83,16 @@ module.exports = {
             console.log(error)
         }
     },
+    viewAddProduct: (req, res) => {
+        res.render('adminViews/add-product')
+    },
+    AddProduct: (req, res) => {
+        productModel.create({ name: req.body.name, image: req.body.image, description: req.body.description, price: req.body.price }).then(() => {
+            console.log("product added")
+            res.redirect('/admin/products')
+
+        })
+    },
     goToEditProduct: (req, res) => {
         productModel.find({ _id: req.params.id }).then((info) => {
             console.log(info)
