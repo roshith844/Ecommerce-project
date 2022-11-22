@@ -143,4 +143,8 @@ nav, main {
 }
 .signup-navigation, .login-navigation{
     background-color: #EE4E34;
+    height: 30rem;
+}
+main{
+    height: 33rem;
 }

@@ -5,13 +5,18 @@
       <%= msg %>
     </div>
     <% } %>
-      <div class="container">
+      <div class="container-fluid">
         <div class="d-flex">
-          <div class="signup-navigation col-6 ">
-            <h1>New to Our Website?</h1>
-            <p>We make Premium Quality Cakes. Experianced Chefs and Unique Recipies Makes Our Cakes Best On Market!!</p>
-            <button type="button" class="btn btn-primary">Create An Account</button>
+
+          <div class="signup-navigation col-6 mx-4 my-4 me-3 d-flex flex-column justify-content-center">
+            <div class="">
+              <h1>New to Our Website?</h1>
+              <p>We make Premium Quality Cakes. Experianced Chefs and Unique Recipies Makes Our Cakes Best On Market!!
+              </p>
+              <button type="button" class="btn btn-primary">Create An Account</button>
+            </div>
           </div>
+
           <div class="login-form">
             <form action="/login" method="POST" novalidate>
               <div class="mb-3">
@@ -24,10 +29,12 @@
                 <label for="exampleInputPassword1" class="form-label">Password</label>
                 <input name="password" type="password" class="form-control" id="exampleInputPassword1">
               </div>
-              <button type="submit" class="btn btn-primary">Log In</button>
+              <div class="py-5 d-flex flex-column">
+                <button type="submit" class="btn btn-primary">Log In</button>
             </form>
-            <a href="/otp-login"><button>Login With OTP</button></a>
+            <a href="/otp-login"><button class="btn btn-primary mt-3">Login With OTP</button></a>
           </div>
         </div>
+      </div>
       </div>
 </main>
