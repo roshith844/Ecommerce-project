@@ -5,14 +5,14 @@
             <input type="text" name="name" id="ProductName" value="<%= product.name %>">
         </label>
         <label for="">Product image link
-            <input type="text" value="<%= product.image %>">
+            <input type="text" name="image" value="<%= product.image %>">
         </label>
         <label for="ProductDes">product description
-            <textarea name="description id=" ProductDes" cols="30" rows="10"
+            <textarea name="description" id=" ProductDes" cols="30" rows="10"
                 value=""><%= product.description %></textarea>
         </label>
         <label for="">Price
-            <input type="text" value="<%= product.price %>">
+            <input type="text" name="price" value="<%= product.price %>">
         </label>
         <button type="submit">Submit</button>
     </form>

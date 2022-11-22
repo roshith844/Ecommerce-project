@@ -69,7 +69,14 @@ module.exports = {
     listProducts: async (req, res) => {
         try {
             await productModel.find({}).then((products) => {
-                res.render('adminViews/products', { products: products })
+                if(req.session.editProduct == true){
+                    req.session.editProduct = false
+                    res.render('adminViews/products', { products: products, msg: "Product Details Updated" })
+                }else{
+                    res.render('adminViews/products', { products: products, msg: "" })
+                }
+
+                ///////
             })
         } catch (error) {
             console.log(error)
@@ -81,8 +88,11 @@ module.exports = {
             res.render('adminViews/edit-product', { info: info })
         })
     },
-    editProduct: (req, res) => {
-        console.log('updation will happening here')
+    editProduct: async (req, res) => {
+        await productModel.replaceOne({_id: req.params.id},{name: req.body.name, image: req.body.image, description: req.body.description, price: req.body.price}).then(()=>{
+            req.session.editProduct = true;
+            console.log("replaced")
+        })
         res.redirect('/admin/products')
     },
     doAdminLogout: (req, res) => {
