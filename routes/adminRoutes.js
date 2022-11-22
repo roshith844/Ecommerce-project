@@ -45,6 +45,7 @@ router.get('/users/unblock/:id', adminController.unblockUser)
 router.get('/products', adminController.listProducts)
 router.get('/products/edit-product/:id', adminController.goToEditProduct)
 router.post('/products/edit-product/:id', adminController.editProduct)
+router.get('/products/delete-product/:id', adminController.deleteProduct)
 router.get('/logout', adminController.doAdminLogout)
 
 module.exports = router

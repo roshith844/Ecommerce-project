@@ -72,11 +72,12 @@ module.exports = {
                 if (req.session.editProduct == true) {
                     req.session.editProduct = false
                     res.render('adminViews/products', { products: products, msg: "Product Details Updated" })
+                } else if (req.session.deleteStatus == true) {
+                    req.session.deleteStatus = false
+                    res.render('adminViews/products', { products: products, msg: "Product Deleted" })
                 } else {
                     res.render('adminViews/products', { products: products, msg: "" })
                 }
-
-                ///////
             })
         } catch (error) {
             console.log(error)
@@ -94,6 +95,13 @@ module.exports = {
             console.log("replaced")
         })
         res.redirect('/admin/products')
+    },
+    deleteProduct: async (req, res) => {
+        await productModel.deleteOne({ _id: req.params.id }).then(() => {
+            console.log("product deleted")
+            req.session.deleteStatus = true
+            res.redirect('/admin/products')
+        })
     },
     doAdminLogout: (req, res) => {
         // Destroys session
