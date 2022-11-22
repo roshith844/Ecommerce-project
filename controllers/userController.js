@@ -94,13 +94,21 @@ module.exports = {
         emailRegex.test(req.body.email) &&
         passwordRegex.test(req.body.password)
       ) {
+
         const userDoc = await UserModel.findOne({ email: req.body.email });
+
         if (userDoc.password == req.body.password) {
-          req.session.user = req.body.email;
-          res.redirect("/");
+          if (userDoc.blockStatus == true) {
+            res.render("userViews/login", { msg: "You were blocked by Admin" });
+          } else {
+            req.session.user = req.body.email;
+            res.redirect("/");
+          }
+
         } else {
           res.render("userViews/login", { msg: "Invalid credentials!!" });
         }
+
       } else {
         if (
           emailRegex.test(req.body.email) == false &&
@@ -169,12 +177,17 @@ module.exports = {
       console.log(req.body.email);
       console.log(req.body.otp);
       const userCodeObj = await otpLoginModel.findOne({
-        email: req.body.email,
+        email: req.body.email
       });
       console.log("code from db Is:" + userCodeObj.code);
       if (req.body.otp == userCodeObj.code) {
-        req.session.user = req.body.email;
-        res.redirect("/");
+        if (userCodeObj.blockStatus == true) {
+          res.render("userViews/login", { msg: "You were blocked by Admin" });
+        } else {
+          req.session.user = req.body.email;
+          res.redirect("/");
+        }
+
       } else {
         console.log("otp is Invalid");
         res.redirect("/login");
@@ -189,10 +202,10 @@ module.exports = {
       res.redirect("/login");
     }
   },
-  getProductInfo: (req, res)=>{
-    productModel.find( {_id: req.params.id}).then((info)=>{
+  getProductInfo: (req, res) => {
+    productModel.find({ _id: req.params.id }).then((info) => {
       console.log(info)
-      res.render('userViews/productDetails',{info: info})
+      res.render('userViews/productDetails', { info: info })
     })
 
   },
