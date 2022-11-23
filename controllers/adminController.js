@@ -145,6 +145,12 @@ module.exports = {
             res.redirect('/admin/categories')
         })
     },
+    deleteCategory: async (req, res) => {
+        await categoryModel.deleteOne({ _id: req.params.id }).then(() => {
+            console.log("category deleted")
+            res.redirect('/admin/categories')
+        })
+    },
     doAdminLogout: (req, res) => {
         // Destroys session
         req.session.destroy((error) => {
