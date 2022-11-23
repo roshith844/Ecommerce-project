@@ -14,6 +14,6 @@ app.set('view engine', 'ejs');
 app.set("layout", "./layouts/layout.ejs");
 
 // Server
-app.listen(8000, () => {
+app.listen(7000, () => {
     console.log("Server Started")
 })

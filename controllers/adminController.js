@@ -1,6 +1,7 @@
 const adminModel = require('../model/adminSchema')
 const UserModel = require("../model/userSchema");
 const productModel = require('../model/productSchema')
+const categoryModel = require('../model/categorySchema')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
@@ -112,6 +113,18 @@ module.exports = {
             req.session.deleteStatus = true
             res.redirect('/admin/products')
         })
+    },
+    ViewCategories: async (req, res) => {
+        try {
+            await categoryModel.find({}).then((all) => {
+                console.log("got categories frm db")
+                res.render('adminViews/categories', { categories: all })
+            })
+
+        } catch (error) {
+            console.log(error)
+        }
+
     },
     doAdminLogout: (req, res) => {
         // Destroys session

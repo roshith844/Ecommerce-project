@@ -1,0 +1,32 @@
+<h1>Category Page</h1>
+<table class="table">
+<thead>
+    <tr>
+        <th scope="col">No.</th>
+        <th scope="col">Category Name</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </tr>
+</thead>
+<tbody>
+    <% let count=1 %>
+        <% categories.forEach((item)=>{ %>
+
+
+            <tr>
+                <th scope="row">
+                    <%= count %>
+                </th>
+                <td>
+                    <%= item.category_name %>
+                </td>
+                <td>
+                    <%= count %>
+                </td>
+                <td>
+                    <%= count %>
+                </td>
+            </tr>
+              <% }) %>
+</tbody>
+</table>
