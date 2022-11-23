@@ -126,6 +126,9 @@ module.exports = {
         }
 
     },
+    addCategory: (req, res)=>{
+res.render('adminViews/add-category')
+    },
     viewEditCategory: async (req, res) => {
         await categoryModel.findOne({ _id: req.params.id }).then((item) => {
             console.log(item)
