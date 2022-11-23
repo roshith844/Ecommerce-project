@@ -21,12 +21,11 @@
                     <%= item.category_name %>
                 </td>
                 <td>
-                    <%= count %>
-                </td>
-                <td>
-                    <%= count %>
+                    <a href="/admin/categories/<%= item._id %>"
+                        class="btn btn-primary">Edit</a>
                 </td>
             </tr>
+            <%  count++ %>
               <% }) %>
 </tbody>
 </table>

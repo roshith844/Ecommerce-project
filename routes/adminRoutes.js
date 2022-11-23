@@ -49,6 +49,8 @@ router.get('/products/edit-product/:id', adminController.goToEditProduct)
 router.post('/products/edit-product/:id', adminController.editProduct)
 router.get('/products/delete-product/:id', adminController.deleteProduct)
 router.get('/categories', adminController.ViewCategories)
+router.get('/categories/:id', adminController.viewEditCategory)
+router.post('/categories/:id', adminController.editCategory)
 router.get('/logout', adminController.doAdminLogout)
 
 module.exports = router

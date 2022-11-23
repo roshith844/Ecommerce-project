@@ -126,6 +126,17 @@ module.exports = {
         }
 
     },
+    viewEditCategory: async (req, res) => {
+        await categoryModel.findOne({ _id: req.params.id }).then((item) => {
+            console.log(item)
+            res.render('adminViews/edit-category', { data: item })
+        })
+    },
+    editCategory: async (req, res) => {
+        await categoryModel.replaceOne({ _id: req.params.id }, { category_name: req.body.category }).then(() => {
+            res.redirect('/admin/categories')
+        })
+    },
     doAdminLogout: (req, res) => {
         // Destroys session
         req.session.destroy((error) => {
