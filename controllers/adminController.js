@@ -91,7 +91,6 @@ module.exports = {
         productModel.create({ name: req.body.name, image: req.body.image, description: req.body.description, price: req.body.price }).then(() => {
             console.log("product added")
             res.redirect('/admin/products')
-
         })
     },
     goToEditProduct: (req, res) => {
@@ -126,8 +125,14 @@ module.exports = {
         }
 
     },
-    addCategory: (req, res)=>{
-res.render('adminViews/add-category')
+    viewAddCategory: (req, res) => {
+        res.render('adminViews/add-category')
+    },
+    addCategory: async (req, res) => {
+        await categoryModel.create({ category_name: req.body.category }).then(() => {
+            console.log("category changed")
+            res.redirect('/admin/categories')
+        })
     },
     viewEditCategory: async (req, res) => {
         await categoryModel.findOne({ _id: req.params.id }).then((item) => {
