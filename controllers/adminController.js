@@ -85,7 +85,8 @@ module.exports = {
         }
     },
     viewAddProduct: (req, res) => {
-        res.render('adminViews/add-product')
+
+        res.render('adminViews/add-product', )
     },
     AddProduct: (req, res) => {
         productModel.create({ name: req.body.name, image: req.body.image, description: req.body.description, price: req.body.price }).then(() => {

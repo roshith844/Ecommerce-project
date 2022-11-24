@@ -1,6 +1,6 @@
 <h1>Category Page</h1>
 <a href="/admin/categories/add"><button class="btn btn-primary"> Add Category</button></a>
-<table class="table">
+<table class="table" id="categoryTable">
     <thead>
         <tr>
             <th scope="col">No.</th>
@@ -12,8 +12,6 @@
     <tbody>
         <% let count=1 %>
             <% categories.forEach((item)=>{ %>
-
-
                 <tr>
                     <th scope="row">
                         <%= count %>
@@ -32,3 +30,8 @@
                     <% }) %>
     </tbody>
 </table>
+<script>
+    $(document).ready(function () {
+   $('#categoryTable').DataTable();
+});
+</script>

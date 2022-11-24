@@ -5,6 +5,7 @@
       <%= msg %>
     </div>
     <% } %>
+
       <div class="container-fluid">
         <div class="d-flex">
 
@@ -18,6 +19,7 @@
           </div>
 
           <div class="login-form">
+
             <form action="/login" method="POST" novalidate>
               <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Email address</label>
@@ -31,10 +33,13 @@
               </div>
               <div class="py-5 d-flex flex-column">
                 <button type="submit" class="btn btn-primary">Log In</button>
+              </div>
             </form>
+
             <a href="/otp-login"><button class="btn btn-primary mt-3">Login With OTP</button></a>
+
           </div>
+
         </div>
-      </div>
       </div>
 </main>
