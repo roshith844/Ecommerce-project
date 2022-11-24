@@ -84,12 +84,15 @@ module.exports = {
             console.log(error)
         }
     },
-    viewAddProduct: (req, res) => {
-
-        res.render('adminViews/add-product', )
+    viewAddProduct: async (req, res) => {
+        await categoryModel.find({}).then((categoryArr)=>{
+            console.log('got categories ')
+            res.render('adminViews/add-product',{categories: categoryArr })
+        })
+        
     },
     AddProduct: (req, res) => {
-        productModel.create({ name: req.body.name, image: req.body.image, description: req.body.description, price: req.body.price }).then(() => {
+        productModel.create({ name: req.body.name, image: req.body.image, description: req.body.description, price: req.body.price, category: req.body.category }).then(() => {
             console.log("product added")
             res.redirect('/admin/products')
         })

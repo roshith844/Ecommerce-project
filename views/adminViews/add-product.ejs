@@ -4,10 +4,11 @@
         <input type="text" name="name" id="ProductName" value="">
     </label>
     <label for=""> Select Category
-        <select name="Category id="">
-
-            <option value="none"></option>
-            
+        <select name="category" id="">
+            <option value="none">choose</option>
+           <% categories.forEach((category)=>{ %>
+            <option value="<%= category.category_name %>"><%= category.category_name %></option>
+            <%    }) %>
 
         </select>
     </label>
