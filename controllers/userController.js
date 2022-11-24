@@ -1,7 +1,7 @@
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
-const myEmailSender = require("../model/SendEmail");
+const myOtpSender = require("../model/SendEmail");
 const UserModel = require("../model/userSchema");
 const otpLoginModel = require("../model/otpLoginSchema");
 const productModel = require('../model/productSchema')
@@ -9,9 +9,11 @@ const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const passwordRegex =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 
+
+
 // checks email exists on database
-async function emailExists(userEmail) {
-  const Userfound = await UserModel.findOne({ email: userEmail });
+async function emailExists(userPhone) {
+  const Userfound = await UserModel.findOne({ phone: userPhone });
   if (Userfound) {
     return true; // Email Exists
   } else {
@@ -37,7 +39,7 @@ module.exports = {
       // Validates User input
       if (req.body.password === req.body.repeatPassword) {
 
-        const userExist = await emailExists(req.body.email);
+        const userExist = await emailExists(req.body.phone);
 
         if (userExist == true) {
           res.render('userViews/signup', { msg: 'email already exists! Try again' })
@@ -57,6 +59,7 @@ module.exports = {
               const newUser = new UserModel({
                 name: req.body.name,
                 email: req.body.email,
+                phone: req.body.phone,
                 password: req.body.password,
               });
               newUser.save().then(() => {
@@ -137,9 +140,10 @@ module.exports = {
     res.render("userViews/otpLogin");
   },
   generateOtp: async (req, res) => {
-    console.log(req.body.email);
+    console.log(req.body.phone);
+
     try {
-      const userExist = await emailExists(req.body.email);
+      const userExist = await emailExists(req.body.phone);
 
       // Generates random code if user Exists
       const randomCode = (function getRandomCode() {
@@ -158,14 +162,14 @@ module.exports = {
 
       if (randomCode != false) {
         await otpLoginModel.findOneAndUpdate(
-          { email: req.body.email },
+          { email: req.body.phone },
           { code: randomCode },
           {
             new: true,
             upsert: true,
           }
         );
-        myEmailSender(randomCode, req.body.email); // Sends email to user
+        myOtpSender(randomCode, req.body.phone); // Sends email to user
         res.render("userViews/verify-otp", { data: req.body.email });
       }
     } catch (error) {

@@ -3,6 +3,7 @@ const userSchema = new mongoose.Schema({
     name: String,
     email: String,
     password: String,
+    phone: Number,
     blockStatus: { type: Boolean, default: false }
 })
 
