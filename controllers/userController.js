@@ -4,13 +4,11 @@ const nodemailer = require("nodemailer");
 const myOtpSender = require("../model/sendOTP");
 const UserModel = require("../model/userSchema");
 const otpLoginModel = require("../model/otpLoginSchema");
-const productModel = require('../model/productSchema')
+const PRODUCT_MODEL = require('../model/productSchema')
 const CART_MODEL = require('../model/cartSchema')
 const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const passwordRegex =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
-
-
 
 // checks Phone Number exists on database
 async function checkPhoneNumber(userPhoneNumber) {
@@ -218,14 +216,14 @@ module.exports = {
   },
   goHome: async (req, res) => {
     if (req.session.user) {
-      const products = await productModel.find({})
+      const products = await PRODUCT_MODEL.find({})
       res.render("userViews/home", { products: products });
     } else {
       res.redirect("/login");
     }
   },
   getProductInfo: (req, res) => {
-    productModel.find({ _id: req.params.id }).then((info) => {
+    PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
       console.log(info)
       res.render('userViews/productDetails', { info: info })
     })
@@ -242,6 +240,20 @@ module.exports = {
       }
     });
   },
+
+  viewCart: async (req, res) => {
+    // const USER_CART = await CART_MODEL.findOne({ userId: req.session.user })
+    // const CART_ITEMS = USER_CART.items
+    // // Get items to cart
+    // await CART_MODEL.aggregate([{$match: { userId: req.session.user }}.])
+    // //aggregate(
+    //   $match: { userId: req.session.user }
+    // }, { $unwind: {"$items" }}).then((result) => {
+    //   console.log(result)
+    // })
+
+  },
+
   addToCart: async (req, res) => {
     const USER_ID = req.session.user
     const USER_DOC = await UserModel.findOne({ _id: USER_ID })
@@ -249,10 +261,14 @@ module.exports = {
       console.log(" user exists ")
     } else {
       console.log("user not exists")
-      await CART_MODEL.create({userId: USER_ID, items: [{
-        productId: req.params.id,
-        quantity: 1
-    }]})
+      await CART_MODEL.create({
+        userId: USER_ID, items: [{
+          productId: req.params.id,
+          quantity: 1
+        }]
+      }).then(() => {
+        res.redirect('/cart')
+      })
     }
   }
 };
