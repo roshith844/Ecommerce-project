@@ -41,11 +41,10 @@ router.get('/login', userController.goToLogin)
 router.get('/signup', userController.goTosignUp)
 router.post('/signup', userController.sendToDatabase)
 router.post('/login', userController.doLogin)
-router.get('/otp-login',userController.getEmailForOTP)
-router.post('/otp-login', userController.generateOtp)
-router.post('/verify-otp', userController.verifyOtp )
+router.get('/otp-login', userController.getPhoneNumber)
+router.post('/otp-login', userController.generateOtp) // posts phone Number for OTP
+router.post('/verify-otp', userController.verifyOtp)
 router.get('/product-info/:id', userController.getProductInfo)
 router.get('/logout', userController.doLogout)
-// /product-info/<%= product._id %
 
 module.exports = router

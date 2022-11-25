@@ -1,7 +1,7 @@
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
-const myOtpSender = require("../model/SendEmail");
+const myOtpSender = require("../model/sendOTP");
 const UserModel = require("../model/userSchema");
 const otpLoginModel = require("../model/otpLoginSchema");
 const productModel = require('../model/productSchema')
@@ -11,13 +11,16 @@ const passwordRegex =
 
 
 
-// checks email exists on database
-async function emailExists(userPhone) {
-  const Userfound = await UserModel.findOne({ phone: userPhone });
+// checks Phone Number exists on database
+async function checkPhoneNumber(userPhoneNumber) {
+  console.log("checking on database for number:" + userPhoneNumber)
+  const PHONE_NUMBER_AS_INTEGER = Number(userPhoneNumber)
+  console.log(typeof PHONE_NUMBER_AS_INTEGER)
+  const Userfound = await UserModel.findOne({ phone: PHONE_NUMBER_AS_INTEGER });
   if (Userfound) {
-    return true; // Email Exists
+    return true; // Phone Number Exists
   } else {
-    return false; // Email Doesnot Exists
+    return false; // Phone Number Doesnot Exists
   }
 }
 
@@ -38,11 +41,11 @@ module.exports = {
 
       // Validates User input
       if (req.body.password === req.body.repeatPassword) {
-
-        const userExist = await emailExists(req.body.phone);
+        console.log("valid password")
+        const userExist = await checkPhoneNumber(req.body.phone);
 
         if (userExist == true) {
-          res.render('userViews/signup', { msg: 'email already exists! Try again' })
+          res.render('userViews/signup', { msg: 'Phone Number already exists! Try again' })
         } else {
 
           if (!validEmail && !validPassword) {
@@ -136,19 +139,23 @@ module.exports = {
         .render("userViews/login", { msg: "invalid credentials!! Try Again" });
     }
   },
-  getEmailForOTP: (req, res) => {
+  // shows page for OTP
+  getPhoneNumber: (req, res) => {
     res.render("userViews/otpLogin");
   },
   generateOtp: async (req, res) => {
-    console.log(req.body.phone);
+    console.log(typeof (req.body.phone));
 
     try {
-      const userExist = await emailExists(req.body.phone);
+      const userExist = await checkPhoneNumber(req.body.phone); // check phone Number exists on database
 
       // Generates random code if user Exists
       const randomCode = (function getRandomCode() {
+
         if (!userExist) {
+          console.log("user does not exist on database")
           res.render("userViews/otpLogin");
+          return false;
         } else {
           console.log("user exists");
 
@@ -157,38 +164,45 @@ module.exports = {
             return Math.floor(1000 + Math.random() * 9000);
           })();
         }
-        return false;
       })();
 
+      // Inserts Random code to database
       if (randomCode != false) {
         await otpLoginModel.findOneAndUpdate(
-          { email: req.body.phone },
+          { phone: req.body.phone },
           { code: randomCode },
           {
             new: true,
             upsert: true,
           }
         );
-        myOtpSender(randomCode, req.body.phone); // Sends email to user
-        res.render("userViews/verify-otp", { data: req.body.email });
+
+        const USER_PHONE_NUMBER = `+91` + (req.body.phone)
+        console.log(USER_PHONE_NUMBER)
+
+        myOtpSender(randomCode, USER_PHONE_NUMBER); // Sends email to user
+
+        res.render("userViews/verify-otp", { data: req.body.phone }) // Renders page to verify OTP
+
       }
     } catch (error) {
       console.log(error);
     }
   },
+
   verifyOtp: async (req, res) => {
     try {
-      console.log(req.body.email);
+      console.log(req.body.phone);
       console.log(req.body.otp);
       const userCodeObj = await otpLoginModel.findOne({
-        email: req.body.email
+        phone: req.body.phone
       });
       console.log("code from db Is:" + userCodeObj.code);
       if (req.body.otp == userCodeObj.code) {
         if (userCodeObj.blockStatus == true) {
           res.render("userViews/login", { msg: "You were blocked by Admin" });
         } else {
-          req.session.user = req.body.email;
+          req.session.user = req.body.phone;
           res.redirect("/");
         }
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const otpLoginSchema = new mongoose.Schema({
-    email: String,
+    phone: String,
     code: String
 })
 
