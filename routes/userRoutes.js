@@ -47,4 +47,7 @@ router.post('/verify-otp', userController.verifyOtp)
 router.get('/product-info/:id', userController.getProductInfo)
 router.get('/logout', userController.doLogout)
 
+// Routes for Cart Management
+router.get('/add-to-cart/:id', userController.addToCart)
+
 module.exports = router

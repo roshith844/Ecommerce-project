@@ -8,8 +8,9 @@
                 <h1><%= info.name %></h1>
                 <h2>Rs. <%= info.price %></h2>
                 <p><%= info.description %></p>
-                <button>Add to Cart</button>
+                <a href="/add-to-cart/<%= info._id %>"><button>Add to Cart</button></a>
             </div>
         </div>
         <% }) %>
+        
 </div>

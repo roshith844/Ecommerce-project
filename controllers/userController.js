@@ -5,6 +5,7 @@ const myOtpSender = require("../model/sendOTP");
 const UserModel = require("../model/userSchema");
 const otpLoginModel = require("../model/otpLoginSchema");
 const productModel = require('../model/productSchema')
+const CART_MODEL = require('../model/cartSchema')
 const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const passwordRegex =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
@@ -102,12 +103,12 @@ module.exports = {
       ) {
 
         const userDoc = await UserModel.findOne({ email: req.body.email });
-
+        console.log(userDoc._id)
         if (userDoc.password == req.body.password) {
           if (userDoc.blockStatus == true) {
             res.render("userViews/login", { msg: "You were blocked by Admin" });
           } else {
-            req.session.user = req.body.email;
+            req.session.user = userDoc._id;
             res.redirect("/");
           }
 
@@ -197,12 +198,15 @@ module.exports = {
       const userCodeObj = await otpLoginModel.findOne({
         phone: req.body.phone
       });
+
+      const userDoc = await UserModel.findOne({ phone: req.body.phone });
+
       console.log("code from db Is:" + userCodeObj.code);
       if (req.body.otp == userCodeObj.code) {
         if (userCodeObj.blockStatus == true) {
           res.render("userViews/login", { msg: "You were blocked by Admin" });
         } else {
-          req.session.user = req.body.phone;
+          req.session.user = userDoc._id;
           res.redirect("/");
         }
 
@@ -238,4 +242,17 @@ module.exports = {
       }
     });
   },
+  addToCart: async (req, res) => {
+    const USER_ID = req.session.user
+    const USER_DOC = await UserModel.findOne({ _id: USER_ID })
+    if (USER_ID == USER_DOC) {
+      console.log(" user exists ")
+    } else {
+      console.log("user not exists")
+      await CART_MODEL.create({userId: USER_ID, items: [{
+        productId: req.params.id,
+        quantity: 1
+    }]})
+    }
+  }
 };
