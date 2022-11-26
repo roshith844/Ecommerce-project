@@ -241,27 +241,40 @@ module.exports = {
 
   viewCart: async (req, res) => {
     const USER_ID = req.session.user
-    let products = await CART_MODEL.findOne({ userId: USER_ID }).populate('items.productId')
+    let products = await CART_MODEL.findOne({ userId: USER_ID }).populate('items.productId').lean()
     res.render('userViews/cart', { productDetails: products.items })
   },
 
   addToCart: async (req, res) => {
     const USER_ID = req.session.user
-    console.log(USER_ID)
 
-    const userExist = await CART_MODEL.findOne({ userId: USER_ID })
+    const USER = await CART_MODEL.exists({ userId: USER_ID }) // checks user on db
 
-    if (userExist) {
+    if (USER) {
       console.log("user exissts")
-      
+      const PRODUCT_EXIST = await CART_MODEL.exists({ "items.$.productId": req.params.id })
+      if (PRODUCT_EXIST) {
+        console.log("product exist")
+        await CART_MODEL.updateOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } } }, { $inc: { "items.$.quantity": 1 } }).then(() => {
+          console.log("updated incremented")
+        })
+      } else {
+        await CART_MODEL.create({
+          userId: USER_ID, items: [{
+            productId: req.params.id,
+            quantity: 1
+          }]
+        })
+      }
+
     } else {
       console.log("user is not here")
       await CART_MODEL.create({
-              userId: USER_ID, items: [{
-                productId: req.params.id,
-                quantity: 1
-              }]
-            })
+        userId: USER_ID, items: [{
+          productId: req.params.id,
+          quantity: 1
+        }]
+      })
     }
 
     // const USER_DOC = await CART_MODEL.findOne({ userId: USER_ID }) // Checks user exists on cart
@@ -269,8 +282,7 @@ module.exports = {
 
     // if (USER_ID == USER_DOC._id) {
     //   console.log(" user exists ")
-    //   await CART_MODEL.updateOne({ userId: USER_ID, items:{$elemMatch: { productId: req.params.id }}},{$inc: {"items.$.quantity": 1}})
-
+    //  
     //   res.redirect('/cart')
     // } else {
     //     console.log("user not exists")
