@@ -1,1 +1,41 @@
 cart
+<table class="table" id="">
+    <thead>
+        <tr>
+            <th scope="col">No.</th>
+            <th scope="col"> Product Name</th>
+            <th scope="col"> Product Image</th>
+            <th scope="col">price</th>
+            <th scope="col">Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% let count=1 %>
+            <% productDetails.forEach((product)=>{ %>
+                <tr>
+                    <th scope="row">
+                        <%= count %>
+                    </th>
+                    <td>
+                        <%= product.productId.name %>
+                    </td>
+                    <td>
+                        <img src="<%= product.productId.image %>" alt="">
+                    </td>
+                    <td>
+                        <%= product.productId.price %>
+                    </td>
+                    <td>
+                        <%= product.quantity%>
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-primary">Edit</a>
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+                <% count++ %>
+                    <% }) %>
+    </tbody>
+</table>

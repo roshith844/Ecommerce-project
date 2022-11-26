@@ -243,7 +243,7 @@ module.exports = {
   viewCart: async (req, res) => {
     const USER_ID = req.session.user
     let products = await CART_MODEL.findOne({ userId: USER_ID }).populate('items.productId')
-    res.render('userViews/cart', { products })
+    res.render('userViews/cart', { productDetails: products.items })
   },
 
   addToCart: async (req, res) => {
@@ -251,6 +251,7 @@ module.exports = {
     const USER_DOC = await UserModel.findOne({ _id: USER_ID })
     if (USER_ID == USER_DOC) {
       console.log(" user exists ")
+      res.redirect('/cart')
     } else {
       console.log("user not exists")
       await CART_MODEL.create({
