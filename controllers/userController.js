@@ -224,7 +224,6 @@ module.exports = {
   },
   getProductInfo: (req, res) => {
     PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
-      console.log(info)
       res.render('userViews/productDetails', { info: info })
     })
 
@@ -242,16 +241,9 @@ module.exports = {
   },
 
   viewCart: async (req, res) => {
-    // const USER_CART = await CART_MODEL.findOne({ userId: req.session.user })
-    // const CART_ITEMS = USER_CART.items
-    // // Get items to cart
-    // await CART_MODEL.aggregate([{$match: { userId: req.session.user }}.])
-    // //aggregate(
-    //   $match: { userId: req.session.user }
-    // }, { $unwind: {"$items" }}).then((result) => {
-    //   console.log(result)
-    // })
-
+    const USER_ID = req.session.user
+    let products = await CART_MODEL.findOne({ userId: USER_ID }).populate('items.productId')
+    res.render('userViews/cart', { products })
   },
 
   addToCart: async (req, res) => {
