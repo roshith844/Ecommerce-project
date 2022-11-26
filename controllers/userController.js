@@ -247,24 +247,28 @@ module.exports = {
 
   addToCart: async (req, res) => {
     const USER_ID = req.session.user
+    console.log(USER_ID)
+    console.log(req.params.id)
 
-    const USER = await CART_MODEL.exists({ userId: USER_ID }) // checks user on db
-
+    const USER = await CART_MODEL.findOne({ userId: USER_ID }) // checks user on db
+    console.log(USER)
     if (USER) {
+
       console.log("user exissts")
-      const PRODUCT_EXIST = await CART_MODEL.exists({ "items.$.productId": req.params.id })
+      const PRODUCT_EXIST = await CART_MODEL.findOne({ items: { $elemMatch: { productId: req.params.id } } })
+
       if (PRODUCT_EXIST) {
         console.log("product exist")
         await CART_MODEL.updateOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } } }, { $inc: { "items.$.quantity": 1 } }).then(() => {
           console.log("updated incremented")
         })
+
       } else {
-        await CART_MODEL.create({
-          userId: USER_ID, items: [{
-            productId: req.params.id,
-            quantity: 1
-          }]
-        })
+        console.log("product not there")
+        // if product not found
+        const res = await CART_MODEL.updateOne({ userId: USER_ID }, { $push: { items: { productId: req.params.id } } })
+        console.log(res)
+
       }
 
     } else {
@@ -277,6 +281,7 @@ module.exports = {
       })
     }
 
+    res.redirect('/cart')
     // const USER_DOC = await CART_MODEL.findOne({ userId: USER_ID }) // Checks user exists on cart
 
 
