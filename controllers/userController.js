@@ -2,7 +2,7 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
 const myOtpSender = require("../model/sendOTP");
-const UserModel = require("../model/userSchema");
+const USER_MODEL = require("../model/userSchema");
 const otpLoginModel = require("../model/otpLoginSchema");
 const PRODUCT_MODEL = require('../model/productSchema')
 const CART_MODEL = require('../model/cartSchema')
@@ -15,7 +15,7 @@ async function checkPhoneNumber(userPhoneNumber) {
   console.log("checking on database for number:" + userPhoneNumber)
   const PHONE_NUMBER_AS_INTEGER = Number(userPhoneNumber)
   console.log(typeof PHONE_NUMBER_AS_INTEGER)
-  const Userfound = await UserModel.findOne({ phone: PHONE_NUMBER_AS_INTEGER });
+  const Userfound = await USER_MODEL.findOne({ phone: PHONE_NUMBER_AS_INTEGER });
   if (Userfound) {
     return true; // Phone Number Exists
   } else {
@@ -58,7 +58,7 @@ module.exports = {
               emailRegex.test(req.body.email) &&
               passwordRegex.test(req.body.password)
             ) {
-              const newUser = new UserModel({
+              const newUser = new USER_MODEL({
                 name: req.body.name,
                 email: req.body.email,
                 phone: req.body.phone,
@@ -100,8 +100,7 @@ module.exports = {
         passwordRegex.test(req.body.password)
       ) {
 
-        const userDoc = await UserModel.findOne({ email: req.body.email });
-        console.log(userDoc._id)
+        const userDoc = await USER_MODEL.findOne({ email: req.body.email });
         if (userDoc.password == req.body.password) {
           if (userDoc.blockStatus == true) {
             res.render("userViews/login", { msg: "You were blocked by Admin" });
@@ -197,7 +196,7 @@ module.exports = {
         phone: req.body.phone
       });
 
-      const userDoc = await UserModel.findOne({ phone: req.body.phone });
+      const userDoc = await USER_MODEL.findOne({ phone: req.body.phone });
 
       console.log("code from db Is:" + userCodeObj.code);
       if (req.body.otp == userCodeObj.code) {
@@ -248,20 +247,41 @@ module.exports = {
 
   addToCart: async (req, res) => {
     const USER_ID = req.session.user
-    const USER_DOC = await UserModel.findOne({ _id: USER_ID })
-    if (USER_ID == USER_DOC) {
-      console.log(" user exists ")
-      res.redirect('/cart')
+    console.log(USER_ID)
+
+    const userExist = await CART_MODEL.findOne({ userId: USER_ID })
+
+    if (userExist) {
+      console.log("user exissts")
+      
     } else {
-      console.log("user not exists")
+      console.log("user is not here")
       await CART_MODEL.create({
-        userId: USER_ID, items: [{
-          productId: req.params.id,
-          quantity: 1
-        }]
-      }).then(() => {
-        res.redirect('/cart')
-      })
+              userId: USER_ID, items: [{
+                productId: req.params.id,
+                quantity: 1
+              }]
+            })
     }
+
+    // const USER_DOC = await CART_MODEL.findOne({ userId: USER_ID }) // Checks user exists on cart
+
+
+    // if (USER_ID == USER_DOC._id) {
+    //   console.log(" user exists ")
+    //   await CART_MODEL.updateOne({ userId: USER_ID, items:{$elemMatch: { productId: req.params.id }}},{$inc: {"items.$.quantity": 1}})
+
+    //   res.redirect('/cart')
+    // } else {
+    //     console.log("user not exists")
+    //     await CART_MODEL.create({
+    //       userId: USER_ID, items: [{
+    //         productId: req.params.id,
+    //         quantity: 1
+    //       }]
+    //     }).then(() => {
+    //       res.redirect('/cart')
+    //     })
+    //   }
   }
 };

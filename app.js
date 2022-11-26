@@ -16,6 +16,6 @@ app.set("layout", "./layouts/layout.ejs");
 
 
 // Server
-app.listen(7000, () => {
+app.listen(8000, () => {
     console.log("Server Started")
 })
