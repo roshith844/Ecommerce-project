@@ -1,0 +1,13 @@
+<h1>Edit Quantity</h1>
+<form action="/update-quantity" method="post">
+    <% productInfo.forEach((product)=>{ %>
+    <label for="">
+        <input type="text" name="productId" value="<%= product.items.productId %>">
+    </label>
+    <label for=""> Quantity
+       
+            <input type="number" name="quantity" value="<%= product.items.quantity %>">
+            <% }) %>
+    </label>
+    <button type="submit">Submit</button>
+</form>

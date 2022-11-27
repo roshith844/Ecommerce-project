@@ -48,7 +48,10 @@ router.get('/product-info/:id', userController.getProductInfo)
 router.get('/logout', userController.doLogout)
 
 // Routes for Cart Management
-router.get('/cart', userController.viewCart )
+router.get('/cart', userController.viewCart)
 router.get('/add-to-cart/:id', userController.addToCart)
+router.get('/edit-cart/:id', userController.viewEditQuantity)
+router.post('/update-quantity', userController.updateQuantity)
+
 
 module.exports = router

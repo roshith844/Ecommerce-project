@@ -1,6 +1,7 @@
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
+const mongoose = require('mongoose')
 const myOtpSender = require("../model/sendOTP");
 const USER_MODEL = require("../model/userSchema");
 const otpLoginModel = require("../model/otpLoginSchema");
@@ -251,10 +252,6 @@ module.exports = {
 
     let products = await CART_MODEL.findOne({ userId: USER_ID }).populate('items.productId').lean()
     res.render('userViews/cart', { productDetails: products.items })
-    console.log(products)
-
-    // })
-
   },
 
   addToCart: async (req, res) => {
@@ -290,25 +287,15 @@ module.exports = {
         }]
       })
     }
-
     res.redirect('/cart')
-    // const USER_DOC = await CART_MODEL.findOne({ userId: USER_ID }) // Checks user exists on cart
-
-
-    // if (USER_ID == USER_DOC._id) {
-    //   console.log(" user exists ")
-    //  
-    //   res.redirect('/cart')
-    // } else {
-    //     console.log("user not exists")
-    //     await CART_MODEL.create({
-    //       userId: USER_ID, items: [{
-    //         productId: req.params.id,
-    //         quantity: 1
-    //       }]
-    //     }).then(() => {
-    //       res.redirect('/cart')
-    //     })
-    //   }
+  },
+  viewEditQuantity: async (req, res) => {
+    await CART_MODEL.aggregate([{ $match: { userId: new mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" }, { $match: { "items.productId": new mongoose.Types.ObjectId(req.params.id) } }]).then((result) => {
+      res.render('userViews/edit-cart', { productInfo: result })
+    })
+  },
+  updateQuantity: async (req, res) => {
+    await CART_MODEL.updateOne({ userId: req.session.user, items: { $elemMatch: { productId: req.body.productId } } }, { $set: { "items.$.quantity": req.body.quantity } })
+    res.redirect('/cart')
   }
 };
