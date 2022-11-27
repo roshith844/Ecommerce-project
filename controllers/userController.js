@@ -10,9 +10,9 @@ const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const passwordRegex =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 
-  // To increment by one on cart
-  async function addOneProduct(userId, productId) {
-  await CART_MODEL.updateOne({ userId: userId , items: { $elemMatch: { productId: productId } } }, { $inc: { "items.$.quantity": 1 } }).then(() => {
+// To increment by one on cart
+async function addOneProduct(userId, productId) {
+  await CART_MODEL.updateOne({ userId: userId, items: { $elemMatch: { productId: productId } } }, { $inc: { "items.$.quantity": 1 } }).then(() => {
     console.log("updated incremented")
   })
 }
@@ -259,19 +259,23 @@ module.exports = {
 
     const USER = await CART_MODEL.findOne({ userId: USER_ID }) // checks user on db
     console.log(USER)
+
+    // Checking weather user has a cart or not
     if (USER) {
+
+      // checks product exists on cart 
       const PRODUCT_EXIST = await CART_MODEL.findOne({ items: { $elemMatch: { productId: req.params.id } } })
-
       if (PRODUCT_EXIST) {
-        addOneProduct(USER_ID, req.params.id) 
+        addOneProduct(USER_ID, req.params.id)
 
+      // if product is not there, Adds the product to cart
       } else {
         console.log("product not there")
-        // if product not found
         await CART_MODEL.updateOne({ userId: USER_ID }, { $push: { items: { productId: req.params.id } } })
 
       }
 
+    // if user doesnot has a cart, Create new cart
     } else {
       console.log("user is not here")
       await CART_MODEL.create({
