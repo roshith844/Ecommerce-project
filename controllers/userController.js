@@ -248,8 +248,13 @@ module.exports = {
 
   viewCart: async (req, res) => {
     const USER_ID = req.session.user
+
     let products = await CART_MODEL.findOne({ userId: USER_ID }).populate('items.productId').lean()
     res.render('userViews/cart', { productDetails: products.items })
+    console.log(products)
+
+    // })
+
   },
 
   addToCart: async (req, res) => {
@@ -268,14 +273,14 @@ module.exports = {
       if (PRODUCT_EXIST) {
         addOneProduct(USER_ID, req.params.id)
 
-      // if product is not there, Adds the product to cart
+        // if product is not there, Adds the product to cart
       } else {
         console.log("product not there")
         await CART_MODEL.updateOne({ userId: USER_ID }, { $push: { items: { productId: req.params.id } } })
 
       }
 
-    // if user doesnot has a cart, Create new cart
+      // if user doesnot has a cart, Create new cart
     } else {
       console.log("user is not here")
       await CART_MODEL.create({

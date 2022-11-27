@@ -1,6 +1,7 @@
 const adminModel = require('../model/adminSchema')
 const UserModel = require("../model/userSchema");
 const productModel = require('../model/productSchema')
+const CART_MODEL = require('../model/cartSchema')
 const categoryModel = require('../model/categorySchema')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
@@ -85,11 +86,11 @@ module.exports = {
         }
     },
     viewAddProduct: async (req, res) => {
-        await categoryModel.find({}).then((categoryArr)=>{
+        await categoryModel.find({}).then((categoryArr) => {
             console.log('got categories ')
-            res.render('adminViews/add-product',{categories: categoryArr })
+            res.render('adminViews/add-product', { categories: categoryArr })
         })
-        
+
     },
     AddProduct: (req, res) => {
         productModel.create({ name: req.body.name, image: req.body.image, description: req.body.description, price: req.body.price, category: req.body.category }).then(() => {
@@ -111,11 +112,16 @@ module.exports = {
         res.redirect('/admin/products')
     },
     deleteProduct: async (req, res) => {
+
+        // Deletes Product from Products collection
         await productModel.deleteOne({ _id: req.params.id }).then(() => {
             console.log("product deleted")
             req.session.deleteStatus = true
             res.redirect('/admin/products')
         })
+
+        // Deletes Product from users cart (carts collection)
+        await CART_MODEL.updateMany({}, { $pull: { items: { productId: req.params.id } } })
     },
     ViewCategories: async (req, res) => {
         try {
