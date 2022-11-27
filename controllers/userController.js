@@ -297,5 +297,10 @@ module.exports = {
   updateQuantity: async (req, res) => {
     await CART_MODEL.updateOne({ userId: req.session.user, items: { $elemMatch: { productId: req.body.productId } } }, { $set: { "items.$.quantity": req.body.quantity } })
     res.redirect('/cart')
+  },
+  deleteCartItem: async (req, res) => {
+    await CART_MODEL.updateMany({ userId: req.session.user }, { $pull: { items: { productId: req.params.id } } }).then(() => {
+      res.redirect('/cart')
+    })
   }
 };
