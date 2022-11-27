@@ -302,5 +302,8 @@ module.exports = {
     await CART_MODEL.updateMany({ userId: req.session.user }, { $pull: { items: { productId: req.params.id } } }).then(() => {
       res.redirect('/cart')
     })
+  },
+  viewAddressSelection: (req, res)=>{
+    res.render('userViews/select-address')
   }
 };
