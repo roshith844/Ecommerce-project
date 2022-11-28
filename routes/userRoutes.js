@@ -54,5 +54,7 @@ router.get('/cart/edit-cart/:id', userController.viewEditQuantity)
 router.post('/cart/update-quantity', userController.updateQuantity)
 router.get('/cart/delete/:id', userController.deleteCartItem)
 router.get('/checkout', userController.viewAddressSelection)
+router.get('/checkout/add-address', userController.viewAddAddress)
+router.post('/checkout/add-address', userController.addAddress)
 
 module.exports = router
