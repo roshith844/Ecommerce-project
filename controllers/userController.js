@@ -324,8 +324,12 @@ module.exports = {
       res.redirect("/cart");
     });
   },
-  viewAddressSelection: (req, res) => {
-    res.render("userViews/select-address");
+  viewAddressSelection: async (req, res) => {
+    const USER_INFO = await USER_MODEL.findOne({ _id: req.session.user }).then(
+      (userInfo) => {
+        res.render("userViews/select-address", { address: userInfo.address });
+      }
+    );
   },
   viewAddAddress: (req, res) => {
     res.render("userViews/add-address");

@@ -1,11 +1,15 @@
 <h1>select-address</h1>
 <a href="/checkout/add-address"><button>Add Address</button></a>
-
 <form action="">
-  <label for="">Select Address
+  <label for=""
+    >Select Address
     <select name="" id="">
       <option value="">Choose</option>
-      <option value=""></option>
+      <% address.forEach((item)=>{ %>
+      <option value="<%= item.address_line_1 %>">
+        <%= item.address_line_1 %>
+      </option>
+      <% }) %>
     </select>
   </label>
 </form>
