@@ -350,6 +350,20 @@ module.exports = {
         },
       }
     );
-    res.render("userViews/select-adress");
+    res.redirect("/checkout");
+  },
+  viewSelectPayment: async (req, res) => {
+    // Takes Full address of user from ObjectID of address choosen by User
+    await USER_MODEL.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(req.session.user) } },
+      { $unwind: "$address" },
+      {
+        $match: {
+          "address._id": new mongoose.Types.ObjectId(req.body.address),
+        },
+      },
+    ]).then((result) => {
+      res.render("userViews/select-payment", { address: result[0].address });
+    });
   },
 };

@@ -1,15 +1,18 @@
 <h1>select-address</h1>
 <a href="/checkout/add-address"><button>Add Address</button></a>
-<form action="">
+<form action="/checkout/payment" method="post">
   <label for=""
     >Select Address
-    <select name="" id="">
+    <select name="address" id="">
       <option value="">Choose</option>
       <% address.forEach((item)=>{ %>
-      <option value="<%= item.address_line_1 %>">
-        <%= item.address_line_1 %>
+      <option value="<%= item._id %>">
+        <%= item.address_line_1 %>, <%= item.address_line_2 %>, <%=
+        item.landmark %>, <%= item.town %>, <%= item.state %>, <%= item.pin_code
+        %>
       </option>
       <% }) %>
     </select>
   </label>
+  <button type="submit">go to payment Page</button>
 </form>

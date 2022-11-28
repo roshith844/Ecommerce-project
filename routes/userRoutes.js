@@ -56,5 +56,6 @@ router.get('/cart/delete/:id', userController.deleteCartItem)
 router.get('/checkout', userController.viewAddressSelection)
 router.get('/checkout/add-address', userController.viewAddAddress)
 router.post('/checkout/add-address', userController.addAddress)
+router.post('/checkout/payment', userController.viewSelectPayment)
 
 module.exports = router
