@@ -57,5 +57,6 @@ router.get('/checkout', userController.viewAddressSelection)
 router.get('/checkout/add-address', userController.viewAddAddress)
 router.post('/checkout/add-address', userController.addAddress)
 router.post('/checkout/payment', userController.viewSelectPayment)
+router.get('/checkout/place-order', userController.placeOrder)
 
 module.exports = router

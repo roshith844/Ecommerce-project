@@ -7,6 +7,7 @@ const USER_MODEL = require("../model/userSchema");
 const otpLoginModel = require("../model/otpLoginSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
+const ORDER_MODEL = require("../model/orderSchema")
 const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const passwordRegex =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
@@ -366,4 +367,16 @@ module.exports = {
       res.render("userViews/select-payment", { address: result[0].address });
     });
   },
+  placeOrder: async (req, res)=>{
+    console.log("placing order")
+    const USER_CART = await CART_MODEL.findOne({userId: req.session.user})
+    ORDER_MODEL.create({userId: USER_CART.userId, items: USER_CART.items}).then(()=>{
+      res.render('userViews/order-placed')
+    })
+     CART_MODEL.deleteOne({userId: req.session.user},(err)=>{
+      if(err){
+        console.log(err)
+      }
+    })
+  }
 };
