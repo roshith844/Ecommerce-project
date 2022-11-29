@@ -405,5 +405,24 @@ module.exports = {
   editProfile: async (req, res)=>{
     await USER_MODEL.updateOne({_id: req.session.user}, {$set: {name: req.body.name, email: req.body.email, phone: req.body.phone}})
 res.redirect('/profile')
+  },
+  viewEditAddress: (req, res)=>{
+    console.log("the user f=given id ids: " + req.params.id)
+    USER_MODEL.aggregate([ { $match: { _id:  new mongoose.Types.ObjectId(req.session.user) }}, {$unwind: "$address"},{$match: {"address._id": new mongoose.Types.ObjectId(req.params.id)} } ]).then((doc)=>{
+      res.render('userViews/edit-address',{address: doc[0].address})      
+      console.log(doc)
+    })
+
+    // await CART_MODEL.aggregate([
+    //   { $match: { userId: new mongoose.Types.ObjectId(req.session.user) } },
+    //   { $unwind: "$items" },
+    //   {
+    //     $match: {
+    //       "items.productId": new mongoose.Types.ObjectId(req.params.id),
+    //     },
+    //   },
+    // ])
+
+   
   }
 };
