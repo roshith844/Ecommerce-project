@@ -1,1 +1,15 @@
-<h1>User profile Page</h1>
+<h1>User profile</h1>
+<p>Full Name : <%= userData.name %></p>
+<p>Email : <%= userData.email %></p>
+<p>Phone : <%= userData.phone %></p>
+<h1>Your Adresses</h1>
+<% userData.address.forEach((address)=>{ %>
+<hr />
+<p><%= address.address_line_1 %></p>
+<p><%= address.address_line_2 %></p>
+<p><%= address.landmark %></p>
+<p><%= address.town %></p>
+<p><%= address.state %></p>
+<p><%= address.pin_code %></p>
+<hr />
+<% }) %>

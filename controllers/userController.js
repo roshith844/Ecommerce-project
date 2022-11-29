@@ -392,9 +392,10 @@ module.exports = {
       if (err) {
         console.log(err);
       }
-    });
+});
   },
-  viewProfile: (req, res) => {
-    res.render("userViews/profile");
+  viewProfile: async (req, res) => {
+    const USER_DATA = await USER_MODEL.findOne({_id: req.session.user})
+    res.render("userViews/profile",{userData: USER_DATA});
   },
 };
