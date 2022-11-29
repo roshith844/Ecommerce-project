@@ -1,7 +1,11 @@
 <h1>User profile</h1>
+<h2>Personal Details</h2>
 <p>Full Name : <%= userData.name %></p>
 <p>Email : <%= userData.email %></p>
 <p>Phone : <%= userData.phone %></p>
+
+<a href="/profile/edit-info"><button>Edit personal Details</button></a>
+
 <h1>Your Adresses</h1>
 <% userData.address.forEach((address)=>{ %>
 <hr />

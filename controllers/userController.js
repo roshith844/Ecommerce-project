@@ -398,4 +398,12 @@ module.exports = {
     const USER_DATA = await USER_MODEL.findOne({_id: req.session.user})
     res.render("userViews/profile",{userData: USER_DATA});
   },
+  viewEditProfile: async (req, res)=>{
+    const USER_DATA = await USER_MODEL.findOne({_id: req.session.user})
+    res.render('userViews/edit-profile-info',{userData: USER_DATA})
+  },
+  editProfile: async (req, res)=>{
+    await USER_MODEL.updateOne({_id: req.session.user}, {$set: {name: req.body.name, email: req.body.email, phone: req.body.phone}})
+res.redirect('/profile')
+  }
 };

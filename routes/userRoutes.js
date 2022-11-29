@@ -61,5 +61,7 @@ router.get('/checkout/place-order', userController.placeOrder)
 
 // Routes for User Profile
 router.get('/profile', userController.viewProfile)
+router.get('/profile/edit-info', userController.viewEditProfile)
+router.post('/profile/edit-info', userController.editProfile)
 
 module.exports = router
