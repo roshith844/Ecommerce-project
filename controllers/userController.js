@@ -442,4 +442,7 @@ module.exports = {
       res.redirect("/profile");
     });
   },
+  profileViewAddAddress: (req, res)=>{
+    console.log("go to add adress page for profile")
+  }
 };

@@ -65,5 +65,6 @@ router.get('/profile/edit-info', userController.viewEditProfile)
 router.post('/profile/edit-info', userController.editProfile)
 router.get('/profile/edit-address/:id', userController.viewEditAddress)
 router.post('/profile/edit-address', userController.editAddress)
+router.get('/profile/add-address', userController.profileViewAddAddress)
 
 module.exports = router
