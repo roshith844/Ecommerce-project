@@ -394,4 +394,7 @@ module.exports = {
       }
     });
   },
+  viewProfile: (req, res) => {
+    res.render("userViews/profile");
+  },
 };

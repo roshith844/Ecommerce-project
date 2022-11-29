@@ -59,4 +59,7 @@ router.post('/checkout/add-address', userController.addAddress)
 router.post('/checkout/payment', userController.viewSelectPayment)
 router.get('/checkout/place-order', userController.placeOrder)
 
+// Routes for User Profile
+router.get('/profile', userController.viewProfile)
+
 module.exports = router
