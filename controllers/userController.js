@@ -392,37 +392,54 @@ module.exports = {
       if (err) {
         console.log(err);
       }
-});
+    });
   },
   viewProfile: async (req, res) => {
-    const USER_DATA = await USER_MODEL.findOne({_id: req.session.user})
-    res.render("userViews/profile",{userData: USER_DATA});
+    const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
+    res.render("userViews/profile", { userData: USER_DATA });
   },
-  viewEditProfile: async (req, res)=>{
-    const USER_DATA = await USER_MODEL.findOne({_id: req.session.user})
-    res.render('userViews/edit-profile-info',{userData: USER_DATA})
+  viewEditProfile: async (req, res) => {
+    const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
+    res.render("userViews/edit-profile-info", { userData: USER_DATA });
   },
-  editProfile: async (req, res)=>{
-    await USER_MODEL.updateOne({_id: req.session.user}, {$set: {name: req.body.name, email: req.body.email, phone: req.body.phone}})
-res.redirect('/profile')
+  editProfile: async (req, res) => {
+    await USER_MODEL.updateOne(
+      { _id: req.session.user },
+      {
+        $set: {
+          name: req.body.name,
+          email: req.body.email,
+          phone: req.body.phone,
+        },
+      }
+    );
+    res.redirect("/profile");
   },
-  viewEditAddress: (req, res)=>{
-    console.log("the user f=given id ids: " + req.params.id)
-    USER_MODEL.aggregate([ { $match: { _id:  new mongoose.Types.ObjectId(req.session.user) }}, {$unwind: "$address"},{$match: {"address._id": new mongoose.Types.ObjectId(req.params.id)} } ]).then((doc)=>{
-      res.render('userViews/edit-address',{address: doc[0].address})      
-      console.log(doc)
-    })
-
-    // await CART_MODEL.aggregate([
-    //   { $match: { userId: new mongoose.Types.ObjectId(req.session.user) } },
-    //   { $unwind: "$items" },
-    //   {
-    //     $match: {
-    //       "items.productId": new mongoose.Types.ObjectId(req.params.id),
-    //     },
-    //   },
-    // ])
-
-   
-  }
+  viewEditAddress: (req, res) => {
+    USER_MODEL.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(req.session.user) } },
+      { $unwind: "$address" },
+      { $match: { "address._id": new mongoose.Types.ObjectId(req.params.id) } },
+    ]).then((doc) => {
+      res.render("userViews/edit-address", { address: doc[0].address });
+    });
+  },
+  editAddress: async (req, res) => {
+    // Updates address details inside array using Object id of inner-object to change
+    await USER_MODEL.updateOne(
+      { _id: req.session.user, address: { $elemMatch: { _id: req.body.id } } },
+      {
+        $set: {
+          "address.$.address_line_1": req.body.address_line_1,
+          "address.$.address_line_2": req.body.address_line_2,
+          "address.$.landmark": req.body.landmark,
+          "address.$.town": req.body.town,
+          "address.$.state": req.body.state,
+          "address.$.pin_code": req.body.pin_code,
+        },
+      }
+    ).then(() => {
+      res.redirect("/profile");
+    });
+  },
 };

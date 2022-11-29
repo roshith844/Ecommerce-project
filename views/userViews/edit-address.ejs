@@ -1,28 +1,32 @@
 <h1>Edit address</h1>
-<form action="" method="">
+<form action="/profile/edit-address" method="post">
+     <label for=""
+     >Id
+     <input type="text" name="id" value="<%= address._id %>"/>
+   </label>
   <label for=""
     >Flat, House no., Building, Company, Apartment
-    <input type="text" name="address_line_1"/>
+    <input type="text" name="address_line_1" value="<%= address.address_line_1 %>"/>
   </label>
   <label for=""
     >Area, Street, Sector, Village
-    <input type="text" name="address_line_2" />
+    <input type="text" name="address_line_2" value="<%= address.address_line_2  %>" />
   </label>
   <label for=""
     >Landmark
-    <input type="text" name="landmark" />
+    <input type="text" name="landmark"  value="<%= address.landmark %>" />
   </label>
   <label for=""
     >Landmark
-    <input type="text" name="town" />
+    <input type="text" name="town"  value="<%= address.town  %>" />
   </label>
   <label for="">
     State
-    <input type="text" name="state"/>
+    <input type="text" name="state"  value="<%= address.state  %>"/>
   </label>
   <label for=""
     >PIN code
-    <input type="" name="pin_code" />
+    <input type="" name="pin_code" value="<%= address.pin_code %>" />
   </label>
   <button type="submit">Submit</button>
 </form>
