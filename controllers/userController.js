@@ -442,10 +442,10 @@ module.exports = {
       res.redirect("/profile");
     });
   },
-  profileViewAddAddress: (req, res)=>{
-    res.render('userViews/profile-add-address')
+  profileViewAddAddress: (req, res) => {
+    res.render("userViews/profile-add-address");
   },
-  addProfileAddress: async (req, res)=>{
+  addProfileAddress: async (req, res) => {
     await USER_MODEL.updateOne(
       { _id: req.session.user },
       {
@@ -461,6 +461,23 @@ module.exports = {
         },
       }
     );
-    res.redirect('/profile')
-  }
+    res.redirect("/profile");
+  },
+  viewOrdersToUser: async (req, res) => {
+    const ORDERS = await ORDER_MODEL.find({ userId: req.session.user })
+      .populate("items.productId")
+      .lean();
+    res.render("userViews/orders", { orderDetails: ORDERS });
+  },
+  cancelOrderByUser: async (req, res) => {
+    console.log("cancel order by user");
+    console.log(req.session.user);
+    console.log(req.params.id);
+    await ORDER_MODEL.updateOne(
+      { _id: req.params.id },
+      { $set: { status: "cancelled" } }
+    ).then(() => {
+      res.redirect("/orders");
+    });
+  },
 };

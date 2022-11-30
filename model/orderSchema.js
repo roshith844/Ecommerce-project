@@ -10,10 +10,15 @@ const orderSchema = new mongoose.Schema({
             ref: 'products',
         },
         quantity: {
+
             type: Number,
             default: 1
         }
-    }]
+    }], 
+    status: {
+        type: String,
+        default: 'pending'
+    }
 
 })
 module.exports = mongoose.model('orders', orderSchema)

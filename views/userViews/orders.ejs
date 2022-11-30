@@ -1,0 +1,25 @@
+<h1>Orders</h1>
+<% let count = 1 %> <% orderDetails.forEach((order)=>{ %>
+
+<div>
+  <div>
+    <%= count %>
+    <p>Order ID: <%= order._id %></p>
+  </div>
+
+  <% order.items.forEach((item)=>{ %>
+  <hr />
+  <p>Product Name: <%= item.productId.name %></p>
+  <p>Price: <%= item.productId.price %></p>
+  <p>Quantity: <%= item.quantity %></p>
+  <% const TOTAL_PRICE = (item.productId.price)*(item.quantity) %>
+  <p>Total Price : <%= TOTAL_PRICE %></p>
+  <hr />
+  <% }) %>
+  <p>Status: <%= order.status %></p>
+  <a href="/orders/cancel/<%= order._id %>"><button>Cancel Order</button></a>
+  <hr><hr>
+</div>
+
+<% count++ %> 
+<% }) %>

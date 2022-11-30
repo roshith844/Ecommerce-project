@@ -68,4 +68,9 @@ router.post('/profile/edit-address', userController.editAddress)
 router.get('/profile/add-address', userController.profileViewAddAddress)
 router.post('/profile/add-address', userController.addProfileAddress)
 
+// Routes for orders
+router.get('/orders', userController.viewOrdersToUser)
+router.get('/orders/cancel/:id', userController.cancelOrderByUser)
+
+
 module.exports = router

@@ -13,6 +13,6 @@ const cartSchema = new mongoose.Schema({
             type: Number,
             default: 1
         }
-    }]
+    }], 
 })
 module.exports = mongoose.model('carts', cartSchema)
