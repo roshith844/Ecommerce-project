@@ -171,5 +171,8 @@ module.exports = {
                 res.redirect("admin/login");
             }
         })
+    },
+    viewOrders: (req, res) => {
+    res.render('adminViews/orders')
     }
 }

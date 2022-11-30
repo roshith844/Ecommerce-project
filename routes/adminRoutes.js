@@ -54,6 +54,7 @@ router.post('/categories/add', adminController.addCategory)
 router.get('/categories/edit/:id', adminController.viewEditCategory)
 router.post('/categories/edit/:id', adminController.editCategory)
 router.get('/categories/delete/:id', adminController.deleteCategory)
+router.get('/orders', adminController.viewOrders)
 router.get('/logout', adminController.doAdminLogout)
 
 module.exports = router
