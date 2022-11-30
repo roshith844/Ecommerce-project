@@ -22,8 +22,6 @@ module.exports = {
     try {
       const adminDoc = await adminModel.findOne({ email: req.body.email });
       if (adminDoc.password == req.body.password) {
-        console.log(adminDoc.password);
-        console.log("Password checked");
         req.session.admin = req.body.email;
         res.redirect("/admin");
       } else {
@@ -224,16 +222,13 @@ module.exports = {
       .populate("userId")
       .populate("items.productId")
       .then((orders) => {
-        console.log(orders);
         res.render("adminViews/orders", { orders });
       });
   },
   viewChangeStatus: (req, res) => {
-    console.log(req.params.id);
     res.render("adminViews/change-status", { orderId: req.params.id });
   },
   changeStatus: async (req, res) => {
-    console.log(req.body);
     await ORDER_MODEL.updateOne(
       { _id: req.body.orderId },
       { $set: { status: req.body.status } }
