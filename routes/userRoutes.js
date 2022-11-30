@@ -67,10 +67,13 @@ router.get('/profile/edit-address/:id', userController.viewEditAddress)
 router.post('/profile/edit-address', userController.editAddress)
 router.get('/profile/add-address', userController.profileViewAddAddress)
 router.post('/profile/add-address', userController.addProfileAddress)
+router.get('/profile/change-password', userController.viewChangePassword)
+router.post('/profile/change-password', userController.changePassword)
 
 // Routes for orders
 router.get('/orders', userController.viewOrdersToUser)
 router.get('/orders/cancel/:id', userController.cancelOrderByUser)
+
 
 
 module.exports = router

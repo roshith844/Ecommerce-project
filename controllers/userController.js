@@ -480,4 +480,13 @@ module.exports = {
       res.redirect("/orders");
     });
   },
+  viewChangePassword:  (req, res) => {
+    res.render('userViews/change-password')
+  },
+  changePassword: async (req, res) => { 
+await USER_MODEL.updateOne({_id: req.session.user}, {$set: {password: req.body.password}}).then(()=>{
+  res.redirect('/profile')
+})
+
+  }
 };
