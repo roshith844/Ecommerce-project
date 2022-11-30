@@ -1,16 +1,31 @@
 <h1>Payment page</h1>
 <h2>Shipping Address</h2>
-<p>Address line_1: <%= address.address_line_1 %></p>
-<p>Address line 2: <%= address.address_line_2 %></p>
-<p>landmark: <%= address.landmark %></p>
-<p>Town: <%= address.town %></p>
-<p>State : <%= address.state %></p>
-<p>PIN Code: <%= address.pin_code %></p>
-<label for="">Payment Options
-     <select name="" id="">
-          <option value="cod">Cash on Delivery</option>
-          <option value="paytm">PayTm</option>
-          <option value="netBanking">Internet Banking</option>
-     </select>
-</label>
-<a href="/checkout/place-order"><button>Place order</button></a>
+<form action="/checkout/place-order" method="post">
+  <label for="">Address line_1: 
+    <input type="text" name="address_line_1" value="<%= address.address_line_1 %>" />
+  </label>
+  <label for="">Address line 2:
+     <input type="text" name="address_line_2" value="<%= address.address_line_2 %>" />
+   </label>
+   <label for="">landmark:
+     <input type="text" name="landmark" value="<%= address.landmark %>" />
+   </label>
+   <label for="">Town: 
+     <input type="text" name="town" value="<%= address.town %>" />
+   </label>
+   <label for="">State : 
+      <input type="text" name="state" value="<%= address.state %>" />
+    </label>
+    <label for="">PIN Code: 
+      <input type="text" name="pin_code"value="<%= address.pin_code %>" />
+    </label>
+  <label for=""
+    >Payment Options
+    <select name="payment" id="">
+      <option value="cod">Cash on Delivery</option>
+      <option value="paytm">PayTm</option>
+      <option value="netBanking">Internet Banking</option>
+    </select>
+  </label>
+  <button type="submit">Place Order</button>
+</form>

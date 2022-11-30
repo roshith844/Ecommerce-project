@@ -379,12 +379,20 @@ module.exports = {
       res.render("userViews/select-payment", { address: result[0].address });
     });
   },
+
   placeOrder: async (req, res) => {
     console.log("placing order");
     const USER_CART = await CART_MODEL.findOne({ userId: req.session.user });
     ORDER_MODEL.create({
       userId: USER_CART.userId,
       items: USER_CART.items,
+      address: { address_line_1: req.body.address_line_1,
+        address_line_2:  req.body.address_line_2,
+        landmark:  req.body.landmark,
+        town:  req.body.town,
+        state:  req.body.state,
+        pin_code:  req.body.pin_code},
+        payment_method: req.body.payment
     }).then(() => {
       res.render("userViews/order-placed");
     });
@@ -394,6 +402,7 @@ module.exports = {
       }
     });
   },
+
   viewProfile: async (req, res) => {
     const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
     res.render("userViews/profile", { userData: USER_DATA });
