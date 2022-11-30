@@ -4,7 +4,6 @@
   <label for=""
     >Select Address
     <select name="address" id="">
-      <option value="">Choose</option>
       <% address.forEach((item)=>{ %>
       <option value="<%= item._id %>">
         <%= item.address_line_1 %>, <%= item.address_line_2 %>, <%=

@@ -57,6 +57,7 @@ router.get("/categories/delete/:id", adminController.deleteCategory);
 router.get("/orders", adminController.viewOrders);
 router.get("/orders/change-status/:id", adminController.viewChangeStatus);
 router.post("/orders/change-status", adminController.changeStatus);
+router.get("/orders/cancel/:id", adminController.cancelOrder);
 router.get("/logout", adminController.doAdminLogout);
 
 module.exports = router;

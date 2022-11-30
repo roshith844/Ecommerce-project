@@ -236,4 +236,12 @@ module.exports = {
       res.redirect("/admin/orders");
     });
   },
+  cancelOrder: async (req, res) => {
+    await ORDER_MODEL.updateOne(
+      { _id: req.params.id },
+      { $set: { status: "cancelled" } }
+    ).then(() => {
+      res.redirect("/admin/orders");
+    });
+  }
 };
