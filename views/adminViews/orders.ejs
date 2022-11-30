@@ -19,6 +19,11 @@
       <td><%= order.userId.email %></td>
       <td><%= order.payment_method %></td>
       <td><%= order.status %></td>
+      <td>
+        <a href="/admin/orders/change-status/<%= order._id %>"
+          ><button>Change Order Status</button>
+        </a>
+      </td>
     </tr>
     <% count++; %> <% }) %>
   </tbody>

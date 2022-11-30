@@ -1,0 +1,11 @@
+<h1>Change Status</h1>
+<form action="/admin/orders/change-status/" method="post">
+     <input type="text" name="orderId" value="<%= orderId %>">
+  <input type="radio" name="status" value="pending" />
+  <label for="">pending</label><br />
+  <input type="radio" name="status" value="shipped" />
+  <label for="">shipped</label><br />
+  <input type="radio" name="status" value="delivered" />
+  <label for="">delivered</label>
+  <a href=""><button type="submit">Submit</button></a>
+</form>

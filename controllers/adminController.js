@@ -220,12 +220,25 @@ module.exports = {
     });
   },
   viewOrders: (req, res) => {
- ORDER_MODEL.find({})
+    ORDER_MODEL.find({})
       .populate("userId")
       .populate("items.productId")
       .then((orders) => {
         console.log(orders);
         res.render("adminViews/orders", { orders });
       });
+  },
+  viewChangeStatus: (req, res) => {
+    console.log(req.params.id);
+    res.render("adminViews/change-status", { orderId: req.params.id });
+  },
+  changeStatus: async (req, res) => {
+    console.log(req.body);
+    await ORDER_MODEL.updateOne(
+      { _id: req.body.orderId },
+      { $set: { status: req.body.status } }
+    ).then(() => {
+      res.redirect("/admin/orders");
+    });
   },
 };
