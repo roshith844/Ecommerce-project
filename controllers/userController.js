@@ -349,7 +349,7 @@ module.exports = {
   },
   addAddress: async (req, res) => {
     await USER_MODEL.updateOne(
-      { userId: req.session.user },
+      { _id: req.session.user },
       {
         $push: {
           address: {
@@ -443,6 +443,24 @@ module.exports = {
     });
   },
   profileViewAddAddress: (req, res)=>{
-    console.log("go to add adress page for profile")
+    res.render('userViews/profile-add-address')
+  },
+  addProfileAddress: async (req, res)=>{
+    await USER_MODEL.updateOne(
+      { _id: req.session.user },
+      {
+        $push: {
+          address: {
+            address_line_1: req.body.address_line_1,
+            address_line_2: req.body.address_line_2,
+            landmark: req.body.landmark,
+            town: req.body.town,
+            state: req.body.state,
+            pin_code: req.body.pin_code,
+          },
+        },
+      }
+    );
+    res.redirect('/profile')
   }
 };
