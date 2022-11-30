@@ -6,22 +6,19 @@
       <th scope="col">order ID</th>
       <th scope="col">Name</th>
       <th scope="col">Email</th>
-      <th scope="col">Products</th>
-      <th scope="col">Total Price</th>
-      <th scope="col">Amount</th>
+      <th scope="col">Payment Method</th>
       <th scope="col">Status</th>
-      
     </tr>
   </thead>
   <tbody>
     <% let count=1; %> <% orders.forEach((order)=>{%>
     <tr>
       <td><%= count %></td>
+      <td><%= order._id %></td>
       <td><%= order.userId.name %></td>
-      <td><%= count %></td>
-      <td><%= count %></td>
-      <td><%= count %></td>
-      <td><%= count %></td>
+      <td><%= order.userId.email %></td>
+      <td><%= order.payment_method %></td>
+      <td><%= order.status %></td>
     </tr>
     <% count++; %> <% }) %>
   </tbody>
