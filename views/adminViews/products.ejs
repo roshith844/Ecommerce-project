@@ -7,7 +7,7 @@
     <% }else{ %>
         <% } %>
             <h1> Product list</h1>
-            <a href="/admin/products/add-product"><button class="btn btn-primary"> Add Product </button></a>
+            <a  class="btn btn-primary"  href="/admin/products/add-product"><button class="btn btn-primary"> Add Product </button></a>
 
             <table class="table" id="productTable">
                 <thead>
@@ -33,11 +33,11 @@
                                     <%= product.price %>
                                 </td>
                                 <td>
-                                    <a href="/admin/products/edit-product/<%=product._id%>"
+                                    <a  class="btn btn-primary"  href="/admin/products/edit-product/<%=product._id%>"
                                         class="btn btn-primary">Edit</a>
                                 </td>
                                 <td>
-                                    <a href="/admin/products/delete-product/<%= product._id%>"
+                                    <a class="btn btn-primary"  href="/admin/products/delete-product/<%= product._id%>"
                                         class="btn btn-danger">Delete</a>
                                 </td>
 

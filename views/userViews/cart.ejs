@@ -20,7 +20,7 @@ cart
                         <%= product.productId.name %>
                     </td>
                     <td>
-                        <img src="<%= product.productId.image %>" alt="">
+                        <img class="col-3" src="<%= product.productId.image %>" alt="">
                     </td>
                     <td>
                         <%= product.productId.price %>
@@ -39,4 +39,4 @@ cart
                     <% }) %>
     </tbody>
 </table>
-<a href="/checkout"><button>Proceed to Buy</button></a>
+<a href="/checkout"><button class="btn btn-primary">Proceed to Buy</button></a>
