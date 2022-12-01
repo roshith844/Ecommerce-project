@@ -1,5 +1,6 @@
 <h1>select-address</h1>
 <a href="/checkout/add-address"><button  class="btn btn-primary" >Add Address</button></a>
+<% if(address.length != 0){  %>
 <form action="/checkout/payment" method="post">
   <label for=""
     >Select Address
@@ -15,3 +16,4 @@
   </label>
   <button class="btn btn-primary"  type="submit">go to payment Page</button>
 </form>
+<%  }  %>
