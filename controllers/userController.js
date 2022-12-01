@@ -386,13 +386,15 @@ module.exports = {
     ORDER_MODEL.create({
       userId: USER_CART.userId,
       items: USER_CART.items,
-      address: { address_line_1: req.body.address_line_1,
-        address_line_2:  req.body.address_line_2,
-        landmark:  req.body.landmark,
-        town:  req.body.town,
-        state:  req.body.state,
-        pin_code:  req.body.pin_code},
-        payment_method: req.body.payment
+      address: {
+        address_line_1: req.body.address_line_1,
+        address_line_2: req.body.address_line_2,
+        landmark: req.body.landmark,
+        town: req.body.town,
+        state: req.body.state,
+        pin_code: req.body.pin_code,
+      },
+      payment_method: req.body.payment,
     }).then(() => {
       res.render("userViews/order-placed");
     });
@@ -473,10 +475,19 @@ module.exports = {
     res.redirect("/profile");
   },
   viewOrdersToUser: async (req, res) => {
-    const ORDERS = await ORDER_MODEL.find({ userId: req.session.user })
-      .populate("items.productId")
-      .lean();
-    res.render("userViews/orders", { orderDetails: ORDERS });
+    ORDER_MODEL.countDocuments({ userId: req.session.user })
+      .then((count) => {
+        return count;
+      }).then(async (count) => {
+        if (count < 1) {
+          res.render("userViews/no-items");
+        } else {
+          const ORDERS = await ORDER_MODEL.find({ userId: req.session.user })
+            .populate("items.productId")
+            .lean();
+          res.render("userViews/orders", { orderDetails: ORDERS });
+        }
+      });
   },
   cancelOrderByUser: async (req, res) => {
     console.log("cancel order by user");
@@ -489,13 +500,15 @@ module.exports = {
       res.redirect("/orders");
     });
   },
-  viewChangePassword:  (req, res) => {
-    res.render('userViews/change-password')
+  viewChangePassword: (req, res) => {
+    res.render("userViews/change-password");
   },
-  changePassword: async (req, res) => { 
-await USER_MODEL.updateOne({_id: req.session.user}, {$set: {password: req.body.password}}).then(()=>{
-  res.redirect('/profile')
-})
-
-  }
+  changePassword: async (req, res) => {
+    await USER_MODEL.updateOne(
+      { _id: req.session.user },
+      { $set: { password: req.body.password } }
+    ).then(() => {
+      res.redirect("/profile");
+    });
+  },
 };
