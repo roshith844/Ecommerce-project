@@ -1,32 +1,50 @@
-<h1>Edit address</h1>
-<form action="/profile/edit-address" method="post">
-     <label for=""
-     >Id
-     <input type="text" name="id" value="<%= address._id %>"/>
-   </label>
-  <label for=""
-    >Flat, House no., Building, Company, Apartment
-    <input type="text" name="address_line_1" value="<%= address.address_line_1 %>"/>
-  </label>
-  <label for=""
-    >Area, Street, Sector, Village
-    <input type="text" name="address_line_2" value="<%= address.address_line_2  %>" />
-  </label>
-  <label for=""
-    >Landmark
-    <input type="text" name="landmark"  value="<%= address.landmark %>" />
-  </label>
-  <label for=""
-    >Landmark
-    <input type="text" name="town"  value="<%= address.town  %>" />
-  </label>
-  <label for="">
-    State
-    <input type="text" name="state"  value="<%= address.state  %>"/>
-  </label>
-  <label for=""
-    >PIN code
-    <input type="" name="pin_code" value="<%= address.pin_code %>" />
-  </label>
-  <button class="btn btn-primary" type="submit">Submit</button>
-</form>
+<div class="container">
+  <div class="row ">
+    <h1 class="mx-auto">Edit address</h1>
+  <form
+    action="/profile/edit-address"
+    method="post"
+    class="d-flex flex-column gap-3"
+  >
+    <label for="" class="d-none"
+      >Id
+      <input type="text" class="d-none" name="id" value="<%= address._id %>" />
+    </label>
+    <label for=""
+      >Flat, House no., Building, Company, Apartment
+      <input
+        type="text"
+        class="d-block"
+        name="address_line_1"
+        value="<%= address.address_line_1 %>"
+      />
+    </label>
+    <label for=""
+      >Area, Street, Sector, Village
+      <input
+        type="text"
+        class="d-block"
+        name="address_line_2"
+        value="<%= address.address_line_2  %>"
+      />
+    </label>
+    <label for=""
+      >Landmark
+      <input type="text" class="d-block" name="landmark" value="<%= address.landmark %>" />
+    </label>
+    <label for=""
+      >Landmark
+      <input type="text" class="d-block" name="town" value="<%= address.town  %>" />
+    </label>
+    <label for="">
+      State
+      <input type="text" name="state" class="d-block" value="<%= address.state  %>" />
+    </label>
+    <label for=""
+      >PIN code
+      <input type="" name="pin_code" class="d-block" value="<%= address.pin_code %>" />
+    </label>
+    <button class="btn btn-primary col-3"  type="submit">Submit</button>
+  </form>
+</div>
+</div>

@@ -1,8 +1,12 @@
+<div class="container">
+<div class="row">
 <h1>Edit Category</h1>
 <form action="/admin/categories/edit/<%= data._id %>" method="post">
     <div class="mb-3">
         <label for="" class="form-label">Edit Category name</label>
-        <input name="category" type="text" class="form-control" id="" value="<%= data.category_name %>">
+        <input name="category" class="d-block" type="text" class="form-control" id="" value="<%= data.category_name %>">
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary col-3">Submit</button>
 </form>
+</div>
+</div>

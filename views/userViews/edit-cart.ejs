@@ -1,13 +1,17 @@
+<div class="container">
+<div class="row">
 <h1>Edit Quantity</h1>
-<form action="/cart/update-quantity" method="post">
+<form action="/cart/update-quantity" method="post" class="d-flex flex-column gap-3">
     <% productInfo.forEach((product)=>{ %>
-    <label for="">
-        <input type="text" name="productId" value="<%= product.items.productId %>">
+    <label for="" class="d-none">
+        <input type="text" class="d-none" name="productId" value="<%= product.items.productId %>">
     </label>
     <label for=""> Quantity
        
             <input type="number" name="quantity" value="<%= product.items.quantity %>">
             <% }) %>
     </label>
-    <button class="btn btn-primary" type="submit">Submit</button>
+    <button class="btn btn-primary col-3" type="submit">Submit</button>
 </form>
+</div>
+</div>

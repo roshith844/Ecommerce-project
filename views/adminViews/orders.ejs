@@ -20,13 +20,13 @@
       <td><%= order.payment_method %></td>
       <td><%= order.status %></td>
       <td>
-        <a class="btn btn-primary"  href="/admin/orders/change-status/<%= order._id %>"
-          ><button>Change Order Status</button>
+        <a href="/admin/orders/change-status/<%= order._id %>"
+          ><button class="btn btn-primary">Change Order Status</button>
         </a>
       </td>
       <td>
-        <a class="btn btn-primary"  href="/admin/orders/cancel/<%= order._id %>"
-          ><button>Cancel Order</button>
+        <a href="/admin/orders/cancel/<%= order._id %>"
+          ><button class="btn btn-danger">Cancel Order</button>
         </a>
       </td>
     </tr>

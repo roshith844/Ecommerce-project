@@ -1,19 +1,23 @@
+<div class="container">
+<div class="row">
 <h1>Edit product</h1>
 <% info.forEach((product)=>{ %>
     <form action="/admin/products/edit-product/<%= product._id %>" method="post">
         <label for="ProductName">Product name
-            <input type="text" name="name" id="ProductName" value="<%= product.name %>">
+            <input type="text" class="d-block" name="name" id="ProductName" value="<%= product.name %>">
         </label>
         <label for="">Product image link
-            <input type="text" name="image" value="<%= product.image %>">
+            <input type="text" class="d-block" name="image" value="<%= product.image %>">
         </label>
         <label for="ProductDes">product description
-            <textarea name="description" id=" ProductDes" cols="30" rows="10"
+            <textarea name="description" class="d-block" id=" ProductDes" cols="30" rows="10"
                 value=""><%= product.description %></textarea>
         </label>
         <label for="">Price
-            <input type="text" name="price" value="<%= product.price %>">
+            <input type="text" class="d-block" name="price" value="<%= product.price %>">
         </label>
-        <button  class="btn btn-primary"  type="submit">Submit</button>
+        <button  class="btn btn-primary col-3"  type="submit">Submit</button>
     </form>
     <% }) %>
+</div>
+</div>

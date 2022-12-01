@@ -1,5 +1,7 @@
 <h1>Edit Personal Details</h1>
-<form action="/profile/edit-info" method="post">
+<div class="container">
+<div class="row">
+<form action="/profile/edit-info" method="post" class="d-flex flex-column gap-3">
      <label for="">Full Name :
           <input type="text" name="name" value="<%= userData.name %>">
      </label>
@@ -9,5 +11,7 @@
      <label for="">Phone :
           <input type="text" name="phone" value="<%= userData.phone %>">
      </label>
-     <button  class="btn btn-primary"  type="submit">Submit</button>
+     <button  class="btn btn-primary col-3"  type="submit">Submit</button>
 </form>
+</div>
+</div>
