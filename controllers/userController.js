@@ -2,14 +2,14 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
-const myOtpSender = require("../model/sendOTP");
+const MY_OTP_SENDER = require("../model/sendOTP");
 const USER_MODEL = require("../model/userSchema");
-const otpLoginModel = require("../model/otpLoginSchema");
+const OTP_LOGIN_MODEL = require("../model/otpLoginSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
 const ORDER_MODEL = require("../model/orderSchema");
-const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
-const passwordRegex =
+const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
+const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 
 // To increment by one on cart
@@ -49,8 +49,8 @@ module.exports = {
   // Sends user data to database for Registration
   sendToDatabase: async (req, res) => {
     try {
-      const validEmail = emailRegex.test(req.body.email);
-      const validPassword = passwordRegex.test(req.body.password);
+      const validEmail = EMAIL_REGEX.test(req.body.email);
+      const validPassword = PASSWORD_REGEX.test(req.body.password);
 
       // Validates User input
       if (req.body.password === req.body.repeatPassword) {
@@ -74,8 +74,8 @@ module.exports = {
             });
           } else {
             if (
-              emailRegex.test(req.body.email) &&
-              passwordRegex.test(req.body.password)
+              EMAIL_REGEX.test(req.body.email) &&
+              PASSWORD_REGEX.test(req.body.password)
             ) {
               const newUser = new USER_MODEL({
                 name: req.body.name,
@@ -108,8 +108,8 @@ module.exports = {
     try {
       // Checks with regex patterns
       if (
-        emailRegex.test(req.body.email) &&
-        passwordRegex.test(req.body.password)
+        EMAIL_REGEX.test(req.body.email) &&
+        PASSWORD_REGEX.test(req.body.password)
       ) {
         const userDoc = await USER_MODEL.findOne({ email: req.body.email });
         if (userDoc.password == req.body.password) {
@@ -124,15 +124,15 @@ module.exports = {
         }
       } else {
         if (
-          emailRegex.test(req.body.email) == false &&
-          passwordRegex.test(req.body.password) == false
+          EMAIL_REGEX.test(req.body.email) == false &&
+          PASSWORD_REGEX.test(req.body.password) == false
         ) {
           res.render("userViews/login", { msg: "Invalid email or Password" });
-        } else if (emailRegex.test(req.body.email) == false) {
+        } else if (EMAIL_REGEX.test(req.body.email) == false) {
           res.render("userViews/login", {
             msg: "Invalid credentials!! Enter a valid email Address",
           });
-        } else if (passwordRegex.test(req.body.password) == false) {
+        } else if (PASSWORD_REGEX.test(req.body.password) == false) {
           res.render("userViews/login", {
             msg: "password should be Minimum eight characters, at least one letter, one number and one special character",
           });
@@ -174,7 +174,7 @@ module.exports = {
 
       // Inserts Random code to database
       if (randomCode != false) {
-        await otpLoginModel.findOneAndUpdate(
+        await OTP_LOGIN_MODEL.findOneAndUpdate(
           { phone: req.body.phone },
           { code: randomCode },
           {
@@ -186,7 +186,7 @@ module.exports = {
         const USER_PHONE_NUMBER = `+91` + req.body.phone;
         console.log(USER_PHONE_NUMBER);
 
-        myOtpSender(randomCode, USER_PHONE_NUMBER); // Sends email to user
+        MY_OTP_SENDER(randomCode, USER_PHONE_NUMBER); // Sends email to user
 
         res.render("userViews/verify-otp", { data: req.body.phone }); // Renders page to verify OTP
       }
@@ -199,7 +199,7 @@ module.exports = {
     try {
       console.log(req.body.phone);
       console.log(req.body.otp);
-      const userCodeObj = await otpLoginModel.findOne({
+      const userCodeObj = await OTP_LOGIN_MODEL.findOne({
         phone: req.body.phone,
       });
 

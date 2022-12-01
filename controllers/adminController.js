@@ -1,11 +1,9 @@
-const adminModel = require("../model/adminSchema");
-const UserModel = require("../model/userSchema");
-const productModel = require("../model/productSchema");
+const ADMIN_MODEL = require("../model/adminSchema");
+const USER_MODEL = require("../model/userSchema");
+const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
-const categoryModel = require("../model/categorySchema");
+const CATEGORY_MODEL = require("../model/categorySchema");
 const ORDER_MODEL = require("../model/orderSchema");
-const session = require("express-session");
-const cookieParser = require("cookie-parser");
 
 module.exports = {
   goToAdminHome: (req, res) => {
@@ -20,7 +18,7 @@ module.exports = {
   },
   doAdminLogin: async (req, res) => {
     try {
-      const adminDoc = await adminModel.findOne({ email: req.body.email });
+      const adminDoc = await ADMIN_MODEL.findOne({ email: req.body.email });
       if (adminDoc.password == req.body.password) {
         req.session.admin = req.body.email;
         res.redirect("/admin");
@@ -35,7 +33,7 @@ module.exports = {
   },
   listUsers: async (req, res) => {
     try {
-      await UserModel.find({}).then((users) => {
+      await USER_MODEL.find({}).then((users) => {
         if (req.session.blockInfo == true) {
           req.session.blockInfo = false;
           res.render("adminViews/users", {
@@ -64,7 +62,7 @@ module.exports = {
   },
   blockUser: async (req, res) => {
     console.log(req.params.id);
-    const updated = await UserModel.findOneAndUpdate(
+    const updated = await USER_MODEL.findOneAndUpdate(
       { _id: req.params.id },
       { $set: { blockStatus: true } }
     ).then(() => {
@@ -76,7 +74,7 @@ module.exports = {
     res.redirect("/admin/users");
   },
   unblockUser: async (req, res) => {
-    await UserModel.findOneAndUpdate(
+    await USER_MODEL.findOneAndUpdate(
       { _id: req.params.id },
       { $set: { blockStatus: false } }
     ).then(() => {
@@ -88,7 +86,7 @@ module.exports = {
   },
   listProducts: async (req, res) => {
     try {
-      await productModel.find({}).then((products) => {
+      await PRODUCT_MODEL.find({}).then((products) => {
         if (req.session.editProduct == true) {
           req.session.editProduct = false;
           res.render("adminViews/products", {
@@ -110,13 +108,13 @@ module.exports = {
     }
   },
   viewAddProduct: async (req, res) => {
-    await categoryModel.find({}).then((categoryArr) => {
+    await CATEGORY_MODEL.find({}).then((categoryArr) => {
       console.log("got categories ");
       res.render("adminViews/add-product", { categories: categoryArr });
     });
   },
   AddProduct: (req, res) => {
-    productModel
+    PRODUCT_MODEL
       .create({
         name: req.body.name,
         image: req.body.image,
@@ -130,13 +128,13 @@ module.exports = {
       });
   },
   goToEditProduct: (req, res) => {
-    productModel.find({ _id: req.params.id }).then((info) => {
+    PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
       console.log(info);
       res.render("adminViews/edit-product", { info: info });
     });
   },
   editProduct: async (req, res) => {
-    await productModel
+    await PRODUCT_MODEL
       .replaceOne(
         { _id: req.params.id },
         {
@@ -154,7 +152,7 @@ module.exports = {
   },
   deleteProduct: async (req, res) => {
     // Deletes Product from Products collection
-    await productModel.deleteOne({ _id: req.params.id }).then(() => {
+    await PRODUCT_MODEL.deleteOne({ _id: req.params.id }).then(() => {
       console.log("product deleted");
       req.session.deleteStatus = true;
       res.redirect("/admin/products");
@@ -168,7 +166,7 @@ module.exports = {
   },
   ViewCategories: async (req, res) => {
     try {
-      await categoryModel.find({}).then((all) => {
+      await CATEGORY_MODEL.find({}).then((all) => {
         console.log("got categories frm db");
         res.render("adminViews/categories", { categories: all });
       });
@@ -180,7 +178,7 @@ module.exports = {
     res.render("adminViews/add-category");
   },
   addCategory: async (req, res) => {
-    await categoryModel
+    await CATEGORY_MODEL
       .create({ category_name: req.body.category })
       .then(() => {
         console.log("category changed");
@@ -188,20 +186,20 @@ module.exports = {
       });
   },
   viewEditCategory: async (req, res) => {
-    await categoryModel.findOne({ _id: req.params.id }).then((item) => {
+    await CATEGORY_MODEL.findOne({ _id: req.params.id }).then((item) => {
       console.log(item);
       res.render("adminViews/edit-category", { data: item });
     });
   },
   editCategory: async (req, res) => {
-    await categoryModel
+    await CATEGORY_MODEL
       .replaceOne({ _id: req.params.id }, { category_name: req.body.category })
       .then(() => {
         res.redirect("/admin/categories");
       });
   },
   deleteCategory: async (req, res) => {
-    await categoryModel.deleteOne({ _id: req.params.id }).then(() => {
+    await CATEGORY_MODEL.deleteOne({ _id: req.params.id }).then(() => {
       console.log("category deleted");
       res.redirect("/admin/categories");
     });

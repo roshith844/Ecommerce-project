@@ -1,14 +1,14 @@
 const express = require("express")
 const app = express()
-const userRouter = require('./routes/userRoutes')
-const adminRouter = require('./routes/adminRoutes')
+const USER_ROUTER = require('./routes/userRoutes')
+const ADMIN_ROUTER = require('./routes/adminRoutes')
 require('./model/database-connection')
 // const nodemailer = require('nodemailer')
 
 // Middlewares
 app.use(express.static('public')); // Serves Static files
-app.use('/', userRouter);
-app.use('/admin', adminRouter)
+app.use('/', USER_ROUTER);
+app.use('/admin', ADMIN_ROUTER)
 // Set EJS as templating engine
 app.set('view engine', 'ejs');
 app.set("layout", "./layouts/layout.ejs");
