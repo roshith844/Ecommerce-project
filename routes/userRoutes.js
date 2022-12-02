@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 const expressLayouts = require('express-ejs-layouts');
 const userController = require('../controllers/userController')
-const SESSION_MANAGER = require('./middlewares/session-management')
+const SESSION_MANAGER = require('../middlewares/session-management')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
