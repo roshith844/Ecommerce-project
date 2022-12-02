@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const expressLayouts = require("express-ejs-layouts");
 const adminController = require("../controllers/adminController");
+const SESSION_MANAGER = require('./middlewares/session-management')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
@@ -39,25 +40,26 @@ router.use(
 router.get("/", adminController.goToAdminHome);
 router.get("/login", adminController.goToAdminLogin);
 router.post("/login", adminController.doAdminLogin);
-router.get("/users", adminController.listUsers);
-router.get("/users/block/:id", adminController.blockUser);
-router.get("/users/unblock/:id", adminController.unblockUser);
-router.get("/products", adminController.listProducts);
-router.get("/products/add-product", adminController.viewAddProduct);
-router.post("/products/add-product", adminController.AddProduct);
-router.get("/products/edit-product/:id", adminController.goToEditProduct);
-router.post("/products/edit-product/:id", adminController.editProduct);
-router.get("/products/delete-product/:id", adminController.deleteProduct);
-router.get("/categories", adminController.ViewCategories);
-router.get("/categories/add", adminController.viewAddCategory);
-router.post("/categories/add", adminController.addCategory);
-router.get("/categories/edit/:id", adminController.viewEditCategory);
-router.post("/categories/edit/:id", adminController.editCategory);
-router.get("/categories/delete/:id", adminController.deleteCategory);
-router.get("/orders", adminController.viewOrders);
-router.get("/orders/change-status/:id", adminController.viewChangeStatus);
-router.post("/orders/change-status", adminController.changeStatus);
-router.get("/orders/cancel/:id", adminController.cancelOrder);
-router.get("/logout", adminController.doAdminLogout);
+
+router.get("/users", SESSION_MANAGER.verifyLoginAdmin, adminController.listUsers);
+router.get("/users/block/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.blockUser);
+router.get("/users/unblock/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.unblockUser);
+router.get("/products", SESSION_MANAGER.verifyLoginAdmin, adminController.listProducts);
+router.get("/products/add-product", SESSION_MANAGER.verifyLoginAdmin, adminController.viewAddProduct);
+router.post("/products/add-product", SESSION_MANAGER.verifyLoginAdmin, adminController.AddProduct);
+router.get("/products/edit-product/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.goToEditProduct);
+router.post("/products/edit-product/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.editProduct);
+router.get("/products/delete-product/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.deleteProduct);
+router.get("/categories", SESSION_MANAGER.verifyLoginAdmin, adminController.ViewCategories);
+router.get("/categories/add", SESSION_MANAGER.verifyLoginAdmin, adminController.viewAddCategory);
+router.post("/categories/add", SESSION_MANAGER.verifyLoginAdmin, adminController.addCategory);
+router.get("/categories/edit/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.viewEditCategory);
+router.post("/categories/edit/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.editCategory);
+router.get("/categories/delete/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.deleteCategory);
+router.get("/orders", SESSION_MANAGER.verifyLoginAdmin, adminController.viewOrders);
+router.get("/orders/change-status/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.viewChangeStatus);
+router.post("/orders/change-status", SESSION_MANAGER.verifyLoginAdmin, adminController.changeStatus);
+router.get("/orders/cancel/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.cancelOrder);
+router.get("/logout", SESSION_MANAGER.verifyLoginAdmin, adminController.doAdminLogout);
 
 module.exports = router;

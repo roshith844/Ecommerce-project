@@ -3,6 +3,7 @@ const express = require('express')
 const router = express.Router()
 const expressLayouts = require('express-ejs-layouts');
 const userController = require('../controllers/userController')
+const SESSION_MANAGER = require('./middlewares/session-management')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
@@ -48,31 +49,31 @@ router.get('/product-info/:id', userController.getProductInfo)
 router.get('/logout', userController.doLogout)
 
 // Routes for Cart Management
-router.get('/cart', userController.viewCart)
-router.get('/add-to-cart/:id', userController.addToCart)
-router.get('/cart/edit-cart/:id', userController.viewEditQuantity)
-router.post('/cart/update-quantity', userController.updateQuantity)
-router.get('/cart/delete/:id', userController.deleteCartItem)
-router.get('/checkout', userController.viewAddressSelection)
-router.get('/checkout/add-address', userController.viewAddAddress)
-router.post('/checkout/add-address', userController.addAddress)
-router.post('/checkout/payment', userController.viewSelectPayment)
-router.post('/checkout/place-order', userController.placeOrder)
+router.get('/cart', SESSION_MANAGER.verifyLoginUser, userController.viewCart)
+router.get('/add-to-cart/:id', SESSION_MANAGER.verifyLoginUser, userController.addToCart)
+router.get('/cart/edit-cart/:id', SESSION_MANAGER.verifyLoginUser, userController.viewEditQuantity)
+router.post('/cart/update-quantity', SESSION_MANAGER.verifyLoginUser, userController.updateQuantity)
+router.get('/cart/delete/:id', SESSION_MANAGER.verifyLoginUser, userController.deleteCartItem)
+router.get('/checkout', SESSION_MANAGER.verifyLoginUser, userController.viewAddressSelection)
+router.get('/checkout/add-address', SESSION_MANAGER.verifyLoginUser, userController.viewAddAddress)
+router.post('/checkout/add-address', SESSION_MANAGER.verifyLoginUser, userController.addAddress)
+router.post('/checkout/payment', SESSION_MANAGER.verifyLoginUser, userController.viewSelectPayment)
+router.post('/checkout/place-order', SESSION_MANAGER.verifyLoginUser, userController.placeOrder)
 
 // Routes for User Profile
-router.get('/profile', userController.viewProfile)
-router.get('/profile/edit-info', userController.viewEditProfile)
-router.post('/profile/edit-info', userController.editProfile)
-router.get('/profile/edit-address/:id', userController.viewEditAddress)
-router.post('/profile/edit-address', userController.editAddress)
-router.get('/profile/add-address', userController.profileViewAddAddress)
-router.post('/profile/add-address', userController.addProfileAddress)
-router.get('/profile/change-password', userController.viewChangePassword)
-router.post('/profile/change-password', userController.changePassword)
+router.get('/profile', SESSION_MANAGER.verifyLoginUser, userController.viewProfile)
+router.get('/profile/edit-info', SESSION_MANAGER.verifyLoginUser, userController.viewEditProfile)
+router.post('/profile/edit-info', SESSION_MANAGER.verifyLoginUser, userController.editProfile)
+router.get('/profile/edit-address/:id', SESSION_MANAGER.verifyLoginUser, userController.viewEditAddress)
+router.post('/profile/edit-address', SESSION_MANAGER.verifyLoginUser, userController.editAddress)
+router.get('/profile/add-address', SESSION_MANAGER.verifyLoginUser, userController.profileViewAddAddress)
+router.post('/profile/add-address', SESSION_MANAGER.verifyLoginUser, userController.addProfileAddress)
+router.get('/profile/change-password', SESSION_MANAGER.verifyLoginUser, userController.viewChangePassword)
+router.post('/profile/change-password', SESSION_MANAGER.verifyLoginUser, userController.changePassword)
 
 // Routes for orders
-router.get('/orders', userController.viewOrdersToUser)
-router.get('/orders/cancel/:id', userController.cancelOrderByUser)
+router.get('/orders', SESSION_MANAGER.verifyLoginUser, userController.viewOrdersToUser)
+router.get('/orders/cancel/:id', SESSION_MANAGER.verifyLoginUser, userController.cancelOrderByUser)
 
 
 
