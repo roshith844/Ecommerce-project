@@ -1,0 +1,31 @@
+<h1>select Address</h1>
+
+<a href="/checkout/add-address"
+  ><button class="btn btn-primary">Add Address</button></a
+>
+
+<% if(address.length != 0){ %>
+<form action="/checkout/payment" method="post">
+  <label for=""
+    >Select Address
+    <select name="address" id="">
+      <% address.forEach((item)=>{ %>
+      <option value="<%= item._id %>">
+        <%= item.address_line_1 %>, <%= item.address_line_2 %>, <%=
+        item.landmark %>, <%= item.town %>, <%= item.state %>, <%= item.pin_code
+        %>
+      </option>
+      <% }) %>
+    </select>
+  </label>
+  <label for=""
+    >Payment Options
+    <select name="payment" id="">
+      <option value="cod">Cash on Delivery</option>
+      <option value="paytm">PayTm</option>
+      <option value="netBanking">Internet Banking</option>
+    </select>
+  </label>
+  <button class="btn btn-primary" type="submit">go to payment Page</button>
+</form>
+<% } %>

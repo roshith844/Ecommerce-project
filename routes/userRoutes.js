@@ -54,11 +54,12 @@ router.get('/add-to-cart/:id', SESSION_MANAGER.verifyLoginUser, userController.a
 router.get('/cart/edit-cart/:id', SESSION_MANAGER.verifyLoginUser, userController.viewEditQuantity)
 router.post('/cart/update-quantity', SESSION_MANAGER.verifyLoginUser, userController.updateQuantity)
 router.get('/cart/delete/:id', SESSION_MANAGER.verifyLoginUser, userController.deleteCartItem)
-router.get('/checkout', SESSION_MANAGER.verifyLoginUser, userController.viewAddressSelection)
+
+// Routes for Checkout
+router.get('/checkout', SESSION_MANAGER.verifyLoginUser, userController.viewCheckout)
 router.get('/checkout/add-address', SESSION_MANAGER.verifyLoginUser, userController.viewAddAddress)
 router.post('/checkout/add-address', SESSION_MANAGER.verifyLoginUser, userController.addAddress)
-router.post('/checkout/payment', SESSION_MANAGER.verifyLoginUser, userController.viewSelectPayment)
-router.post('/checkout/place-order', SESSION_MANAGER.verifyLoginUser, userController.placeOrder)
+router.post('/checkout/payment', SESSION_MANAGER.verifyLoginUser, userController.placeOrder)
 
 // Routes for User Profile
 router.get('/profile', SESSION_MANAGER.verifyLoginUser, userController.viewProfile)

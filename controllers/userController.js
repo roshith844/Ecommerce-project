@@ -217,7 +217,7 @@ module.exports = {
         console.log("otp is Invalid");
         res.redirect("/login");
       }
-    } catch (error) {}
+    } catch (error) { }
   },
   goHome: async (req, res) => {
     if (req.session.user) {
@@ -337,15 +337,15 @@ module.exports = {
       res.redirect("/cart");
     });
   },
-  viewAddressSelection: async (req, res) => {
+  viewCheckout: async (req, res) => {
     const USER_INFO = await USER_MODEL.findOne({ _id: req.session.user }).then(
       (userInfo) => {
-        res.render("userViews/select-address", { address: userInfo.address });
+        res.render("userViews/checkout", { address: userInfo.address });
       }
     );
   },
   viewAddAddress: (req, res) => {
-    res.render("userViews/add-address");
+    res.render("userViews/checkout");
   },
   addAddress: async (req, res) => {
     await USER_MODEL.updateOne(
@@ -364,20 +364,6 @@ module.exports = {
       }
     );
     res.redirect("/checkout");
-  },
-  viewSelectPayment: async (req, res) => {
-    // Takes Full address of user from ObjectID of address choosen by User
-    await USER_MODEL.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(req.session.user) } },
-      { $unwind: "$address" },
-      {
-        $match: {
-          "address._id": new mongoose.Types.ObjectId(req.body.address),
-        },
-      },
-    ]).then((result) => {
-      res.render("userViews/select-payment", { address: result[0].address });
-    });
   },
 
   placeOrder: async (req, res) => {
