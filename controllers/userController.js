@@ -11,6 +11,12 @@ const ORDER_MODEL = require("../model/orderSchema");
 const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
+const Razorpay = require('razorpay');
+
+var instance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 // To increment by one on cart
 async function addOneProduct(userId, productId) {
@@ -367,30 +373,94 @@ module.exports = {
   },
 
   placeOrder: async (req, res) => {
-    console.log("placing order");
-    const USER_CART = await CART_MODEL.findOne({ userId: req.session.user });
-    ORDER_MODEL.create({
-      userId: USER_CART.userId,
-      items: USER_CART.items,
-      address: {
-        address_line_1: req.body.address_line_1,
-        address_line_2: req.body.address_line_2,
-        landmark: req.body.landmark,
-        town: req.body.town,
-        state: req.body.state,
-        pin_code: req.body.pin_code,
-      },
-      payment_method: req.body.payment,
-    }).then(() => {
-      res.render("userViews/order-placed");
-    });
-    CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-  },
+    const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }) //Finds user cart
+    
+    // // Creates new Order
+    // ORDER_MODEL.create({
+    //   userId: USER_CART.userId,
+    //   items: USER_CART.items,
+    //   address: {
+    //     address_line_1: req.body.address_line_1,
+    //     address_line_2: req.body.address_line_2,
+    //     landmark: req.body.landmark,
+    //     town: req.body.town,
+    //     state: req.body.state,
+    //     pin_code: req.body.pin_code,
+    //   },
+    //   payment_method: req.body.payment,
+    // })
 
+    console.log("got post")
+    console.log(req.body.payment)
+    if (req.body.payment == 'razorpay') {
+      console.log("checked razorpay")
+      var options = {
+        amount: 50000,  // amount in the smallest currency unit
+        currency: "INR",
+        receipt: "order_rcptid_11"
+      };
+
+      const order = await instance.orders.create(options, function (err, order) {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log(order)
+          res.json({ status: true, order })
+        }
+        return order.id
+      }).then((orderId) => {
+         ORDER_MODEL.updateOne({})
+      })
+    } else {
+      console.log("its not razorpay")
+    }
+
+
+    //     console.log("placing order");  
+    //     var options = {
+    //       amount: 50000,  // amount in the smallest currency unit
+    //       currency: "INR",
+    //       // receipt: "order_rcptid_11"
+    //     };
+    //     const order = await instance.orders.create(options, function(err, order) {
+    //       if(err){
+    //         console.log(err)
+    //       }else{
+    // console.log(order)
+    // res.status(200).json({
+    //   success: true
+    // })
+    //       }
+    //     });
+
+    // const USER_CART = await CART_MODEL.findOne({ userId: req.session.user });
+    // ORDER_MODEL.create({
+    //   userId: USER_CART.userId,
+    //   items: USER_CART.items,
+    //   address: {
+    //     address_line_1: req.body.address_line_1,
+    //     address_line_2: req.body.address_line_2,
+    //     landmark: req.body.landmark,
+    //     town: req.body.town,
+    //     state: req.body.state,
+    //     pin_code: req.body.pin_code,
+    //   },
+    //   payment_method: req.body.payment,
+    // }).then(() => {
+    //   res.render("userViews/order-placed");
+    // });
+    // CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+    //   if (err) {
+    //     console.log(err);
+    //   }
+    // });
+  },
+  showPaymentSuccess: (req, res) => {
+    res.render('userViews/payment-success')
+  },
+  showPaymentFailed: (req, res) => {
+    res.render('userViews/payment-fail')
+  },
   viewProfile: async (req, res) => {
     const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
     res.render("userViews/profile", { userData: USER_DATA });
@@ -497,4 +567,9 @@ module.exports = {
       res.redirect("/profile");
     });
   },
+  verifyPayment: (req, res) => {
+    console.log(req.body)
+    console.log('its working')
+    res.render('userViews/payment-success')
+  }
 };

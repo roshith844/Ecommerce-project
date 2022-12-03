@@ -5,7 +5,7 @@
 >
 
 <% if(address.length != 0){ %>
-<form action="/checkout/payment" method="post">
+<form id="checkout">
   <label for=""
     >Select Address
     <select name="address" id="">
@@ -22,10 +22,63 @@
     >Payment Options
     <select name="payment" id="">
       <option value="cod">Cash on Delivery</option>
-      <option value="paytm">PayTm</option>
-      <option value="netBanking">Internet Banking</option>
+      <option value="razorpay">PayTm</option>
+      <option value="razorpay">Internet Banking</option>
     </select>
   </label>
   <button class="btn btn-primary" type="submit">go to payment Page</button>
 </form>
 <% } %>
+
+<!-- Ajax library (jquery) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  $("#checkout").submit((e) => {
+    e.preventDefault();
+    $.ajax({
+      url: "/checkout/payment",
+      method: "post",
+      data: $("#checkout").serialize(),
+      success: (res) => {
+        if (res.status) {
+          var options = {
+            key: "rzp_test_tN9rva6tbuI8ng", // Enter the Key ID generated from the Dashboard
+            amount: res.order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+            currency: res.order.currency,
+            order_id: res.order.id,
+            name: "Roshith",
+            handler: function (response) {
+              console.log(response);
+              $.post("/verify-payment", response);
+            },
+
+            theme: {
+              color: "#3399cc",
+            },
+          };
+          // Popup
+          var rzp1 = new Razorpay(options);
+          rzp1.on("payment.failed", function (response) {
+            alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);
+          });
+          rzp1.open();
+        }
+      },
+    });
+  });
+</script>
+
+<!-- <script>
+  function dosubmit(){
+    fetch('/checkout/payment', {method: 'POST', headers: {
+      'Content-Type': 'application/json'
+    }, body: JSON.stringify()})
+  }
+</script> -->

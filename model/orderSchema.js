@@ -4,6 +4,9 @@ const orderSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId,
     ref: "users",
   },
+  payment_order_id: {
+    type : String
+  },
   items: [
     {
       productId: {
@@ -28,6 +31,6 @@ const orderSchema = new mongoose.Schema({
   status: {
     type: String,
     default: "pending",
-  },
+  }
 });
 module.exports = mongoose.model("orders", orderSchema);

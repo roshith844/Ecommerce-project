@@ -7,6 +7,7 @@ const SESSION_MANAGER = require('../middlewares/session-management')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
+
 // Middlewares
 router.use(expressLayouts);
 router.use(express.urlencoded({ extended: true }));
@@ -60,6 +61,10 @@ router.get('/checkout', SESSION_MANAGER.verifyLoginUser, userController.viewChec
 router.get('/checkout/add-address', SESSION_MANAGER.verifyLoginUser, userController.viewAddAddress)
 router.post('/checkout/add-address', SESSION_MANAGER.verifyLoginUser, userController.addAddress)
 router.post('/checkout/payment', SESSION_MANAGER.verifyLoginUser, userController.placeOrder)
+
+router.post('/verify-payment', SESSION_MANAGER.verifyLoginUser, userController.verifyPayment )
+router.get('/payment-success', SESSION_MANAGER.verifyLoginUser, userController.showPaymentSuccess)
+router.get('/payment-failed', SESSION_MANAGER.verifyLoginUser, userController.showPaymentFailed)
 
 // Routes for User Profile
 router.get('/profile', SESSION_MANAGER.verifyLoginUser, userController.viewProfile)
