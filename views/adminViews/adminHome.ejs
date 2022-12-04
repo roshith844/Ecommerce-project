@@ -1,6 +1,56 @@
 <h1>Admin Home page</h1>
-<a  class="btn btn-primary"  href="/logout"><button>Log Out</button></a>
-<a   class="btn btn-primary" href="admin/users">users list</a>
-<a class="btn btn-primary"  href="admin/products">Products list</a>
-<a  class="btn btn-primary" href="/admin/categories">Categories</a>
-<a class="btn btn-primary"  href="/admin/orders">Orders</a>
+<a href="/logout"><button class="btn btn-danger">Log Out</button></a><br />
+
+<div class="container">
+  <div class="row">
+    <div class="col-3">
+      <div class="card">
+        <div class="card-header">
+          <h1>Total Users</h1>
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><%= count.user %></h2>
+          <a class="btn btn-primary" href="admin/users">View Users</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-3">
+      <div class="card">
+        <div class="card-header">
+          <h1>Total Categories</h1>
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><%= count.category %></h2>
+          <a class="btn btn-primary" href="/admin/categories">
+            View Categories</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="col-3">
+      <div class="card">
+        <div class="card-header">
+          <h1>Total Products</h1>
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><%= count.product %></h2>
+          <a class="btn btn-primary" href="admin/products">Products list</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-3">
+      <div class="card">
+        <div class="card-header">
+          <h1>Total Orders</h1>
+        </div>
+        <div class="card-body">
+          <h2 class="card-title"><%= count.order %></h2>
+          <a class="btn btn-primary" href="/admin/orders">View Orders</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

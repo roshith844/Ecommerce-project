@@ -6,9 +6,33 @@ const CATEGORY_MODEL = require("../model/categorySchema");
 const ORDER_MODEL = require("../model/orderSchema");
 
 module.exports = {
-  goToAdminHome: (req, res) => {
+  goToAdminHome: async (req, res) => {
     if (req.session.admin) {
-      res.render("adminViews/adminHome", { layout: false });
+      // Gets count of total Users
+      const USER_COUNT = await USER_MODEL.countDocuments({}).then((count) => {
+        return count;
+      })
+      // Gets count of total Categories
+      const CATEGORY_COUNT = await CATEGORY_MODEL.countDocuments({}).then((count) => {
+        return count;
+      })
+      // Gets count of total Products
+      const PRODUCT_COUNT = await PRODUCT_MODEL.countDocuments({}).then((count) => {
+        return count;
+      })
+      // Gets count of total Orders
+      const ORDER_COUNT = await ORDER_MODEL.countDocuments({}).then((count) => {
+        return count;
+      })
+
+      const COUNT = {
+        user: USER_COUNT,
+        category: CATEGORY_COUNT,
+        product: PRODUCT_COUNT,
+        order: ORDER_COUNT
+      }
+
+      res.render("adminViews/adminHome", { count: COUNT });
     } else {
       res.redirect("/admin/login");
     }
