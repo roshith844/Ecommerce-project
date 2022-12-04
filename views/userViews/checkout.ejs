@@ -52,7 +52,7 @@
               console.log(response);
               var verifyPayment = $.post("/verify-payment", response);
               verifyPayment.done(function (response) {
-                if (response.status === true) {
+                if (response.signatureIsValid == true) {
                   location.href = "/payment-success/" + response.ref_id;
                 } else {
                   location.href = "/payment-failed/" + response.ref_id;
