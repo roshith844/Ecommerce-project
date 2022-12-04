@@ -235,9 +235,12 @@ module.exports = {
     }
   },
   getProductInfo: (req, res) => {
+
     PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
+      console.log(info)
       res.render("userViews/productDetails", { info: info });
     });
+
   },
   doLogout: (req, res) => {
     // Destroys session

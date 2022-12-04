@@ -140,6 +140,7 @@ module.exports = {
   AddProduct: (req, res) => {
     console.log("the path is " + req.file.path)
     const IMAGE_PATH = (req.file.path).slice(7)
+    console.log("after cut "+ IMAGE_PATH )
     PRODUCT_MODEL
       .create({
         name: req.body.name,
