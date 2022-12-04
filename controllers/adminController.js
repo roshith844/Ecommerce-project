@@ -138,10 +138,12 @@ module.exports = {
     });
   },
   AddProduct: (req, res) => {
+    console.log("the path is " + req.file.path)
+    const IMAGE_PATH = (req.file.path).slice(7)
     PRODUCT_MODEL
       .create({
         name: req.body.name,
-        image: req.body.image,
+        image: IMAGE_PATH,
         description: req.body.description,
         price: req.body.price,
         category: req.body.category,

@@ -1,5 +1,8 @@
 <h1> Add product</h1>
-<form action="/admin/products/add-product" method="post">
+// upload.single("image")
+// puton data enctype="multipart/form=data"   
+// tyoe file name image
+<form action="/admin/products/add-product" method="post" enctype="multipart/form-data">
     <label for="ProductName">Product name
         <input type="text" name="name" id="ProductName" value="">
     </label>
@@ -12,14 +15,15 @@
 
         </select>
     </label>
-    <label for="">Product image link
-        <input type="text" name="image" value="">
-    </label>
     <label for="ProductDes">product description
         <textarea name="description" id=" ProductDes" cols="30" rows="10" value=""></textarea>
     </label>
     <label for="">Price
         <input type="text" name="price" value="">
     </label>
+    <label for="">Product Image
+        <input type="file" name="image">
+    </label>
+    
     <button   class="btn btn-primary" type="submit">Submit</button>
 </form>

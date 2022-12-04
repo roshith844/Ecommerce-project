@@ -6,7 +6,8 @@ const adminController = require("../controllers/adminController");
 const SESSION_MANAGER = require('../middlewares/session-management')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-
+const multer = require('multer')
+const upload = require('../middlewares/image-upload')
 // Middlewares
 router.use(expressLayouts);
 router.use(express.urlencoded({ extended: true }));
@@ -46,7 +47,7 @@ router.get("/users/block/:id", SESSION_MANAGER.verifyLoginAdmin, adminController
 router.get("/users/unblock/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.unblockUser);
 router.get("/products", SESSION_MANAGER.verifyLoginAdmin, adminController.listProducts);
 router.get("/products/add-product", SESSION_MANAGER.verifyLoginAdmin, adminController.viewAddProduct);
-router.post("/products/add-product", SESSION_MANAGER.verifyLoginAdmin, adminController.AddProduct);
+router.post("/products/add-product", SESSION_MANAGER.verifyLoginAdmin, upload.single("image"), adminController.AddProduct);
 router.get("/products/edit-product/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.goToEditProduct);
 router.post("/products/edit-product/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.editProduct);
 router.get("/products/delete-product/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.deleteProduct);
