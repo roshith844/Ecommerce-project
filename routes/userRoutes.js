@@ -60,11 +60,11 @@ router.get('/cart/delete/:id', SESSION_MANAGER.verifyLoginUser, userController.d
 router.get('/checkout', SESSION_MANAGER.verifyLoginUser, userController.viewCheckout)
 router.get('/checkout/add-address', SESSION_MANAGER.verifyLoginUser, userController.viewAddAddress)
 router.post('/checkout/add-address', SESSION_MANAGER.verifyLoginUser, userController.addAddress)
-router.post('/checkout/payment', SESSION_MANAGER.verifyLoginUser, userController.placeOrder)
 
-router.post('/verify-payment', SESSION_MANAGER.verifyLoginUser, userController.verifyPayment )
-router.get('/payment-success', SESSION_MANAGER.verifyLoginUser, userController.showPaymentSuccess)
-router.get('/payment-failed', SESSION_MANAGER.verifyLoginUser, userController.showPaymentFailed)
+router.post('/checkout/payment', SESSION_MANAGER.verifyLoginUser, userController.placeOrder)
+router.post('/verify-payment', SESSION_MANAGER.verifyLoginUser, userController.verifyPayment)
+router.get('/payment-success/:id', SESSION_MANAGER.verifyLoginUser, userController.showPaymentSuccess)
+router.get('/payment-failed/:id', SESSION_MANAGER.verifyLoginUser, userController.showPaymentFailed)
 
 // Routes for User Profile
 router.get('/profile', SESSION_MANAGER.verifyLoginUser, userController.viewProfile)

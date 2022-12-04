@@ -1,4 +1,5 @@
 const session = require("express-session");
+const crypto = require('crypto')
 const cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
@@ -374,21 +375,31 @@ module.exports = {
 
   placeOrder: async (req, res) => {
     const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }) //Finds user cart
-    
-    // // Creates new Order
-    // ORDER_MODEL.create({
-    //   userId: USER_CART.userId,
-    //   items: USER_CART.items,
-    //   address: {
-    //     address_line_1: req.body.address_line_1,
-    //     address_line_2: req.body.address_line_2,
-    //     landmark: req.body.landmark,
-    //     town: req.body.town,
-    //     state: req.body.state,
-    //     pin_code: req.body.pin_code,
-    //   },
-    //   payment_method: req.body.payment,
-    // })
+
+    // Creates new Order
+    ORDER_MODEL.create({
+      userId: USER_CART.userId,
+      payment_order_id: "",
+      items: USER_CART.items,
+      address: {
+        address_line_1: req.body.address_line_1,
+        address_line_2: req.body.address_line_2,
+        landmark: req.body.landmark,
+        town: req.body.town,
+        state: req.body.state,
+        pin_code: req.body.pin_code,
+      },
+      payment_method: req.body.payment,
+      status: 'waiting for payment'
+    }).then(() => {
+      CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+    })
+
+
 
     console.log("got post")
     console.log(req.body.payment)
@@ -405,61 +416,44 @@ module.exports = {
           console.log(err)
         } else {
           console.log(order)
-          res.json({ status: true, order })
+          ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id }).then(() => {
+            res.json({ status: true, order })
+          })
+
         }
-        return order.id
-      }).then((orderId) => {
-         ORDER_MODEL.updateOne({})
+
       })
     } else {
       console.log("its not razorpay")
     }
+  },
+  verifyPayment: async (req, res) => {
+    console.log(req.body)
+    const ORDER = await ORDER_MODEL.findOne({ userId: req.session.user, status: 'waiting for payment' })
+    console.log("retrived from db is " + ORDER.payment_order_id)
 
+    const ref_id = ORDER._id
+    const razorpay_payment_id = req.body.razorpay_payment_id
+    const secret = process.env.RAZORPAY_KEY_SECRET
+    const razorpay_signature = req.body.razorpay_signature
+    let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+    hmac.update(req.body.razorpay_order_id + '|' + razorpay_payment_id)
+    hmac = hmac.digest('hex')
 
-    //     console.log("placing order");  
-    //     var options = {
-    //       amount: 50000,  // amount in the smallest currency unit
-    //       currency: "INR",
-    //       // receipt: "order_rcptid_11"
-    //     };
-    //     const order = await instance.orders.create(options, function(err, order) {
-    //       if(err){
-    //         console.log(err)
-    //       }else{
-    // console.log(order)
-    // res.status(200).json({
-    //   success: true
-    // })
-    //       }
-    //     });
-
-    // const USER_CART = await CART_MODEL.findOne({ userId: req.session.user });
-    // ORDER_MODEL.create({
-    //   userId: USER_CART.userId,
-    //   items: USER_CART.items,
-    //   address: {
-    //     address_line_1: req.body.address_line_1,
-    //     address_line_2: req.body.address_line_2,
-    //     landmark: req.body.landmark,
-    //     town: req.body.town,
-    //     state: req.body.state,
-    //     pin_code: req.body.pin_code,
-    //   },
-    //   payment_method: req.body.payment,
-    // }).then(() => {
-    //   res.render("userViews/order-placed");
-    // });
-    // CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
-    //   if (err) {
-    //     console.log(err);
-    //   }
-    // });
+    if (hmac == razorpay_signature) {
+      console.log("payment is checked succussfull")
+      res.json({ "signatureIsValid": true, ref_id: ref_id })
+    } else {
+      res.json({ "signatureIsValid": false, ref_id: ref_id })
+    }
   },
   showPaymentSuccess: (req, res) => {
-    res.render('userViews/payment-success')
+    const REF_ID = req.params.id
+    res.render('userViews/payment-success', { REF_ID })
   },
   showPaymentFailed: (req, res) => {
-    res.render('userViews/payment-fail')
+    const REF_ID = req.params.id
+    res.render('userViews/payment-fail', { REF_ID })
   },
   viewProfile: async (req, res) => {
     const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
@@ -567,9 +561,5 @@ module.exports = {
       res.redirect("/profile");
     });
   },
-  verifyPayment: (req, res) => {
-    console.log(req.body)
-    console.log('its working')
-    res.render('userViews/payment-success')
-  }
+
 };
