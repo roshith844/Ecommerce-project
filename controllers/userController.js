@@ -388,7 +388,7 @@ module.exports = {
     );
   },
   viewAddAddress: (req, res) => {
-    res.render("userViews/checkout", { cartItemsCount });
+    res.render("userViews/add-address", { cartItemsCount });
   },
   addAddress: async (req, res) => {
     await USER_MODEL.updateOne(
