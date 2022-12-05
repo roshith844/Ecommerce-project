@@ -140,7 +140,7 @@ module.exports = {
   AddProduct: (req, res) => {
     console.log("the path is " + req.file.path)
     const IMAGE_PATH = (req.file.path).slice(7)
-    console.log("after cut "+ IMAGE_PATH )
+    console.log("after cut " + IMAGE_PATH)
     PRODUCT_MODEL
       .create({
         name: req.body.name,
@@ -205,12 +205,24 @@ module.exports = {
     res.render("adminViews/add-category");
   },
   addCategory: async (req, res) => {
-    await CATEGORY_MODEL
-      .create({ category_name: req.body.category })
-      .then(() => {
-        console.log("category changed");
-        res.redirect("/admin/categories");
-      });
+
+    // Check Category already exists on Categories
+    const CATEGORY_EXIST = await CATEGORY_MODEL.exists({ category_name: req.body.category }).then((result) => {
+      return result;
+    })
+    // console.log(CATEGORY_EXIST)
+    // if category not Exists on Database add category
+    if (CATEGORY_EXIST == null) {
+      await CATEGORY_MODEL
+        .create({ category_name: req.body.category })
+        .then(() => {
+          console.log("category changed");
+        });
+    } else {
+      console.log("category exists already");
+    }
+    res.redirect("/admin/categories");
+
   },
   viewEditCategory: async (req, res) => {
     await CATEGORY_MODEL.findOne({ _id: req.params.id }).then((item) => {

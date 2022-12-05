@@ -51,7 +51,7 @@ router.get('/logout', userController.doLogout)
 
 // Routes for Cart Management
 router.get('/cart', SESSION_MANAGER.verifyLoginUser, userController.viewCart)
-router.get('/add-to-cart/:id', SESSION_MANAGER.verifyLoginUser, userController.addToCart)
+router.get('/add-to-cart/:id', userController.addToCart)
 router.get('/cart/edit-cart/:id', SESSION_MANAGER.verifyLoginUser, userController.viewEditQuantity)
 router.post('/cart/update-quantity', SESSION_MANAGER.verifyLoginUser, userController.updateQuantity)
 router.get('/cart/delete/:id', SESSION_MANAGER.verifyLoginUser, userController.deleteCartItem)
