@@ -56,12 +56,14 @@ cart
       success: (response) => {
         if (response.status) {
           let quantity = $("#productQuantity" + response.productId).html();
+
           quantity = parseInt(quantity) + 1;
           $("#productQuantity" + response.productId).html(quantity);
         }
       },
     });
   }
+
   function removeOneProduct(productId) {
     $.ajax({
       url: "/remove-one/" + productId,
