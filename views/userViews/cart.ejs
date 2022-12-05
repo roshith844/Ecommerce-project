@@ -1,42 +1,93 @@
 cart
 <table class="table" id="">
-    <thead>
-        <tr>
-            <th scope="col">No.</th>
-            <th scope="col"> Product Name</th>
-            <th scope="col"> Product Image</th>
-            <th scope="col">price</th>
-            <th scope="col">Quantity</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% let count=1 %>
-            <% productDetails.forEach((product)=>{ %>
-                <tr>
-                    <th scope="row">
-                        <%= count %>
-                    </th>
-                    <td>
-                        <%= product.productId.name %>
-                    </td>
-                    <td>
-                        <img class="col-3" src="<%= product.productId.image %>" alt="">
-                    </td>
-                    <td>
-                        <%= product.productId.price %>
-                    </td>
-                    <td>
-                        <%= product.quantity%>
-                    </td>
-                    <td>
-                        <a href="/cart/edit-cart/<%= product.productId._id %>" class="btn btn-primary">Edit Quantity</a>
-                    </td>
-                    <td>
-                        <a href="/cart/delete/<%= product.productId._id %>" class="btn btn-danger">Delete</a>
-                    </td>
-                </tr>
-                <% count++ %>
-                    <% }) %>
-    </tbody>
+  <thead>
+    <tr>
+      <th scope="col">No.</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Product Image</th>
+      <th scope="col">price</th>
+      <th scope="col">Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% let count=1 %> <% productDetails.forEach((product)=>{ %>
+    <tr>
+      <th scope="row"><%= count %></th>
+      <td><%= product.productId.name %></td>
+      <td>
+        <img class="col-3" src="<%= product.productId.image %>" alt="" />
+      </td>
+      <td><%= product.productId.price %></td>
+      <td>
+        <button onclick="removeOneProduct('<%= product.productId._id %>')">
+          <i class="fa-solid fa-square-minus"></i>
+        </button>
+        <span id="productQuantity<%= product.productId._id %>"
+          ><%= product.quantity%></span
+        >
+        <button onclick="addOneProduct('<%= product.productId._id %>')">
+          <i class="fa-solid fa-square-plus"></i>
+        </button>
+      </td>
+      <td>
+        <a
+          href="/cart/edit-cart/<%= product.productId._id %>"
+          class="btn btn-primary"
+          >Edit Quantity</a
+        >
+      </td>
+      <td>
+        <a
+          href="/cart/delete/<%= product.productId._id %>"
+          class="btn btn-danger"
+          >Delete</a
+        >
+      </td>
+    </tr>
+    <% count++ %> <% }) %>
+  </tbody>
 </table>
 <a href="/checkout"><button class="btn btn-primary">Proceed to Buy</button></a>
+<script>
+  function addOneProduct(productId) {
+    $.ajax({
+      url: "/add-one/" + productId,
+      method: "get",
+      success: (response) => {
+        if (response.status) {
+          let quantity = $("#productQuantity" + response.productId).html();
+          quantity = parseInt(quantity) + 1;
+          $("#productQuantity" + response.productId).html(quantity);
+        }
+      },
+    });
+  }
+  function removeOneProduct(productId) {
+    $.ajax({
+      url: "/remove-one/" + productId,
+      method: "get",
+      success: (response) => {
+        if (response.status) {
+          let quantity = $("#productQuantity" + response.productId).html();
+          quantity = parseInt(quantity) - 1;
+          $("#productQuantity" + response.productId).html(quantity);
+        }
+      },
+    });
+  }
+</script>
+<!-- <script>
+  function addToCart(productId) {
+    $.ajax({
+      url: "/add-to-cart/" + productId,
+      method: "get",
+      success: (response) => {
+        if (response.status) {
+          let count = $("#cartCount").html();
+          count = parseInt(count) + 1;
+          $("#cartCount").html(count);
+        }
+      },
+    });
+  }
+</script> -->

@@ -13,7 +13,7 @@ const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 const Razorpay = require('razorpay');
-var  cartItemsCount= 0 ;
+var cartItemsCount = 0;
 var instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -26,6 +26,16 @@ async function addOneProduct(userId, productId) {
     { $inc: { "items.$.quantity": 1 } }
   ).then(() => {
     console.log("updated incremented");
+  });
+}
+
+// To Decrement by one on cart
+async function removeOneProduct(userId, productId) {
+  await CART_MODEL.updateOne(
+    { userId: userId, items: { $elemMatch: { productId: productId } } },
+    { $inc: { "items.$.quantity": -1 } }
+  ).then(() => {
+    console.log("updated Decremented");
   });
 }
 
@@ -47,11 +57,11 @@ async function checkPhoneNumber(userPhoneNumber) {
 module.exports = {
   // Renders Login Page
   goToLogin: (req, res) => {
-    res.render("userViews/login", { msg: "",  cartItemsCount: 0 });
+    res.render("userViews/login", { msg: "", cartItemsCount: 0 });
   },
   // Renders Signup page
   goTosignUp: (req, res) => {
-    res.render("userViews/signup", { msg: "",  cartItemsCount: 0 });
+    res.render("userViews/signup", { msg: "", cartItemsCount: 0 });
   },
   // Sends user data to database for Registration
   sendToDatabase: async (req, res) => {
@@ -71,10 +81,10 @@ module.exports = {
         } else {
           if (!validEmail && !validPassword) {
             res.render("userViews/signup", {
-              msg: "Invalid Email Format & Password",  cartItemsCount: 0
+              msg: "Invalid Email Format & Password", cartItemsCount: 0
             });
           } else if (!validEmail) {
-            res.render("userViews/signup", { msg: "Invalid Email Format",  cartItemsCount: 0});
+            res.render("userViews/signup", { msg: "Invalid Email Format", cartItemsCount: 0 });
           } else if (!validPassword) {
             res.render("userViews/signup", {
               msg: "password= should be Minimum eight characters, at least one letter, one number and one special character",
@@ -97,7 +107,7 @@ module.exports = {
               });
             } else {
               res.render("userViews/signup", {
-                msg: "Something went wrong!! Try Again",  cartItemsCount: 0
+                msg: "Something went wrong!! Try Again", cartItemsCount: 0
               });
             }
           }
@@ -105,11 +115,11 @@ module.exports = {
       } else {
         console.log("password doesn't match");
         res.render("userViews/signup", {
-          msg: "password doesn't match. Try Again",  cartItemsCount: 0
+          msg: "password doesn't match. Try Again", cartItemsCount: 0
         });
       }
     } catch (error) {
-      res.render("userViews/signup", { msg: error,  cartItemsCount: 0 });
+      res.render("userViews/signup", { msg: error, cartItemsCount: 0 });
     }
   },
   doLogin: async (req, res) => {
@@ -122,23 +132,23 @@ module.exports = {
         const userDoc = await USER_MODEL.findOne({ email: req.body.email });
         if (userDoc.password == req.body.password) {
           if (userDoc.blockStatus == true) {
-            res.render("userViews/login", { msg: "You were blocked by Admin",  cartItemsCount: 0});
+            res.render("userViews/login", { msg: "You were blocked by Admin", cartItemsCount: 0 });
           } else {
             req.session.user = userDoc._id;
             res.redirect("/");
           }
         } else {
-          res.render("userViews/login", { msg: "Invalid credentials!!",  cartItemsCount: 0 });
+          res.render("userViews/login", { msg: "Invalid credentials!!", cartItemsCount: 0 });
         }
       } else {
         if (
           EMAIL_REGEX.test(req.body.email) == false &&
           PASSWORD_REGEX.test(req.body.password) == false
         ) {
-          res.render("userViews/login", { msg: "Invalid email or Password",  cartItemsCount: 0 });
+          res.render("userViews/login", { msg: "Invalid email or Password", cartItemsCount: 0 });
         } else if (EMAIL_REGEX.test(req.body.email) == false) {
           res.render("userViews/login", {
-            msg: "Invalid credentials!! Enter a valid email Address",  cartItemsCount: 0
+            msg: "Invalid credentials!! Enter a valid email Address", cartItemsCount: 0
           });
         } else if (PASSWORD_REGEX.test(req.body.password) == false) {
           res.render("userViews/login", {
@@ -146,18 +156,18 @@ module.exports = {
             cartItemsCount: 0
           });
         } else {
-          res.render("userViews/login", { msg: "Something went wrong",  cartItemsCount: 0 });
+          res.render("userViews/login", { msg: "Something went wrong", cartItemsCount: 0 });
         }
       }
     } catch {
       res
         .status(400)
-        .render("userViews/login", { msg: "invalid credentials!! Try Again",  cartItemsCount: 0 });
+        .render("userViews/login", { msg: "invalid credentials!! Try Again", cartItemsCount: 0 });
     }
   },
   // shows page for OTP
   getPhoneNumber: (req, res) => {
-    res.render("userViews/otpLogin",  {cartItemsCount: 0});
+    res.render("userViews/otpLogin", { cartItemsCount: 0 });
   },
   generateOtp: async (req, res) => {
     console.log(typeof req.body.phone);
@@ -169,7 +179,7 @@ module.exports = {
       const randomCode = (function getRandomCode() {
         if (!userExist) {
           console.log("user does not exist on database");
-          res.render("userViews/otpLogin",  {cartItemsCount: 0});
+          res.render("userViews/otpLogin", { cartItemsCount: 0 });
           return false;
         } else {
           console.log("user exists");
@@ -197,7 +207,7 @@ module.exports = {
 
         MY_OTP_SENDER(randomCode, USER_PHONE_NUMBER); // Sends email to user
 
-        res.render("userViews/verify-otp", { data: req.body.phone,  cartItemsCount: 0 }); // Renders page to verify OTP
+        res.render("userViews/verify-otp", { data: req.body.phone, cartItemsCount: 0 }); // Renders page to verify OTP
       }
     } catch (error) {
       console.log(error);
@@ -217,7 +227,7 @@ module.exports = {
       console.log("code from db Is:" + userCodeObj.code);
       if (req.body.otp == userCodeObj.code) {
         if (userCodeObj.blockStatus == true) {
-          res.render("userViews/login", { msg: "You were blocked by Admin",  cartItemsCount: 0 });
+          res.render("userViews/login", { msg: "You were blocked by Admin", cartItemsCount: 0 });
         } else {
           req.session.user = userDoc._id;
           res.redirect("/");
@@ -233,15 +243,15 @@ module.exports = {
       const products = await PRODUCT_MODEL.find({});
       // const CART_ITEMS_COUNT = await CART_MODEL.countDocuments
       // Checks user Cart Exists
-      const USER_CART = await CART_MODEL.findOne({userId: req.session.user})
-      
-      if(USER_CART){
-         cartItemsCount = USER_CART.items.length
+      const USER_CART = await CART_MODEL.findOne({ userId: req.session.user })
+
+      if (USER_CART) {
+        cartItemsCount = USER_CART.items.length
         res.render("userViews/home", { products: products, cartItemsCount });
-      }else{
+      } else {
         res.render("userViews/home", { products: products, cartItemsCount: 0 });
       }
-     
+
     } else {
       res.redirect("/login");
     }
@@ -250,7 +260,7 @@ module.exports = {
 
     PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
       console.log(info)
-      res.render("userViews/productDetails", { info: info,  cartItemsCount });
+      res.render("userViews/productDetails", { info: info, cartItemsCount });
     });
 
   },
@@ -276,13 +286,13 @@ module.exports = {
       })
       .then(async (count) => {
         if (count < 1) {
-          res.render("userViews/no-items",{ cartItemsCount});
+          res.render("userViews/no-items", { cartItemsCount });
         } else {
           // Shows cart items
           let products = await CART_MODEL.findOne({ userId: USER_ID })
             .populate("items.productId")
             .lean();
-          res.render("userViews/cart", { productDetails: products.items,  cartItemsCount });
+          res.render("userViews/cart", { productDetails: products.items, cartItemsCount });
         }
       });
   },
@@ -292,7 +302,7 @@ module.exports = {
     const USER_ID = req.session.user;
 
     const USER = await CART_MODEL.findOne({ userId: USER_ID }); // checks user on db
-  
+
     // Checking weather user has a cart or not
     if (USER) {
       // checks product exists on cart
@@ -324,8 +334,20 @@ module.exports = {
         ],
       });
     }
-    res.json({status: true})
+    res.json({ status: true })
     // res.redirect("/cart");
+  },
+
+  incrementProduct: (req, res) => {
+    addOneProduct(req.session.user, req.params.id).then(() => {
+      res.json({ status: true, productId: req.params.id })
+    })
+  },
+
+  decrementProduct: (req, res) => {
+    removeOneProduct(req.session.user, req.params.id).then(() => {
+      res.json({ status: true, productId: req.params.id })
+    })
   },
   viewEditQuantity: async (req, res) => {
     await CART_MODEL.aggregate([
@@ -337,7 +359,7 @@ module.exports = {
         },
       },
     ]).then((result) => {
-      res.render("userViews/edit-cart", { productInfo: result,  cartItemsCount });
+      res.render("userViews/edit-cart", { productInfo: result, cartItemsCount });
     });
   },
   updateQuantity: async (req, res) => {
@@ -361,12 +383,12 @@ module.exports = {
   viewCheckout: async (req, res) => {
     const USER_INFO = await USER_MODEL.findOne({ _id: req.session.user }).then(
       (userInfo) => {
-        res.render("userViews/checkout", { address: userInfo.address,  cartItemsCount});
+        res.render("userViews/checkout", { address: userInfo.address, cartItemsCount });
       }
     );
   },
   viewAddAddress: (req, res) => {
-  res.render("userViews/checkout",{  cartItemsCount});
+    res.render("userViews/checkout", { cartItemsCount });
   },
   addAddress: async (req, res) => {
     await USER_MODEL.updateOne(
@@ -463,11 +485,11 @@ module.exports = {
   },
   showPaymentSuccess: (req, res) => {
     const REF_ID = req.params.id
-    res.render('userViews/payment-success', { REF_ID,  cartItemsCount })
+    res.render('userViews/payment-success', { REF_ID, cartItemsCount })
   },
   showPaymentFailed: (req, res) => {
     const REF_ID = req.params.id
-    res.render('userViews/payment-fail', { REF_ID,  cartItemsCount })
+    res.render('userViews/payment-fail', { REF_ID, cartItemsCount })
   },
   viewProfile: async (req, res) => {
     const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
@@ -475,7 +497,7 @@ module.exports = {
   },
   viewEditProfile: async (req, res) => {
     const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
-    res.render("userViews/edit-profile-info", { userData: USER_DATA,  cartItemsCount});
+    res.render("userViews/edit-profile-info", { userData: USER_DATA, cartItemsCount });
   },
   editProfile: async (req, res) => {
     await USER_MODEL.updateOne(
@@ -496,7 +518,7 @@ module.exports = {
       { $unwind: "$address" },
       { $match: { "address._id": new mongoose.Types.ObjectId(req.params.id) } },
     ]).then((doc) => {
-      res.render("userViews/edit-address", { address: doc[0].address,  cartItemsCount });
+      res.render("userViews/edit-address", { address: doc[0].address, cartItemsCount });
     });
   },
   editAddress: async (req, res) => {
@@ -518,7 +540,7 @@ module.exports = {
     });
   },
   profileViewAddAddress: (req, res) => {
-    res.render("userViews/profile-add-address",{ cartItemsCount});
+    res.render("userViews/profile-add-address", { cartItemsCount });
   },
   addProfileAddress: async (req, res) => {
     await USER_MODEL.updateOne(
@@ -544,7 +566,7 @@ module.exports = {
         return count;
       }).then(async (count) => {
         if (count < 1) {
-          res.render("userViews/no-items",  {cartItemsCount});
+          res.render("userViews/no-items", { cartItemsCount });
         } else {
           const ORDERS = await ORDER_MODEL.find({ userId: req.session.user })
             .populate("items.productId")
@@ -565,7 +587,7 @@ module.exports = {
     });
   },
   viewChangePassword: (req, res) => {
-    res.render("userViews/change-password",{ cartItemsCount});
+    res.render("userViews/change-password", { cartItemsCount });
   },
   changePassword: async (req, res) => {
     await USER_MODEL.updateOne(
