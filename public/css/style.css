@@ -138,6 +138,10 @@ table {
 }
 
 /**/
+*{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
+
 nav, main {
     background-color: #FCEDDA;
 }
