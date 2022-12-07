@@ -4,7 +4,7 @@ const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
 const CATEGORY_MODEL = require("../model/categorySchema");
 const ORDER_MODEL = require("../model/orderSchema");
-
+var cartItemsCount;
 module.exports = {
   goToAdminHome: async (req, res) => {
     if (req.session.admin) {
@@ -31,8 +31,7 @@ module.exports = {
         product: PRODUCT_COUNT,
         order: ORDER_COUNT
       }
-
-      res.render("adminViews/adminHome", { count: COUNT });
+      res.render("adminViews/adminHome", { count: COUNT, layout: "layouts/adminLayout" });
     } else {
       res.redirect("/admin/login");
     }
@@ -52,7 +51,7 @@ module.exports = {
     } catch (error) {
       res
         .status(400)
-        .render("adminViews/adminLogin", { layout: "layouts/adminLayout" });
+        .render("adminViews/adminLogin", { layout: "layouts/adminLayout"});
     }
   },
   listUsers: async (req, res) => {
@@ -64,6 +63,7 @@ module.exports = {
             users: users,
             msg: "blocked succusfully",
             unblockmsg: "",
+            layout: "layouts/adminLayout"
           });
         } else if (req.session.unblockInfo == true) {
           req.session.unblockInfo = false;
@@ -71,12 +71,14 @@ module.exports = {
             users: users,
             unblockmsg: "Unblocked succusfully",
             msg: "",
+            layout: "layouts/adminLayout"
           });
         } else {
           res.render("adminViews/users", {
             users: users,
             unblockmsg: "",
             msg: "",
+            layout: "layouts/adminLayout"
           });
         }
       });
@@ -116,15 +118,17 @@ module.exports = {
           res.render("adminViews/products", {
             products: products,
             msg: "Product Details Updated",
+            layout: "layouts/adminLayout"
           });
         } else if (req.session.deleteStatus == true) {
           req.session.deleteStatus = false;
           res.render("adminViews/products", {
             products: products,
             msg: "Product Deleted",
+            layout: "layouts/adminLayout"
           });
         } else {
-          res.render("adminViews/products", { products: products, msg: "" });
+          res.render("adminViews/products", { products: products, msg: "" ,layout: "layouts/adminLayout"});
         }
       });
     } catch (error) {
@@ -134,7 +138,7 @@ module.exports = {
   viewAddProduct: async (req, res) => {
     await CATEGORY_MODEL.find({}).then((categoryArr) => {
       console.log("got categories ");
-      res.render("adminViews/add-product", { categories: categoryArr });
+      res.render("adminViews/add-product", { categories: categoryArr, layout: "layouts/adminLayout" });
     });
   },
   AddProduct: (req, res) => {
@@ -157,7 +161,7 @@ module.exports = {
   goToEditProduct: (req, res) => {
     PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
       console.log(info);
-      res.render("adminViews/edit-product", { info: info });
+      res.render("adminViews/edit-product", { info: info, layout: "layouts/adminLayout" });
     });
   },
   editProduct: async (req, res) => {
@@ -195,14 +199,14 @@ module.exports = {
     try {
       await CATEGORY_MODEL.find({}).then((all) => {
         console.log("got categories frm db");
-        res.render("adminViews/categories", { categories: all });
+        res.render("adminViews/categories", { categories: all, layout: "layouts/adminLayout" });
       });
     } catch (error) {
       console.log(error);
     }
   },
   viewAddCategory: (req, res) => {
-    res.render("adminViews/add-category");
+    res.render("adminViews/add-category",{layout: "layouts/adminLayout"});
   },
   addCategory: async (req, res) => {
 
@@ -227,7 +231,7 @@ module.exports = {
   viewEditCategory: async (req, res) => {
     await CATEGORY_MODEL.findOne({ _id: req.params.id }).then((item) => {
       console.log(item);
-      res.render("adminViews/edit-category", { data: item });
+      res.render("adminViews/edit-category", { data: item, layout: "layouts/adminLayout" });
     });
   },
   editCategory: async (req, res) => {
@@ -259,11 +263,11 @@ module.exports = {
       .populate("userId")
       .populate("items.productId")
       .then((orders) => {
-        res.render("adminViews/orders", { orders });
+        res.render("adminViews/orders", { orders, layout: "layouts/adminLayout" });
       });
   },
   viewChangeStatus: (req, res) => {
-    res.render("adminViews/change-status", { orderId: req.params.id });
+    res.render("adminViews/change-status", { orderId: req.params.id, layout: "layouts/adminLayout" });
   },
   changeStatus: async (req, res) => {
     await ORDER_MODEL.updateOne(

@@ -38,7 +38,7 @@
                                 </td>
                                 <td>
                                     <a  href="/admin/products/delete-product/<%= product._id%>"
-                                        class="btn btn-danger">Delete</a>
+                                        class="btn btn-danger" onclick="return confirm('Delete <%= product.name %>?')">Delete</a>
                                 </td>
 
                             </tr>
