@@ -37,7 +37,7 @@
                                                 <%= user.password %>
                                             </td>
                                             <td>
-                                                <a href="/admin/users/block/<%=user._id%>"
+                                                <a href="/admin/users/block/<%=user._id%>" onclick="return confirm('Block <%= user.email %>?')"
                                                     class="btn btn-danger">Block</a>
                                             </td>
                                             <td>
