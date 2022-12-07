@@ -31,12 +31,20 @@ async function addOneProduct(userId, productId) {
 
 // To Decrement by one on cart
 async function removeOneProduct(userId, productId) {
-  await CART_MODEL.updateOne(
-    { userId: userId, items: { $elemMatch: { productId: productId } } },
-    { $inc: { "items.$.quantity": -1 } }
-  ).then(() => {
-    console.log("updated Decremented");
-  });
+  const QUANTITY = await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(userId), items: { $elemMatch: { productId: mongoose.Types.ObjectId(productId) } } } }, { $unwind: "$items" }, { $match: { "items.productId": mongoose.Types.ObjectId(productId) } }]).then((result) => {
+    return result;
+  })
+  if (QUANTITY[0].items.quantity != 1) {
+    await CART_MODEL.updateOne(
+      { userId: userId, items: { $elemMatch: { productId: productId } } },
+      { $inc: { "items.$.quantity": -1 } }
+    ).then(() => {
+      console.log("updated Decremented");
+    });
+
+  } else {
+    return false
+  }
 }
 
 // checks Phone Number exists on database
@@ -345,7 +353,8 @@ module.exports = {
   },
 
   decrementProduct: (req, res) => {
-    removeOneProduct(req.session.user, req.params.id).then(() => {
+    removeOneProduct(req.session.user, req.params.id).then((result) => {
+      console.log(result)
       res.json({ status: true, productId: req.params.id })
     })
   },
