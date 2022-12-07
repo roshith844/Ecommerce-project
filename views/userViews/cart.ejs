@@ -22,9 +22,13 @@
       </td>
       <td><%= product.productId.price %></td>
       <td>
-        <button onclick="removeOneProduct('<%= product.productId._id %>')">
+        <button
+          id="minusButton<%= product.productId._id %>"
+          onclick="removeOneProduct('<%= product.productId._id %>')"
+        >
           <i class="fa-solid fa-square-minus"></i>
         </button>
+        
         <span id="productQuantity<%= product.productId._id %>"
           ><%= product.quantity%></span
         >
@@ -52,12 +56,18 @@
 </table>
 <a href="/checkout"><button class="btn btn-primary">Proceed to Buy</button></a>
 <script>
+   let selectQuantity = document.getElementById("#productQuantity" + productId)
+    console.log(selectQuantity.innerText)
+
   function addOneProduct(productId) {
     $.ajax({
       url: "/add-one/" + productId,
       method: "get",
       success: (response) => {
         if (response.status) {
+          $("#minusButton" + productId).prop("disabled", false);
+          $("#minusButton" + productId).show();
+
           let quantity = $("#productQuantity" + response.productId).html();
 
           quantity = parseInt(quantity) + 1;
@@ -68,14 +78,24 @@
   }
 
   function removeOneProduct(productId) {
+ 
     $.ajax({
       url: "/remove-one/" + productId,
       method: "get",
       success: (response) => {
+        let quantity = $("#productQuantity" + productId).html();
         if (response.status) {
-          let quantity = $("#productQuantity" + response.productId).html();
-          quantity = parseInt(quantity) - 1;
-          $("#productQuantity" + response.productId).html(quantity);
+          if (parseInt(quantity) <= 2) {
+            $("#minusButton" + productId).prop("disabled", true);
+            $("#minusButton" + productId).hide();
+            quantity = parseInt(quantity) - 1;
+            $("#productQuantity" + productId).html(quantity);
+          } else {
+            $("#minusButton" + productId).prop("disabled", false);
+            $("#minusButton" + productId).show();
+            quantity = parseInt(quantity) - 1;
+            $("#productQuantity" + productId).html(quantity);
+          }
         }
       },
     });
