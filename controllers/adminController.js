@@ -254,7 +254,7 @@ module.exports = {
         console.log(error);
       } else {
         console.log("logout successfully");
-        res.redirect("admin/login");
+        res.redirect("/admin/");
       }
     });
   },

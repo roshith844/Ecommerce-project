@@ -152,3 +152,9 @@ nav, main {
 main{
     height: auto;
 }
+main.fullScreen{
+    min-height: 100vh;
+min-width: 100vw;
+overflow: hidden;
+
+}
