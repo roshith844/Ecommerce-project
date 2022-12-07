@@ -74,6 +74,7 @@
             alert(response.error.reason);
             alert(response.error.metadata.order_id);
             alert(response.error.metadata.payment_id);
+            location.href = "/payment-failed/" + response.error.metadata.payment_id
           });
           rzp1.open();
         }
