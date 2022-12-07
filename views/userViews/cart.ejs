@@ -81,14 +81,15 @@
       success: (response) => {
         let quantity = $("#productQuantity" + productId).html();
         if (response.status == true) {
-          if (parseInt(quantity) <= 2) {
-            $("#minusButton" + productId).prop("disabled", true);
+          $("#minusButton" + productId).prop("disabled", false);
+          if (parseInt(quantity) <= 1) {
             $("#productQuantity" + productId).html(quantity);
           } else {
-            $("#minusButton" + productId).prop("disabled", false);
             quantity = parseInt(quantity) - 1;
             $("#productQuantity" + productId).html(quantity);
           }
+        }else{
+          $("#minusButton" + productId).prop("disabled", true);
         }
       },
     });
