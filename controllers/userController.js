@@ -354,8 +354,12 @@ module.exports = {
 
   decrementProduct: (req, res) => {
     removeOneProduct(req.session.user, req.params.id).then((result) => {
-      console.log(result)
-      res.json({ status: true, productId: req.params.id })
+      if (result == false) {
+        res.json({ status: false, productId: req.params.id })
+      } else {
+        res.json({ status: true, productId: req.params.id })
+      }
+
     })
   },
   viewEditQuantity: async (req, res) => {

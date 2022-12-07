@@ -28,7 +28,7 @@
         >
           <i class="fa-solid fa-square-minus"></i>
         </button>
-        
+
         <span id="productQuantity<%= product.productId._id %>"
           ><%= product.quantity%></span
         >
@@ -56,7 +56,7 @@
 </table>
 <a href="/checkout"><button class="btn btn-primary">Proceed to Buy</button></a>
 <script>
-   function addOneProduct(productId) {
+  function addOneProduct(productId) {
     $.ajax({
       url: "/add-one/" + productId,
       method: "get",
@@ -75,21 +75,17 @@
   }
 
   function removeOneProduct(productId) {
- 
     $.ajax({
       url: "/remove-one/" + productId,
       method: "get",
       success: (response) => {
         let quantity = $("#productQuantity" + productId).html();
-        if (response.status) {
+        if (response.status == true) {
           if (parseInt(quantity) <= 2) {
             $("#minusButton" + productId).prop("disabled", true);
-            $("#minusButton" + productId).hide();
-            quantity = parseInt(quantity) - 1;
             $("#productQuantity" + productId).html(quantity);
           } else {
             $("#minusButton" + productId).prop("disabled", false);
-            $("#minusButton" + productId).show();
             quantity = parseInt(quantity) - 1;
             $("#productQuantity" + productId).html(quantity);
           }
@@ -98,18 +94,3 @@
     });
   }
 </script>
-<!-- <script>
-  function addToCart(productId) {
-    $.ajax({
-      url: "/add-to-cart/" + productId,
-      method: "get",
-      success: (response) => {
-        if (response.status) {
-          let count = $("#cartCount").html();
-          count = parseInt(count) + 1;
-          $("#cartCount").html(count);
-        }
-      },
-    });
-  }
-</script> -->
