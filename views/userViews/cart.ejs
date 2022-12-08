@@ -1,8 +1,7 @@
-<main class="fullScreen">
+<main class="fullScreen col-12">
   <div class="d-flex justify-content-center my-3">
     <h1>Cart</h1>
   </div>
-
   <table class="table" id="">
     <thead>
       <tr>
@@ -11,15 +10,18 @@
         <th scope="col">Product Image</th>
         <th scope="col">price</th>
         <th scope="col">Quantity</th>
+        <th scope="col">Edit</th>
+        
       </tr>
     </thead>
     <tbody>
-      <% let count=1 %> <% productDetails.forEach((product)=>{ %>
+      <% let count = 1 %> <% productDetails.forEach((product)=>{ %>
       <tr>
         <th scope="row"><%= count %></th>
         <td><%= product.productId.name %></td>
         <td>
-          <img class="col-3" src="<%= product.productId.image %>" alt="" />
+            <img class="" src="<%= product.productId.image %>" alt="" style="width: 20rem;"/>
+            <!-- <p>its image</p> --> 
         </td>
         <td><%= product.productId.price %></td>
         <td>
