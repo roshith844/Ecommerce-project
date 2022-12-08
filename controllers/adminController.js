@@ -17,7 +17,7 @@ module.exports = {
         return count;
       })
       // Gets count of total Products
-      const PRODUCT_COUNT = await PRODUCT_MODEL.countDocuments({}).then((count) => {
+      const PRODUCT_COUNT = await PRODUCT_MODEL.countDocuments({isDeleted: false}).then((count) => {
         return count;
       })
       // Gets count of total Orders
@@ -112,7 +112,7 @@ module.exports = {
   },
   listProducts: async (req, res) => {
     try {
-      await PRODUCT_MODEL.find({}).then((products) => {
+      await PRODUCT_MODEL.find({isDeleted: false}).then((products) => {
         if (req.session.editProduct == true) {
           req.session.editProduct = false;
           res.render("adminViews/products", {
@@ -182,12 +182,19 @@ module.exports = {
     res.redirect("/admin/products");
   },
   deleteProduct: async (req, res) => {
-    // Deletes Product from Products collection
-    await PRODUCT_MODEL.deleteOne({ _id: req.params.id }).then(() => {
-      console.log("product deleted");
+    
+    //Update isDeleted feild to true
+    PRODUCT_MODEL.updateOne({_id: req.params.id },{$set : {isDeleted: true}}).then(()=>{
+      console.log("product soft-deleted");
       req.session.deleteStatus = true;
       res.redirect("/admin/products");
-    });
+    })
+    // // Deletes Product from Products collection
+    // await PRODUCT_MODEL.deleteOne({ _id: req.params.id }).then(() => {
+    //   console.log("product deleted");
+    //   req.session.deleteStatus = true;
+    //   res.redirect("/admin/products");
+    // });
 
     // Deletes Product from users cart (carts collection)
     await CART_MODEL.updateMany(

@@ -4,7 +4,10 @@ const productSchema = new mongoose.Schema({
     image: String,
     description: String,
     price: String,
-    category: {type: String, default: 'none'}
+    category: { type: String, default: 'none' },
+    isDeleted: {
+        type: Boolean, default: 'false'
+    }
 })
 
 module.exports = mongoose.model('products', productSchema)

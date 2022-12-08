@@ -248,7 +248,7 @@ module.exports = {
   },
   goHome: async (req, res) => {
     if (req.session.user) {
-      const products = await PRODUCT_MODEL.find({});
+      const products = await PRODUCT_MODEL.find({isDeleted: false});
       // const CART_ITEMS_COUNT = await CART_MODEL.countDocuments
       // Checks user Cart Exists
       const USER_CART = await CART_MODEL.findOne({ userId: req.session.user })

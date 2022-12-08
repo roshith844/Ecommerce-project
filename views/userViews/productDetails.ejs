@@ -1,35 +1,35 @@
 <main class="fullScreen">
-<div class="container">
-  <% info.forEach((info)=>{ %>
-  <div class="row">
-    <div class="col-6">
-      <img class="col-6" src="/<%= info.image %>" alt="" />
+  <div class="container">
+    <% info.forEach((info)=>{ %>
+    <div class="row">
+      <div class="col-6">
+        <img class="col-6" src="/<%= info.image %>" alt="" />
+      </div>
+      <div class="col-6">
+        <h1><%= info.name %></h1>
+        <h2>Rs. <%= info.price %></h2>
+        <p><%= info.description %></p>
+        <button class="btn btn-primary" onclick="addToCart('<%= info._id %>')">
+          Add to Cart
+        </button>
+      </div>
     </div>
-    <div class="col-6">
-      <h1><%= info.name %></h1>
-      <h2>Rs. <%= info.price %></h2>
-      <p><%= info.description %></p>
-      <button class="btn btn-primary" onclick="addToCart('<%= info._id %>')">
-        Add to Cart
-      </button>
-    </div>
+    <% }) %>
   </div>
-  <% }) %>
-</div>
 
-<script>
-  function addToCart(productId) {
-    $.ajax({
-      url: "/add-to-cart/" + productId,
-      method: "get",
-      success: (response) => {
-        if (response.status) {
-          let count = $("#cartCount").html();
-          count = parseInt(count) + 1;
-          $("#cartCount").html(count);
-        }
-      },
-    });
-  }
-</script>
+  <script>
+    function addToCart(productId) {
+      $.ajax({
+        url: "/add-to-cart/" + productId,
+        method: "get",
+        success: (response) => {
+          if (response.status) {
+            let count = $("#cartCount").html();
+            count = parseInt(count) + 1;
+            $("#cartCount").html(count);
+          }
+        },
+      });
+    }
+  </script>
 </main>
