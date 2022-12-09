@@ -47,6 +47,25 @@ async function removeOneProduct(userId, productId) {
   }
 }
 
+// Calculates Total Price of Cart items
+function getTotalPrice(userId) {
+  return new Promise((resolve, reject) => {
+    CART_MODEL.findOne({ userId: userId }).populate("items.productId").lean().then((result) => {
+      let totalPrice = 0;
+      for (let i = 0; i < result.items.length; i++) {
+        totalPrice += (result.items[i].quantity) * (result.items[i].productId.price)
+      }
+      resolve(totalPrice)
+    })
+
+
+  })
+  //  .then((totalPrice)=>{
+  //   console.log(totalPrice)
+
+  // })
+}
+
 // checks Phone Number exists on database
 async function checkPhoneNumber(userPhoneNumber) {
   console.log("checking on database for number:" + userPhoneNumber);
@@ -248,7 +267,7 @@ module.exports = {
   },
   goHome: async (req, res) => {
     if (req.session.user) {
-      const products = await PRODUCT_MODEL.find({isDeleted: false});
+      const products = await PRODUCT_MODEL.find({ isDeleted: false });
       // const CART_ITEMS_COUNT = await CART_MODEL.countDocuments
       // Checks user Cart Exists
       const USER_CART = await CART_MODEL.findOne({ userId: req.session.user })
@@ -346,20 +365,19 @@ module.exports = {
     // res.redirect("/cart");
   },
 
-  incrementProduct: (req, res) => {
-    addOneProduct(req.session.user, req.params.id).then(() => {
-      res.json({ status: true, productId: req.params.id })
+  incrementProduct: async (req, res) => {
+    await addOneProduct(req.session.user, req.params.id).then(() => {
+      getTotalPrice(req.session.user).then((totalPrice) => {
+        console.log(totalPrice)
+        res.json({ status: true, productId: req.params.id, totalPrice: totalPrice })
+      })
     })
   },
-
-  decrementProduct: (req, res) => {
-    removeOneProduct(req.session.user, req.params.id).then((result) => {
-      if (result == false) {
-        res.json({ status: false, productId: req.params.id })
-      } else {
-        res.json({ status: true, productId: req.params.id })
-      }
-
+  decrementProduct: async (req, res) => {
+    await removeOneProduct(req.session.user, req.params.id).then((result) => {
+      getTotalPrice(req.session.user).then((totalPrice) => {
+        res.json({ status: true, productId: req.params.id, totalPrice: totalPrice })
+      })
     })
   },
   viewEditQuantity: async (req, res) => {

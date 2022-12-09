@@ -17,7 +17,8 @@
         </tr>
       </thead>
       <tbody>
-        <% let count = 1 %> <% productDetails.forEach((product)=>{ %>
+        <% let count = 1 %> <% let totalPrice = 0 %> <%
+        productDetails.forEach((product)=>{ %>
         <tr>
           <th scope="row"><%= count %></th>
           <td><%= product.productId.name %></td>
@@ -39,7 +40,7 @@
             </button>
 
             <span id="productQuantity<%= product.productId._id %>"
-              ><%= product.quantity%></span
+              ><%= product.quantity %></span
             >
             <button onclick="addOneProduct('<%= product.productId._id %>')">
               <i class="fa-solid fa-square-plus"></i>
@@ -60,13 +61,14 @@
             >
           </td>
         </tr>
-        <% count++ %> <% }) %>
+        <% let itemTotalPrice = (product.productId.price) * (product.quantity)
+        %> <% totalPrice += itemTotalPrice %> <% count++ %> <% }) %>
         <tr>
           <td></td>
           <td></td>
           <td></td>
           <td>Total</td>
-          <td></td>
+          <td><div id="totalPrice"><%= totalPrice %></div></td>
         </tr>
       </tbody>
     </table>
@@ -88,11 +90,15 @@
         if (response.status) {
           $("#minusButton" + productId).prop("disabled", false);
           $("#minusButton" + productId).show();
-
           let quantity = $("#productQuantity" + response.productId).html();
-
           quantity = parseInt(quantity) + 1;
           $("#productQuantity" + response.productId).html(quantity);
+
+          // Select element to show total Price
+          let totalPrice = $("#totalPrice").html();
+
+          // Shows Total Price
+          $("#totalPrice").html(response.totalPrice);
         }
       },
     });
@@ -115,6 +121,11 @@
         } else {
           $("#minusButton" + productId).prop("disabled", true);
         }
+        // Select element to show total Price
+        let totalPrice = $("#totalPrice").html();
+
+        // Shows Total Price
+        $("#totalPrice").html(response.totalPrice);
       },
     });
   }
