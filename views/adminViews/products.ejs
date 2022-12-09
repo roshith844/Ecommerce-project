@@ -1,55 +1,53 @@
 <main class="fullScreen">
-<% if(msg.length> 0){ %>
-    <div class="alert alert-info" role="alert">
-        <p>
-            <%= msg %>
-        </p>
-    </div>
-    <% }else{ %>
-        <% } %>
-            <h1> Product list</h1>
-            <a  href="/admin/products/add-product"><button class="btn btn-primary"> Add Product </button></a>
+  <% if(msg.length> 0){ %>
+  <div class="alert alert-info" role="alert">
+    <p><%= msg %></p>
+  </div>
+  <% }else{ %> <% } %>
+  <h1>Product list</h1>
+  <a href="/admin/products/add-product"
+    ><button class="btn btn-primary">Add Product</button></a
+  >
 
-            <table class="table" id="productTable">
-                <thead>
-                    <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% let count=1; %>
-                        <% products.forEach((product)=>{%>
-                            <tr>
-                                <td>
-                                    <%= count %>
-                                </td>
-                                <td>
-                                    <%= product.name %>
-                                </td>
-                                <td>
-                                    <%= product.price %>
-                                </td>
-                                <td>
-                                    <a  class="btn btn-primary"  href="/admin/products/edit-product/<%=product._id%>"
-                                        class="btn btn-primary">Edit</a>
-                                </td>
-                                <td>
-                                    <a  href="/admin/products/delete-product/<%= product._id%>"
-                                        class="btn btn-danger" onclick="return confirm('Delete <%= product.name %>?')">Delete</a>
-                                </td>
-
-                            </tr>
-                            <% count++; %>
-                                <% }) %>
-                </tbody>
-            </table>
-        </main>
-            <script>
-                $(document).ready(function () {
-               $('#productTable').DataTable();
-           });
-           </script>
+  <table class="table" id="productTable">
+    <thead>
+      <tr>
+        <th scope="col">No</th>
+        <th scope="col">Product</th>
+        <th scope="col">Price</th>
+        <th scope="col">Price</th>
+        <th scope="col">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% let count=1; %> <% products.forEach((product)=>{%>
+      <tr>
+        <td><%= count %></td>
+        <td><%= product.name %></td>
+        <td>₹ <%= product.price %></td>
+        <td>
+          <a
+            class="btn btn-primary"
+            href="/admin/products/edit-product/<%=product._id%>"
+            class="btn btn-primary"
+            >Edit</a
+          >
+        </td>
+        <td>
+          <a
+            href="/admin/products/delete-product/<%= product._id%>"
+            class="btn btn-danger"
+            onclick="return confirm('Delete <%= product.name %>?')"
+            >Delete</a
+          >
+        </td>
+      </tr>
+      <% count++; %> <% }) %>
+    </tbody>
+  </table>
+</main>
+<script>
+  $(document).ready(function () {
+    $("#productTable").DataTable();
+  });
+</script>

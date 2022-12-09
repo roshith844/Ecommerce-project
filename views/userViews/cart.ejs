@@ -30,7 +30,7 @@
               style="width: 20rem"
             />
           </td>
-          <td><%= product.productId.price %></td>
+          <td>₹ <%= product.productId.price %></td>
           <td>
             <button
               id="minusButton<%= product.productId._id %>"
@@ -68,7 +68,7 @@
           <td></td>
           <td></td>
           <td>Total</td>
-          <td><div id="totalPrice"><%= totalPrice %></div></td>
+          <td><div id="totalPrice">₹ <%= totalPrice %></div></td>
         </tr>
       </tbody>
     </table>

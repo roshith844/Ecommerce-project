@@ -12,7 +12,7 @@
   <% order.items.forEach((item)=>{ %>
   <hr />
   <p>Product Name: <%= item.productId.name %></p>
-  <p>Price: <%= item.productId.price %></p>
+  <p>Price: ₹<%= item.productId.price %></p>
   <p>Quantity: <%= item.quantity %></p>
   <% const TOTAL_PRICE = (item.productId.price)*(item.quantity) %>
   <p>Total Price : <%= TOTAL_PRICE %></p>
