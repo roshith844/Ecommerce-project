@@ -84,8 +84,6 @@ router.get('/orders', SESSION_MANAGER.verifyLoginUser, userController.viewOrders
 router.get('/orders/cancel/:id', SESSION_MANAGER.verifyLoginUser, userController.cancelOrderByUser)
 
 // 404page
-router.get('/not', (req, res)=>{
-    res.render('not-found',{cartItemsCount: 0})
-})
+router.get('/not',userController.showErrorPage)
 
 module.exports = router
