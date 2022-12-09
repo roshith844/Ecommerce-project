@@ -140,8 +140,12 @@ table {
 /**/
 * {
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  box-sizing: border-box;
 }
 
+body{
+  overflow-x: hidden;
+}
 nav,
 main {
   background-color: #fcedda;
@@ -151,10 +155,13 @@ main {
   background-color: #ee4e34;
   height: 30rem;
 }
-main {
-  height: auto;
-}
+
 main.fullScreen {
   min-height: 100vh;
   width:auto;
+  margin: 0;
+  padding: 0;
+}
+table{
+  width: 100%;
 }
