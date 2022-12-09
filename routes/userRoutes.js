@@ -83,6 +83,9 @@ router.post('/profile/change-password', SESSION_MANAGER.verifyLoginUser, userCon
 router.get('/orders', SESSION_MANAGER.verifyLoginUser, userController.viewOrdersToUser)
 router.get('/orders/cancel/:id', SESSION_MANAGER.verifyLoginUser, userController.cancelOrderByUser)
 
-
+// 404page
+router.get('/not', (req, res)=>{
+    res.render('not-found',{cartItemsCount: 0})
+})
 
 module.exports = router

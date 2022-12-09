@@ -88,6 +88,7 @@ module.exports = {
   },
   // Renders Signup page
   goTosignUp: (req, res) => {
+
     res.render("userViews/signup", { msg: "", cartItemsCount: 0 });
   },
   // Sends user data to database for Registration
