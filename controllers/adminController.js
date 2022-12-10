@@ -217,15 +217,16 @@ module.exports = {
   },
   addCategory: async (req, res) => {
 
+    const CATEGORY_IN_SMALL_LETTERS = (req.body.category).toLowerCase()
     // Check Category already exists on Categories
-    const CATEGORY_EXIST = await CATEGORY_MODEL.exists({ category_name: req.body.category }).then((result) => {
+    const CATEGORY_EXIST = await CATEGORY_MODEL.exists({ category_name: CATEGORY_IN_SMALL_LETTERS }).then((result) => {
       return result;
     })
 
     // if category not Exists on Database add category
     if (CATEGORY_EXIST == null) {
       await CATEGORY_MODEL
-        .create({ category_name: req.body.category })
+        .create({ category_name: CATEGORY_IN_SMALL_LETTERS })
         .then(() => {
           console.log("category changed");
         });
@@ -255,7 +256,7 @@ module.exports = {
       res.redirect("/admin/categories");
     });
   },
-  
+
   doAdminLogout: (req, res) => {
     // Destroys session
     req.session.destroy((error) => {
