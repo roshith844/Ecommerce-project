@@ -709,9 +709,11 @@ module.exports = {
           } else {
             const ORDERS = await ORDER_MODEL.find({ userId: req.session.user })
               .populate("items.productId")
-              .lean();
-            res.render("userViews/orders", { orderDetails: ORDERS, cartItemsCount });
+              .lean()
+            return ORDERS
           }
+        }).then((orderDetails) => {
+          res.render("userViews/orders", { orderDetails, cartItemsCount });
         });
     } catch (error) {
 
