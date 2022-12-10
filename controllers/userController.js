@@ -707,13 +707,21 @@ module.exports = {
           if (count < 1) {
             res.render("userViews/no-items", { cartItemsCount });
           } else {
-            const ORDERS = await ORDER_MODEL.find({ userId: req.session.user })
+            const ORDERS = await ORDER_MODEL.find({ userId: req.session.user, status: { $ne: "cancelled" } })
               .populate("items.productId")
               .lean()
-            return ORDERS
+
+            const CANCELLED_ORDERS = await ORDER_MODEL.find({ userId: req.session.user, status: "cancelled" })
+              .populate("items.productId")
+              .lean()
+
+            return { ORDERS, CANCELLED_ORDERS }
           }
-        }).then((orderDetails) => {
-          res.render("userViews/orders", { orderDetails, cartItemsCount });
+        }).then((result) => {
+          const orderDetails = result.ORDERS
+          const cancelledOrderDetails = result.CANCELLED_ORDERS
+
+          res.render("userViews/orders", { orderDetails, cancelledOrderDetails, cartItemsCount });
         });
     } catch (error) {
 
