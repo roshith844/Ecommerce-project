@@ -1,6 +1,6 @@
 <main class="fullScreen">
 <h1>Orders</h1>
-<table class="table" id="productTable">
+<table class="table" id="orderTable">
   <thead>
     <tr>
       <th scope="col">No</th>
@@ -9,6 +9,7 @@
       <th scope="col">Email</th>
       <th scope="col">Payment Method</th>
       <th scope="col">Status</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -24,8 +25,7 @@
         <a href="/admin/orders/change-status/<%= order._id %>"
           ><button class="btn btn-primary">Change Order Status</button>
         </a>
-      </td>
-      <td>
+     
         <a href="/admin/orders/cancel/<%= order._id %>"
           ><button class="btn btn-danger">Cancel Order</button>
         </a>
@@ -35,3 +35,8 @@
   </tbody>
 </table>
 </main>
+<script>   
+  $(document).ready(function () {
+ $('#orderTable').DataTable();
+});
+</script>
