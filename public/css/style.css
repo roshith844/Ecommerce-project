@@ -151,11 +151,15 @@ body{
 nav,
 main {
   background-color: #fcedda;
+  margin: 0;
+  padding: 0;
 }
 .signup-navigation,
 .login-navigation {
   background-color: #ee4e34;
   height: 30rem;
+  margin: 0;
+  padding: 0;
 }
 
 .fullScreen {
