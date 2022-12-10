@@ -272,11 +272,11 @@ module.exports = {
       .populate("userId")
       .populate("items.productId")
       .then((orders) => {
-        if(req.session.orderCancelled == true){
+        if (req.session.orderCancelled == true) {
           req.session.orderCancelled = false
-          res.render("adminViews/orders", { orders,message: "Order Cancelled successfully",  layout: "layouts/adminLayout" });
-        }else{
-          res.render("adminViews/orders", { orders,message: "",  layout: "layouts/adminLayout"});
+          res.render("adminViews/orders", { orders, message: "Order Cancelled successfully", layout: "layouts/adminLayout" });
+        } else {
+          res.render("adminViews/orders", { orders, message: "", layout: "layouts/adminLayout" });
         }
       });
   },
