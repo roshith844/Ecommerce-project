@@ -28,6 +28,10 @@ const orderSchema = new mongoose.Schema({
     pin_code: String,
   },
   payment_method: String,
+  date: {
+    type: Date,
+    default: new Date()
+  },
   status: {
     type: String,
     default: "pending",
