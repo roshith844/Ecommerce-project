@@ -17,7 +17,7 @@ module.exports = {
         return count;
       })
       // Gets count of total Products
-      const PRODUCT_COUNT = await PRODUCT_MODEL.countDocuments({isDeleted: false}).then((count) => {
+      const PRODUCT_COUNT = await PRODUCT_MODEL.countDocuments({ isDeleted: false }).then((count) => {
         return count;
       })
       // Gets count of total Orders
@@ -51,7 +51,7 @@ module.exports = {
     } catch (error) {
       res
         .status(400)
-        .render("adminViews/adminLogin", { layout: "layouts/adminLayout"});
+        .render("adminViews/adminLogin", { layout: "layouts/adminLayout" });
     }
   },
   listUsers: async (req, res) => {
@@ -112,7 +112,7 @@ module.exports = {
   },
   listProducts: async (req, res) => {
     try {
-      await PRODUCT_MODEL.find({isDeleted: false}).then((products) => {
+      await PRODUCT_MODEL.find({ isDeleted: false }).then((products) => {
         if (req.session.editProduct == true) {
           req.session.editProduct = false;
           res.render("adminViews/products", {
@@ -128,7 +128,7 @@ module.exports = {
             layout: "layouts/adminLayout"
           });
         } else {
-          res.render("adminViews/products", { products: products, msg: "" ,layout: "layouts/adminLayout"});
+          res.render("adminViews/products", { products: products, msg: "", layout: "layouts/adminLayout" });
         }
       });
     } catch (error) {
@@ -182,38 +182,38 @@ module.exports = {
     res.redirect("/admin/products");
   },
   deleteProduct: async (req, res) => {
-    
+
     //Update isDeleted feild to true
-    PRODUCT_MODEL.updateOne({_id: req.params.id },{$set : {isDeleted: true}}).then(()=>{
+    PRODUCT_MODEL.updateOne({ _id: req.params.id }, { $set: { isDeleted: true } }).then(() => {
       console.log("product soft-deleted");
       req.session.deleteStatus = true;
       res.redirect("/admin/products");
     })
-    // // Deletes Product from Products collection
-    // await PRODUCT_MODEL.deleteOne({ _id: req.params.id }).then(() => {
-    //   console.log("product deleted");
-    //   req.session.deleteStatus = true;
-    //   res.redirect("/admin/products");
-    // });
 
-    // Deletes Product from users cart (carts collection)
     await CART_MODEL.updateMany(
       {},
       { $pull: { items: { productId: req.params.id } } }
     );
   },
   ViewCategories: async (req, res) => {
+
     try {
       await CATEGORY_MODEL.find({}).then((all) => {
-        console.log("got categories frm db");
-        res.render("adminViews/categories", { categories: all, layout: "layouts/adminLayout" });
+
+        if (req.session.categoryDeleted == true) {
+          req.session.categoryDeleted = false
+          res.render("adminViews/categories", { categories: all, message: "Category Deleted successfully", layout: "layouts/adminLayout" });
+        } else {
+          res.render("adminViews/categories", { categories: all, message: "", layout: "layouts/adminLayout" });
+        }
       });
+
     } catch (error) {
       console.log(error);
     }
   },
   viewAddCategory: (req, res) => {
-    res.render("adminViews/add-category",{layout: "layouts/adminLayout"});
+    res.render("adminViews/add-category", { layout: "layouts/adminLayout" });
   },
   addCategory: async (req, res) => {
 
@@ -221,7 +221,7 @@ module.exports = {
     const CATEGORY_EXIST = await CATEGORY_MODEL.exists({ category_name: req.body.category }).then((result) => {
       return result;
     })
-    // console.log(CATEGORY_EXIST)
+
     // if category not Exists on Database add category
     if (CATEGORY_EXIST == null) {
       await CATEGORY_MODEL
@@ -251,9 +251,11 @@ module.exports = {
   deleteCategory: async (req, res) => {
     await CATEGORY_MODEL.deleteOne({ _id: req.params.id }).then(() => {
       console.log("category deleted");
+      req.session.categoryDeleted = true;
       res.redirect("/admin/categories");
     });
   },
+  
   doAdminLogout: (req, res) => {
     // Destroys session
     req.session.destroy((error) => {
