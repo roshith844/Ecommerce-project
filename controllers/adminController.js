@@ -251,7 +251,6 @@ module.exports = {
   },
   deleteCategory: async (req, res) => {
     await CATEGORY_MODEL.deleteOne({ _id: req.params.id }).then(() => {
-      console.log("category deleted");
       req.session.categoryDeleted = true;
       res.redirect("/admin/categories");
     });
@@ -273,7 +272,12 @@ module.exports = {
       .populate("userId")
       .populate("items.productId")
       .then((orders) => {
-        res.render("adminViews/orders", { orders, layout: "layouts/adminLayout" });
+        if(req.session.orderCancelled == true){
+          req.session.orderCancelled = false
+          res.render("adminViews/orders", { orders,message: "Order Cancelled successfully",  layout: "layouts/adminLayout" });
+        }else{
+          res.render("adminViews/orders", { orders,message: "",  layout: "layouts/adminLayout"});
+        }
       });
   },
   viewChangeStatus: (req, res) => {
@@ -292,6 +296,7 @@ module.exports = {
       { _id: req.params.id },
       { $set: { status: "cancelled" } }
     ).then(() => {
+      req.session.orderCancelled = true;
       res.redirect("/admin/orders");
     });
   }
