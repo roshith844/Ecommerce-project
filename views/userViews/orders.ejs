@@ -1,78 +1,102 @@
 <main class="fullScreen">
-  <h1>Orders</h1>
-  <% let count = 1 %>
-  <div class="table-responsive">
-  <table id="userOrderTable" class="table">
-    <thead>
-      <tr>
-        <th scope="col">No</th>
-        <th scope="col">Order ID</th>
-        <th scope="col">Date</th>
-        <th scope="col">Items</th>
-        <th scope="col">Status</th>
-        <th scope="col"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% orderDetails.forEach((order)=>{ %>
-      <tr>
-        <th scope="row"><%= count %></th>
-        <td><%= order._id %></td>
+  <h1 class="text-center">Orders</h1>
+  <% let count=1 %>
+    <div class="table-responsive p-5">
+      <table id="userOrderTable" class="table">
+        <thead>
+          <tr>
+            <th scope="col">No</th>
+            <th scope="col">Order ID</th>
+            <th scope="col">Date</th>
+            <th scope="col">Items</th>
+            <th scope="col">Status</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orderDetails.forEach((order)=>{ %>
+            <tr>
+              <th scope="row">
+                <%= count %>
+              </th>
+              <td>
+                <%= order._id %>
+              </td>
 
-        <td><%= order.date %></td>
-        <td>
-          <% order.items.forEach((item)=>{ %>
-          <div style="border: 2px solid black">
-            <li>product Name: <%= item.productId.name %></li>
-            <li>Price : ₹ <%= item.productId.price %></li>
-            <li>Quantity: <%= item.quantity %></li>
-            <% const TOTAL_PRICE = (item.productId.price)*(item.quantity) %>
-            <li>Total Price : <%= TOTAL_PRICE %></li>
-          </div>
-          <% }) %>
-        </td>
-        <td>
-          <p><%= order.status %></p>
-        </td>
-        <td>
-          <a href="/orders/cancel/<%= order._id %>"
-            ><button class="btn btn-danger">Cancel Order</button></a
-          >
-        </td>
-      </tr>
-      <% count++ %> <% }) %>
+              <td>
+                <%= order.date %>
+              </td>
+              <td>
+                <% order.items.forEach((item)=>{ %>
+                  <div>
+                    <ul class="list-group">
+                      <li class="list-group-item">product Name: <%= item.productId.name %>
+                      </li>
+                      <li class="list-group-item">Price : ₹ <%= item.productId.price %>
+                      </li>
+                      <li class="list-group-item">Quantity: <%= item.quantity %>
+                      </li>
+                      <% const TOTAL_PRICE=(item.productId.price)*(item.quantity) %>
+                        <li class="list-group-item list-group-item-dark">Total Price : <%= TOTAL_PRICE %>
+                        </li>
+                    </ul>
+                  </div>
+                  <% }) %>
+              </td>
+              <td>
+                <p>
+                  <%= order.status %>
+                </p>
+              </td>
+              <td>
+                <a href="/orders/cancel/<%= order._id %>"><button class="btn btn-danger">Cancel Order</button></a>
+              </td>
+            </tr>
+            <% count++ %>
+              <% }) %>
 
-      <% cancelledOrderDetails.forEach((order)=>{ %> 
-        <tr>
-          <th scope="row"><%= count %></th>
-          <td><%= order._id %></td>
-  
-          <td><%= order.date %></td>
-          <td>
-            <% order.items.forEach((item)=>{ %>
-            <div style="border: 2px solid black">
-              <li>product Name: <%= item.productId.name %></li>
-              <li>Price : ₹ <%= item.productId.price %></li>
-              <li>Quantity: <%= item.quantity %></li>
-              <% const TOTAL_PRICE = (item.productId.price)*(item.quantity) %>
-              <li>Total Price : <%= TOTAL_PRICE %></li>
-            </div>
-            <% }) %>
-          </td>
-          <td>
-            <p><%= order.status %></p>
-          </td>
-          <td>
-          </td>
-        </tr>
-      <%  }) %> 
-    </tbody>
-  </table>
-</div>
+                <% cancelledOrderDetails.forEach((order)=>{ %>
+                  <tr>
+                    <th scope="row">
+                      <%= count %>
+                    </th>
+                    <td>
+                      <%= order._id %>
+                    </td>
+
+                    <td>
+                      <%= order.date %>
+                    </td>
+                    <td>
+                      <% order.items.forEach((item)=>{ %>
+                        <div style="border: 2px solid black">
+                          <li>product Name: <%= item.productId.name %>
+                          </li>
+                          <li>Price : ₹ <%= item.productId.price %>
+                          </li>
+                          <li>Quantity: <%= item.quantity %>
+                          </li>
+                          <% const TOTAL_PRICE=(item.productId.price)*(item.quantity) %>
+                            <li>Total Price : <%= TOTAL_PRICE %>
+                            </li>
+                        </div>
+                        <% }) %>
+                    </td>
+                    <td>
+                      <p>
+                        <%= order.status %>
+                      </p>
+                    </td>
+                    <td>
+                    </td>
+                  </tr>
+                  <% }) %>
+        </tbody>
+      </table>
+    </div>
 </main>
-<script>   
+<script>
   $(document).ready(function () {
- $('#userOrderTable').DataTable();
-});
+    $('#userOrderTable').DataTable();
+  });
 </script>
-
