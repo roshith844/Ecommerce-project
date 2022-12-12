@@ -1,30 +1,41 @@
 <main class="fullScreen">
-<h1>Add Address</h1>
-<form action="/profile/add-address" method="post">
-  <label for=""
-    >Flat, House no., Building, Company, Apartment
-    <input type="text" name="address_line_1" />
-  </label>
-  <label for=""
-    >Area, Street, Sector, Village
-    <input type="text" name="address_line_2" />
-  </label>
-  <label for=""
-    >Landmark
-    <input type="text" name="landmark" />
-  </label>
-  <label for=""
-    >Town
-    <input type="text" name="town" />
-  </label>
-  <label for="">
-    State
-    <input type="text" name="state" />
-  </label>
-  <label for=""
-    >PIN code
-    <input type="" name="pin_code" />
-  </label>
-  <button class="btn btn-primary"  type="submit">Submit</button>
-</form>
+  <div class="container d-flex justify-content-center align-items-center">
+    <div class="row col-6">
+      <h1 class="text-center mt-3">Add Address</h1>
+      <form action="/profile/add-address" method="post" class="">
+        <div class="mb-3">
+          <label for="" class="form-label d-flex flex-column">Flat, House no., Building, Company, Apartment
+            <input type="text" name="address_line_1" class="form-control" />
+          </label>
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label  d-flex flex-column">Area, Street, Sector, Village
+            <input type="text" name="address_line_2" class="form-control" />
+          </label>
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label  d-flex flex-column">Landmark
+            <input type="text" name="landmark" class="form-control" />
+          </label>
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label  d-flex flex-column">Town
+            <input type="text" name="town" class="form-control" />
+          </label>
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label  d-flex flex-column">
+            State
+            <input type="text" name="state" class="form-control" />
+          </label>
+        </div>
+        <div class="mb-3">
+          <label for="" class="form-label  d-flex flex-column">PIN code
+            <input type="" name="pin_code" class="form-control" />
+          </label>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
 </main>
