@@ -93,7 +93,7 @@ module.exports = {
   // Renders Signup page
   goTosignUp: (req, res) => {
     try {
-      res.render("userViews/signup", { msg: "", cartItemsCount: 0,  layout: "layouts/guest-layout" });
+      res.render("userViews/signup", { msg: "", cartItemsCount: 0, layout: "layouts/guest-layout" });
     } catch (error) {
 
     }
@@ -152,11 +152,11 @@ module.exports = {
       } else {
         console.log("password doesn't match");
         res.render("userViews/signup", {
-          msg: "password doesn't match. Try Again", cartItemsCount: 0,  layout: "layouts/guest-layout"
+          msg: "password doesn't match. Try Again", cartItemsCount: 0, layout: "layouts/guest-layout"
         });
       }
     } catch (error) {
-      res.render("userViews/signup", { msg: error, cartItemsCount: 0,  layout: "layouts/guest-layout"});
+      res.render("userViews/signup", { msg: error, cartItemsCount: 0, layout: "layouts/guest-layout" });
     }
   },
   doLogin: async (req, res) => {
@@ -205,7 +205,7 @@ module.exports = {
   // shows page for OTP
   getPhoneNumber: (req, res) => {
     try {
-      res.render("userViews/otpLogin", { cartItemsCount: 0,  layout: "layouts/guest-layout" });
+      res.render("userViews/otpLogin", { cartItemsCount: 0, layout: "layouts/guest-layout" });
     } catch (error) {
 
     }
@@ -547,7 +547,7 @@ module.exports = {
       } else if (req.body.payment == 'cod') {
         let codRefId = USER_CART.userId
         // for COD 
-        ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'cod' }, { payment_order_id: USER_CART.userId }).then(() => {
+        ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: USER_CART.userId, status: 'cod order placed' }).then(() => {
           CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
             if (err) {
               console.log(err);
