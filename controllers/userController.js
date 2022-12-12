@@ -85,16 +85,15 @@ module.exports = {
   // Renders Login Page
   goToLogin: (req, res) => {
     try {
-      res.render("userViews/login", { msg: "", cartItemsCount: 0 });
+      res.render("userViews/login", { msg: "", cartItemsCount: 0, layout: "layouts/guest-layout" });
     } catch (error) {
 
     }
-
   },
   // Renders Signup page
   goTosignUp: (req, res) => {
     try {
-      res.render("userViews/signup", { msg: "", cartItemsCount: 0 });
+      res.render("userViews/signup", { msg: "", cartItemsCount: 0,  layout: "layouts/guest-layout" });
     } catch (error) {
 
     }
@@ -144,7 +143,8 @@ module.exports = {
               });
             } else {
               res.render("userViews/signup", {
-                msg: "Something went wrong!! Try Again", cartItemsCount: 0
+                msg: "Something went wrong!! Try Again", cartItemsCount: 0,
+                layout: "layouts/guest-layout"
               });
             }
           }
@@ -152,11 +152,11 @@ module.exports = {
       } else {
         console.log("password doesn't match");
         res.render("userViews/signup", {
-          msg: "password doesn't match. Try Again", cartItemsCount: 0
+          msg: "password doesn't match. Try Again", cartItemsCount: 0,  layout: "layouts/guest-layout"
         });
       }
     } catch (error) {
-      res.render("userViews/signup", { msg: error, cartItemsCount: 0 });
+      res.render("userViews/signup", { msg: error, cartItemsCount: 0,  layout: "layouts/guest-layout"});
     }
   },
   doLogin: async (req, res) => {
@@ -205,7 +205,7 @@ module.exports = {
   // shows page for OTP
   getPhoneNumber: (req, res) => {
     try {
-      res.render("userViews/otpLogin", { cartItemsCount: 0 });
+      res.render("userViews/otpLogin", { cartItemsCount: 0,  layout: "layouts/guest-layout" });
     } catch (error) {
 
     }
@@ -287,11 +287,10 @@ module.exports = {
 
         if (USER_CART) {
           cartItemsCount = USER_CART.items.length
-          res.render("userViews/home", { products: products, cartItemsCount });
+          res.render("userViews/home", { products: products, cartItemsCount: 0 });
         } else {
           res.render("userViews/home", { products: products, cartItemsCount: 0 });
         }
-
       } else {
         res.redirect("/login");
       }
