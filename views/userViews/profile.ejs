@@ -1,24 +1,50 @@
-<main class="fullScreen">
-<h1>User profile</h1>
-<h2>Personal Details</h2>
-<p>Full Name : <%= userData.name %></p>
-<p>Email : <%= userData.email %></p>
-<p>Phone : <%= userData.phone %></p>
-<a href="/orders"><button class="btn btn-primary" >Show Orders</button></a>
-
-<a href="/profile/edit-info"><button  class="btn btn-primary" >Edit personal Details</button></a>
-<a href="/profile/change-password"><button  class="btn btn-primary" >Change Password</button></a>
-<h1>Your Adresses</h1>
-<a href="/profile/add-address"><button  class="btn btn-primary" >Add new Address</button></a>
-<% userData.address.forEach((address)=>{ %>
-<hr />
-<p><%= address.address_line_1 %></p>
-<p><%= address.address_line_2 %></p>
-<p><%= address.landmark %></p>
-<p><%= address.town %></p>
-<p><%= address.state %></p>
-<p><%= address.pin_code %></p>
-<a href="/profile/edit-address/<%= address._id %>"><button  class="btn btn-primary" >Edit</button></a>
-<hr />
-<% }) %>
+<main class="fullScreen container-fluid">
+     <div class="row ms-5">
+          <h1 class="text-center mb-3">User profile</h1>
+          <h2 class="text-start mb-3">Personal Details</h2>
+          <p>Full Name : <%= userData.name %>
+          </p>
+          <p>Email : <%= userData.email %>
+          </p>
+          <p>Phone : <%= userData.phone %>
+          </p>
+          <div class="d-grid gap-2 col-6 mb-3">
+               <a href="/orders"><button class="btn btn-primary col-6">Show Orders</button></a>
+               <a href="/profile/edit-info"><button class="btn btn-primary col-6">Edit personal Details</button></a>
+               <a href="/profile/change-password"><button class="btn btn-primary col-6">Change Password</button></a>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between align-items-center">
+               <h2 class="text-end my-3 pe-5">Your Addresses</h2>
+               <a href="/profile/add-address"><button class="btn btn-primary  my-3 pe-5">Add new Address</button></a>
+          </div>
+          <div class="d-flex justify-content-end ">
+          </div>
+          <% userData.address.forEach((address)=>{ %>
+               <hr />
+               <p>
+                    <%= address.address_line_1 %>
+               </p>
+               <p>
+                    <%= address.address_line_2 %>
+               </p>
+               <p>
+                    <%= address.landmark %>
+               </p>
+               <p>
+                    <%= address.town %>
+               </p>
+               <p>
+                    <%= address.state %>
+               </p>
+               <p>
+                    <%= address.pin_code %>
+               </p>
+               <div class="d-grid gap-2 col-6">
+                    <a href="/profile/edit-address/<%= address._id %>"><button
+                              class="btn btn-primary col-6 mb-3">Edit</button></a>
+               </div>
+               <hr />
+               <% }) %>
+     </div>
 </main>
