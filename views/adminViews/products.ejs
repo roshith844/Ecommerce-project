@@ -14,6 +14,7 @@
       <tr>
         <th scope="col">No</th>
         <th scope="col">Product</th>
+        <th scope="col">Image</th>
         <th scope="col">Price</th>
         <th scope="col">Price</th>
         <th scope="col">Price</th>
@@ -24,6 +25,11 @@
       <tr>
         <td><%= count %></td>
         <td><%= product.name %></td>
+        <td> 
+          <div>
+            <img src="/<%= product.image %>" alt="image of <%= product.name %>"  style="width: 100px; height: 100px"/>
+          </div>
+        </td>
         <td>₹ <%= product.price %></td>
         <td>
           <a
@@ -45,6 +51,7 @@
       <% count++; %> <% }) %>
     </tbody>
   </table>
+  
 </main>
 <script>
   $(document).ready(function () {
