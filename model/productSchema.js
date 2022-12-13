@@ -3,7 +3,7 @@ const productSchema = new mongoose.Schema({
     name: String,
     image: String,
     description: String,
-    price: String,
+    price: Number,
     category: { type: String, default: 'none' },
     isDeleted: {
         type: Boolean, default: 'false'

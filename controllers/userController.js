@@ -500,6 +500,38 @@ module.exports = {
 
   placeOrder: async (req, res) => {
     try {
+
+      // Find Total Price of products on the Cart
+      const TOTAL_PRICE = await CART_MODEL.aggregate([{ $match: { userId: new mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.productId",
+          foreignField: "_id",
+          as: "product"
+        }
+      },
+      {
+        $project: {
+          userId: 1,
+          product_price: "$product.price",
+          quantity: "$items.quantity"
+        }
+      },
+      {
+        $unwind: "$product_price"
+      },
+      { $addFields: { total_price_of_item: { $multiply: ["$product_price", "$quantity"] } } },
+      ]).exec().then((result) => {
+        return result;
+      })
+      const PRODUCT_SUM = TOTAL_PRICE.reduce((accumulator, itemObj) => {
+        return accumulator + itemObj.total_price_of_item;
+      }, 0)
+
+      await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" }]).then((result) => {
+        console.log("the result is" + result)
+      })
       const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }) //Finds user cart
 
       // Creates new Order
@@ -516,6 +548,7 @@ module.exports = {
           pin_code: req.body.pin_code,
         },
         payment_method: req.body.payment,
+        amount: PRODUCT_SUM,
         status: 'waiting for payment'
       }).then(() => {
         CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
@@ -527,7 +560,7 @@ module.exports = {
       if (req.body.payment == 'razorpay') {
         console.log("checked razorpay")
         var options = {
-          amount: 50000,  // amount in the smallest currency unit
+          amount: PRODUCT_SUM * 100,  // amount in the smallest currency unit
           currency: "INR",
           receipt: "order_rcptid_11"
         };
