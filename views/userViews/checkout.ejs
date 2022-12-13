@@ -13,7 +13,7 @@
   <div class="mb-3">
   <label for=""
     >Select Address
-    <select name="address" id="" class="d-block">
+    <select name="address" id="" class="d-block"  class="form-control">
       <% address.forEach((item)=>{ %>
       <option value="<%= item._id %>">
         <%= item.address_line_1 %>, <%= item.address_line_2 %>, <%=
@@ -24,18 +24,21 @@
     </select>
   </label>
 </div>
-
-  <div class="mb-3">
+<div class="mb-3">
   <label for=""
     >Payment Options
-    <select name="payment" id="" class="d-block">
+    <select name="payment" id="" class="d-block form-control">
       <option value="cod">Cash on Delivery</option>
       <option value="razorpay">PayTm</option>
       <option value="razorpay">Internet Banking</option>
     </select>
   </label>
 </div>
-
+<div class="mb-3">
+  <label for=""> Coupon Code
+    <input type="text" name="coupon" id="" placeholder="Optional"  class="form-control">
+  </label>
+</div>
   <button class="btn btn-primary text-bg-success mb-3" type="submit">Check Out
   </button>
 </form>

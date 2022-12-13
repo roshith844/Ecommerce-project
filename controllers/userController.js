@@ -9,6 +9,7 @@ const OTP_LOGIN_MODEL = require("../model/otpLoginSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
 const ORDER_MODEL = require("../model/orderSchema");
+const COUPON_MODEL = require("../model/couponSchema")
 const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
@@ -525,9 +526,17 @@ module.exports = {
       ]).exec().then((result) => {
         return result;
       })
-      const PRODUCT_SUM = TOTAL_PRICE.reduce((accumulator, itemObj) => {
+
+      const TOTAL_AMOUNT = TOTAL_PRICE.reduce((accumulator, itemObj) => {
         return accumulator + itemObj.total_price_of_item;
       }, 0)
+
+      // Checks coupon Code 
+      const COUPON_DOC = await COUPON_MODEL.findOne({ coupon_code: req.body.coupon })
+      if (COUPON_DOC) {
+        const DISCOUNT = (COUPON_DOC.discount)
+        TOTAL_AMOUNT = Math.floor(TOTAL_AMOUNT - (TOTAL_AMOUNT * (DISCOUNT / 100)))
+      }
 
       await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" }]).then((result) => {
         console.log("the result is" + result)
@@ -535,7 +544,7 @@ module.exports = {
       const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }) //Finds user cart
 
       // Creates new Order
-      ORDER_MODEL.create({
+      await ORDER_MODEL.create({
         userId: USER_CART.userId,
         payment_order_id: "",
         items: USER_CART.items,
@@ -548,15 +557,16 @@ module.exports = {
           pin_code: req.body.pin_code,
         },
         payment_method: req.body.payment,
-        amount: PRODUCT_SUM,
+        amount: TOTAL_AMOUNT,
         status: 'waiting for payment'
-      }).then(() => {
-        CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+      }).then( () => {
+       CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
           if (err) {
             console.log(err);
           }
         });
       })
+
       if (req.body.payment == 'razorpay') {
         console.log("checked razorpay")
         var options = {
@@ -565,12 +575,12 @@ module.exports = {
           receipt: "order_rcptid_11"
         };
 
-        const order = await instance.orders.create(options, function (err, order) {
+        const order = await instance.orders.create(options, async (err, order)=>{
           if (err) {
             console.log(err)
           } else {
             console.log("one: " + order.id)
-            ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id }).then(() => {
+            await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id }).then(() => {
               res.json({ status: true, order })
             })
           }
@@ -579,8 +589,8 @@ module.exports = {
       } else if (req.body.payment == 'cod') {
         let codRefId = USER_CART.userId
         // for COD 
-        ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: USER_CART.userId, status: 'order placed' }).then(() => {
-          CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+        await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: USER_CART.userId, status: 'order placed' }).then(async () => {
+         await CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
             if (err) {
               console.log(err);
             }

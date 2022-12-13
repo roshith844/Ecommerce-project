@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema({
   },
   payment_order_id: {
     type: String
-  },
+  },  
   items: [
     {
       productId: {
