@@ -547,7 +547,7 @@ module.exports = {
       } else if (req.body.payment == 'cod') {
         let codRefId = USER_CART.userId
         // for COD 
-        ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: USER_CART.userId, status: 'cod order placed' }).then(() => {
+        ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: USER_CART.userId, status: 'order placed' }).then(() => {
           CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
             if (err) {
               console.log(err);
