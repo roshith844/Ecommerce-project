@@ -1,16 +1,19 @@
 <main class="fullScreen">
-
-<h1>select Address</h1>
-
+  <div class="d-flex justify-content-center ">
+<h1 class="my-3">Select Address</h1>
+</div>
+<div class="d-flex justify-content-end me-5">
 <a href="/checkout/add-address"
   ><button class="btn btn-primary">Add Address</button></a
->
+></div>
 
 <% if(address.length != 0){ %>
-<form id="checkout">
+
+<form id="checkout" class="ps-5">
+  <div class="mb-3">
   <label for=""
     >Select Address
-    <select name="address" id="">
+    <select name="address" id="" class="d-block"  class="form-control">
       <% address.forEach((item)=>{ %>
       <option value="<%= item._id %>">
         <%= item.address_line_1 %>, <%= item.address_line_2 %>, <%=
@@ -20,15 +23,24 @@
       <% }) %>
     </select>
   </label>
+</div>
+<div class="mb-3">
   <label for=""
     >Payment Options
-    <select name="payment" id="">
+    <select name="payment" id="" class="d-block form-control">
       <option value="cod">Cash on Delivery</option>
       <option value="razorpay">PayTm</option>
       <option value="razorpay">Internet Banking</option>
     </select>
   </label>
-  <button class="btn btn-primary" type="submit">go to payment Page</button>
+</div>
+<div class="mb-3">
+  <label for=""> Coupon Code
+    <input type="text" name="coupon" id="" placeholder="Optional"  class="form-control">
+  </label>
+</div>
+  <button class="btn btn-primary text-bg-success mb-3" type="submit">Check Out
+  </button>
 </form>
 <% } %>
 </main>

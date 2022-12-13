@@ -6,15 +6,16 @@
             <%= msg %>
         </div>
         <% } %>
-            <div class="container">
+            <div class="container-fluid">
                 <div class="d-flex">
-                    <div class="login-navigation col-6 ">
+                    <div
+                        class="login-navigation col-6 mx-4 my-4 me-3 p-5 d-flex flex-column justify-content-center align-items-center rounded-5 text-wrap">
                         <h1>Already have an Account?</h1>
                         <p>Let's deep dive into the Delicious world of Cakes</p>
                         <button type="button" class="btn btn-primary">Login Now</button>
                     </div>
-                    <div class="signup-form">
-                        <form action="/signup" method="POST" novalidate>
+                    <div class="signup-form col-4">
+                        <form action="/signup" method="POST" class="mt-5 ms-5" novalidate>
                             <div class="mb-3">
                                 <label for="" class="form-label">Name</label>
                                 <input type="text" class="form-control" name="name" id="">
@@ -38,7 +39,10 @@
                                 <label for="" class="form-label">Repeat Password</label>
                                 <input name="repeatPassword" type="password" class="form-control" id="">
                             </div>
-                            <button class="btn btn-primary"  type="submit" class="btn btn-primary">Register</button>
+                            <div
+                                class="d-flex flex-column text-center justify-content-center align-items-center text-wrap">
+                                <button class="btn btn-primary" type="submit" class="btn btn-primary">Register</button>
+                            </div>
                         </form>
                     </div>
                 </div>

@@ -1,51 +1,54 @@
 <main class="fullScreen">
-<div class="container">
-  <div class="row ">
+<div class="container d-flex justify-content-center align-middle">
+  <div class="row col-6">
+    <div class="d-flex my-3">
     <h1 class="mx-auto">Edit address</h1>
+  </div>
   <form
     action="/profile/edit-address"
     method="post"
     class="d-flex flex-column gap-3"
   >
-    <label for="" class="d-none"
+    <label for="" class="d-none form-label"
       >Id
-      <input type="text" class="d-none" name="id" value="<%= address._id %>" />
+      <input type="text" class="d-none form-control" name="id" value="<%= address._id %>" />
     </label>
-    <label for=""
-      >Flat, House no., Building, Company, Apartment
+    <label for="" class="form-label" >Flat, House no., Building, Company, Apartment
       <input
         type="text"
-        class="d-block"
+        class="d-block form-control"
         name="address_line_1"
         value="<%= address.address_line_1 %>"
       />
     </label>
-    <label for=""
+    <label for=""  class="form-label" 
       >Area, Street, Sector, Village
       <input
         type="text"
-        class="d-block"
+        class="d-block form-control"
         name="address_line_2"
         value="<%= address.address_line_2  %>"
       />
     </label>
-    <label for=""
+    <label for=""  class="form-label" 
       >Landmark
-      <input type="text" class="d-block" name="landmark" value="<%= address.landmark %>" />
+      <input type="text" class="d-block form-control" name="landmark" value="<%= address.landmark %>" />
     </label>
-    <label for=""
+    <label for=""  class="form-label" 
       >Landmark
-      <input type="text" class="d-block" name="town" value="<%= address.town  %>" />
+      <input type="text" class="d-block form-control" name="town" value="<%= address.town  %>" />
     </label>
-    <label for="">
+    <label for=""  class="form-label" >
       State
-      <input type="text" name="state" class="d-block" value="<%= address.state  %>" />
+      <input type="text" name="state" class="d-block form-control" value="<%= address.state  %>" />
     </label>
-    <label for=""
+    <label for=""  class="form-label" 
       >PIN code
-      <input type="" name="pin_code" class="d-block" value="<%= address.pin_code %>" />
+      <input type="" name="pin_code" class="d-block form-control" value="<%= address.pin_code %>" />
     </label>
-    <button class="btn btn-primary col-3"  type="submit">Submit</button>
+    <div class="d-flex justify-content-center ">
+    <button class="btn btn-primary mb-3 col-6"  type="submit">Submit</button>
+  </div>
   </form>
 </div>
 </div>

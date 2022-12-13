@@ -5,8 +5,8 @@ const orderSchema = new mongoose.Schema({
     ref: "users",
   },
   payment_order_id: {
-    type : String
-  },
+    type: String
+  },  
   items: [
     {
       productId: {
@@ -28,6 +28,13 @@ const orderSchema = new mongoose.Schema({
     pin_code: String,
   },
   payment_method: String,
+  amount: {
+    type: Number
+  },
+  date: {
+    type: Date,
+    default: new Date()
+  },
   status: {
     type: String,
     default: "pending",

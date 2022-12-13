@@ -9,6 +9,7 @@ const OTP_LOGIN_MODEL = require("../model/otpLoginSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
 const ORDER_MODEL = require("../model/orderSchema");
+const COUPON_MODEL = require("../model/couponSchema")
 const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
@@ -84,11 +85,20 @@ async function checkPhoneNumber(userPhoneNumber) {
 module.exports = {
   // Renders Login Page
   goToLogin: (req, res) => {
-    res.render("userViews/login", { msg: "", cartItemsCount: 0 });
+    try {
+      res.render("userViews/login", { msg: "", cartItemsCount: 0, layout: "layouts/guest-layout" });
+    } catch (error) {
+
+    }
   },
   // Renders Signup page
   goTosignUp: (req, res) => {
-    res.render("userViews/signup", { msg: "", cartItemsCount: 0 });
+    try {
+      res.render("userViews/signup", { msg: "", cartItemsCount: 0, layout: "layouts/guest-layout" });
+    } catch (error) {
+
+    }
+
   },
   // Sends user data to database for Registration
   sendToDatabase: async (req, res) => {
@@ -134,7 +144,8 @@ module.exports = {
               });
             } else {
               res.render("userViews/signup", {
-                msg: "Something went wrong!! Try Again", cartItemsCount: 0
+                msg: "Something went wrong!! Try Again", cartItemsCount: 0,
+                layout: "layouts/guest-layout"
               });
             }
           }
@@ -142,11 +153,11 @@ module.exports = {
       } else {
         console.log("password doesn't match");
         res.render("userViews/signup", {
-          msg: "password doesn't match. Try Again", cartItemsCount: 0
+          msg: "password doesn't match. Try Again", cartItemsCount: 0, layout: "layouts/guest-layout"
         });
       }
     } catch (error) {
-      res.render("userViews/signup", { msg: error, cartItemsCount: 0 });
+      res.render("userViews/signup", { msg: error, cartItemsCount: 0, layout: "layouts/guest-layout" });
     }
   },
   doLogin: async (req, res) => {
@@ -194,11 +205,13 @@ module.exports = {
   },
   // shows page for OTP
   getPhoneNumber: (req, res) => {
-    res.render("userViews/otpLogin", { cartItemsCount: 0 });
+    try {
+      res.render("userViews/otpLogin", { cartItemsCount: 0, layout: "layouts/guest-layout" });
+    } catch (error) {
+
+    }
   },
   generateOtp: async (req, res) => {
-    console.log(typeof req.body.phone);
-
     try {
       const userExist = await checkPhoneNumber(req.body.phone); // check phone Number exists on database
 
@@ -266,377 +279,528 @@ module.exports = {
     } catch (error) { }
   },
   goHome: async (req, res) => {
-    if (req.session.user) {
-      const products = await PRODUCT_MODEL.find({ isDeleted: false });
-      // const CART_ITEMS_COUNT = await CART_MODEL.countDocuments
-      // Checks user Cart Exists
-      const USER_CART = await CART_MODEL.findOne({ userId: req.session.user })
+    try {
+      if (req.session.user) {
+        const products = await PRODUCT_MODEL.find({ isDeleted: false });
+        // const CART_ITEMS_COUNT = await CART_MODEL.countDocuments
+        // Checks user Cart Exists
+        const USER_CART = await CART_MODEL.findOne({ userId: req.session.user })
 
-      if (USER_CART) {
-        cartItemsCount = USER_CART.items.length
-        res.render("userViews/home", { products: products, cartItemsCount });
+        if (USER_CART) {
+          cartItemsCount = USER_CART.items.length
+          res.render("userViews/home", { products: products, cartItemsCount: 0 });
+        } else {
+          res.render("userViews/home", { products: products, cartItemsCount: 0 });
+        }
       } else {
-        res.render("userViews/home", { products: products, cartItemsCount: 0 });
+        res.redirect("/login");
       }
+    } catch (error) {
 
-    } else {
-      res.redirect("/login");
     }
   },
   getProductInfo: (req, res) => {
+    try {
+      PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
+        console.log(info)
+        res.render("userViews/productDetails", { info: info, cartItemsCount });
+      });
+    } catch (error) {
 
-    PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
-      console.log(info)
-      res.render("userViews/productDetails", { info: info, cartItemsCount });
-    });
-
+    }
   },
   doLogout: (req, res) => {
-    // Destroys session
-    req.session.destroy((error) => {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("logout successfully");
-        res.redirect("/login");
-      }
-    });
+    try {
+      // Destroys session
+      req.session.destroy((error) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("logout successfully");
+          res.redirect("/login");
+        }
+      });
+    } catch (error) {
+
+    }
   },
 
   viewCart: async (req, res) => {
     const USER_ID = req.session.user;
+    try {
+      // checks for products available in cart or not
+      const RESULT = CART_MODEL.countDocuments({ userId: USER_ID })
+        .then((count) => {
+          return count;
+        })
+        .then(async (count) => {
+          if (count < 1) {
+            res.render("userViews/no-items", { cartItemsCount });
+          } else {
+            // Shows cart items
+            let products = await CART_MODEL.findOne({ userId: USER_ID })
+              .populate("items.productId")
+              .lean();
+            res.render("userViews/cart", { productDetails: products.items, cartItemsCount });
+          }
+        });
+    } catch (error) {
 
-    // checks for products available in cart or not
-    const RESULT = CART_MODEL.countDocuments({ userId: USER_ID })
-      .then((count) => {
-        return count;
-      })
-      .then(async (count) => {
-        if (count < 1) {
-          res.render("userViews/no-items", { cartItemsCount });
-        } else {
-          // Shows cart items
-          let products = await CART_MODEL.findOne({ userId: USER_ID })
-            .populate("items.productId")
-            .lean();
-          res.render("userViews/cart", { productDetails: products.items, cartItemsCount });
-        }
-      });
+    }
   },
 
   addToCart: async (req, res) => {
-    console.log("reached add to cart")
-    const USER_ID = req.session.user;
+    try {
+      const USER_ID = req.session.user;
+      const USER = await CART_MODEL.findOne({ userId: USER_ID }); // checks user on db
 
-    const USER = await CART_MODEL.findOne({ userId: USER_ID }); // checks user on db
+      // Checking weather user has a cart or not
+      if (USER) {
+        // checks product exists on cart
+        const PRODUCT_EXIST = await CART_MODEL.findOne({
+          items: { $elemMatch: { productId: req.params.id } },
+        });
+        if (PRODUCT_EXIST) {
+          addOneProduct(USER_ID, req.params.id);
 
-    // Checking weather user has a cart or not
-    if (USER) {
-      // checks product exists on cart
-      const PRODUCT_EXIST = await CART_MODEL.findOne({
-        items: { $elemMatch: { productId: req.params.id } },
-      });
-      if (PRODUCT_EXIST) {
-        addOneProduct(USER_ID, req.params.id);
+          // if product is not there, Adds the product to cart
+        } else {
+          console.log("product not there");
+          await CART_MODEL.updateOne(
+            { userId: USER_ID },
+            { $push: { items: { productId: req.params.id } } }
+          );
+        }
 
-        // if product is not there, Adds the product to cart
+        // if user doesnot has a cart, Create new cart
       } else {
-        console.log("product not there");
-        await CART_MODEL.updateOne(
-          { userId: USER_ID },
-          { $push: { items: { productId: req.params.id } } }
-        );
+        console.log("user is not here");
+        await CART_MODEL.create({
+          userId: USER_ID,
+          items: [
+            {
+              productId: req.params.id,
+              quantity: 1,
+            },
+          ],
+        });
       }
+      res.json({ status: true })
+      // res.redirect("/cart");
+    } catch (error) {
 
-      // if user doesnot has a cart, Create new cart
-    } else {
-      console.log("user is not here");
-      await CART_MODEL.create({
-        userId: USER_ID,
-        items: [
-          {
-            productId: req.params.id,
-            quantity: 1,
-          },
-        ],
-      });
     }
-    res.json({ status: true })
-    // res.redirect("/cart");
   },
 
   incrementProduct: async (req, res) => {
-    await addOneProduct(req.session.user, req.params.id).then(() => {
-      getTotalPrice(req.session.user).then((totalPrice) => {
-        console.log(totalPrice)
-        res.json({ status: true, productId: req.params.id, totalPrice: totalPrice })
+    try {
+      await addOneProduct(req.session.user, req.params.id).then(() => {
+        getTotalPrice(req.session.user).then((totalPrice) => {
+          console.log(totalPrice)
+          res.json({ status: true, productId: req.params.id, totalPrice: totalPrice })
+        })
       })
-    })
+    } catch (error) {
+
+    }
   },
   decrementProduct: async (req, res) => {
-    await removeOneProduct(req.session.user, req.params.id).then((result) => {
-      getTotalPrice(req.session.user).then((totalPrice) => {
-        res.json({ status: true, productId: req.params.id, totalPrice: totalPrice })
+    try {
+      await removeOneProduct(req.session.user, req.params.id).then((result) => {
+        getTotalPrice(req.session.user).then((totalPrice) => {
+          res.json({ status: true, productId: req.params.id, totalPrice: totalPrice })
+        })
       })
-    })
+    } catch (error) {
+
+    }
   },
   viewEditQuantity: async (req, res) => {
-    await CART_MODEL.aggregate([
-      { $match: { userId: new mongoose.Types.ObjectId(req.session.user) } },
-      { $unwind: "$items" },
-      {
-        $match: {
-          "items.productId": new mongoose.Types.ObjectId(req.params.id),
-        },
-      },
-    ]).then((result) => {
-      res.render("userViews/edit-cart", { productInfo: result, cartItemsCount });
-    });
-  },
-  updateQuantity: async (req, res) => {
-    await CART_MODEL.updateOne(
-      {
-        userId: req.session.user,
-        items: { $elemMatch: { productId: req.body.productId } },
-      },
-      { $set: { "items.$.quantity": req.body.quantity } }
-    );
-    res.redirect("/cart");
-  },
-  deleteCartItem: async (req, res) => {
-    await CART_MODEL.updateMany(
-      { userId: req.session.user },
-      { $pull: { items: { productId: req.params.id } } }
-    ).then(() => {
-      res.redirect("/cart");
-    });
-  },
-  viewCheckout: async (req, res) => {
-    const USER_INFO = await USER_MODEL.findOne({ _id: req.session.user }).then(
-      (userInfo) => {
-        res.render("userViews/checkout", { address: userInfo.address, cartItemsCount });
-      }
-    );
-  },
-  viewAddAddress: (req, res) => {
-    res.render("userViews/add-address", { cartItemsCount });
-  },
-  addAddress: async (req, res) => {
-    await USER_MODEL.updateOne(
-      { _id: req.session.user },
-      {
-        $push: {
-          address: {
-            address_line_1: req.body.address_line_1,
-            address_line_2: req.body.address_line_2,
-            landmark: req.body.landmark,
-            town: req.body.town,
-            state: req.body.state,
-            pin_code: req.body.pin_code,
+    try {
+      await CART_MODEL.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(req.session.user) } },
+        { $unwind: "$items" },
+        {
+          $match: {
+            "items.productId": new mongoose.Types.ObjectId(req.params.id),
           },
         },
-      }
-    );
-    res.redirect("/checkout");
+      ]).then((result) => {
+        res.render("userViews/edit-cart", { productInfo: result, cartItemsCount });
+      });
+    } catch (error) {
+
+    }
+  },
+  updateQuantity: async (req, res) => {
+    try {
+      await CART_MODEL.updateOne(
+        {
+          userId: req.session.user,
+          items: { $elemMatch: { productId: req.body.productId } },
+        },
+        { $set: { "items.$.quantity": req.body.quantity } }
+      );
+      res.redirect("/cart");
+    } catch (error) {
+
+    }
+  },
+  deleteCartItem: async (req, res) => {
+    try {
+      await CART_MODEL.updateMany(
+        { userId: req.session.user },
+        { $pull: { items: { productId: req.params.id } } }
+      ).then(() => {
+        res.redirect("/cart");
+      });
+    } catch (error) {
+
+    }
+  },
+  viewCheckout: async (req, res) => {
+    try {
+      const USER_INFO = await USER_MODEL.findOne({ _id: req.session.user }).then(
+        (userInfo) => {
+          res.render("userViews/checkout", { address: userInfo.address, cartItemsCount });
+        }
+      );
+    } catch (error) {
+
+    }
+  },
+  viewAddAddress: (req, res) => {
+    try {
+      res.render("userViews/add-address", { cartItemsCount });
+    } catch (error) {
+
+    }
+  },
+  addAddress: async (req, res) => {
+    try {
+      await USER_MODEL.updateOne(
+        { _id: req.session.user },
+        {
+          $push: {
+            address: {
+              address_line_1: req.body.address_line_1,
+              address_line_2: req.body.address_line_2,
+              landmark: req.body.landmark,
+              town: req.body.town,
+              state: req.body.state,
+              pin_code: req.body.pin_code,
+            },
+          },
+        }
+      );
+      res.redirect("/checkout");
+    } catch (error) {
+
+    }
   },
 
   placeOrder: async (req, res) => {
-    const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }) //Finds user cart
+    try {
 
-    // Creates new Order
-    ORDER_MODEL.create({
-      userId: USER_CART.userId,
-      payment_order_id: "",
-      items: USER_CART.items,
-      address: {
-        address_line_1: req.body.address_line_1,
-        address_line_2: req.body.address_line_2,
-        landmark: req.body.landmark,
-        town: req.body.town,
-        state: req.body.state,
-        pin_code: req.body.pin_code,
+      // Find Total Price of products on the Cart
+      const TOTAL_PRICE = await CART_MODEL.aggregate([{ $match: { userId: new mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.productId",
+          foreignField: "_id",
+          as: "product"
+        }
       },
-      payment_method: req.body.payment,
-      status: 'waiting for payment'
-    }).then(() => {
-      CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
-        if (err) {
-          console.log(err);
+      {
+        $project: {
+          userId: 1,
+          product_price: "$product.price",
+          quantity: "$items.quantity"
         }
-      });
-    })
-
-
-
-    console.log("got post")
-    console.log(req.body.payment)
-    if (req.body.payment == 'razorpay') {
-      console.log("checked razorpay")
-      var options = {
-        amount: 50000,  // amount in the smallest currency unit
-        currency: "INR",
-        receipt: "order_rcptid_11"
-      };
-
-      const order = await instance.orders.create(options, function (err, order) {
-        if (err) {
-          console.log(err)
-        } else {
-          console.log(order)
-          ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id }).then(() => {
-            res.json({ status: true, order })
-          })
-
-        }
-
+      },
+      {
+        $unwind: "$product_price"
+      },
+      { $addFields: { total_price_of_item: { $multiply: ["$product_price", "$quantity"] } } },
+      ]).exec().then((result) => {
+        return result;
       })
-    } else if (req.body.payment == 'cod') {
-      let codRefId = USER_CART.userId
-      // for COD 
-      ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'cod' }, { payment_order_id: USER_CART.userId }).then(() => {
-        CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+
+      const TOTAL_AMOUNT = TOTAL_PRICE.reduce((accumulator, itemObj) => {
+        return accumulator + itemObj.total_price_of_item;
+      }, 0)
+
+      // Checks coupon Code 
+      const COUPON_DOC = await COUPON_MODEL.findOne({ coupon_code: req.body.coupon })
+      if (COUPON_DOC) {
+        const DISCOUNT = (COUPON_DOC.discount)
+        TOTAL_AMOUNT = Math.floor(TOTAL_AMOUNT - (TOTAL_AMOUNT * (DISCOUNT / 100)))
+      }
+
+      await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" }]).then((result) => {
+        console.log("the result is" + result)
+      })
+      const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }) //Finds user cart
+
+      // Creates new Order
+      await ORDER_MODEL.create({
+        userId: USER_CART.userId,
+        payment_order_id: "",
+        items: USER_CART.items,
+        address: {
+          address_line_1: req.body.address_line_1,
+          address_line_2: req.body.address_line_2,
+          landmark: req.body.landmark,
+          town: req.body.town,
+          state: req.body.state,
+          pin_code: req.body.pin_code,
+        },
+        payment_method: req.body.payment,
+        amount: TOTAL_AMOUNT,
+        status: 'waiting for payment'
+      }).then( () => {
+       CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
           if (err) {
             console.log(err);
           }
         });
-      }).then(() => {
-        res.json({ status: 'cod', order: codRefId })
       })
+
+      if (req.body.payment == 'razorpay') {
+        console.log("checked razorpay")
+        var options = {
+          amount: PRODUCT_SUM * 100,  // amount in the smallest currency unit
+          currency: "INR",
+          receipt: "order_rcptid_11"
+        };
+
+        const order = await instance.orders.create(options, async (err, order)=>{
+          if (err) {
+            console.log(err)
+          } else {
+            console.log("one: " + order.id)
+            await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id }).then(() => {
+              res.json({ status: true, order })
+            })
+          }
+
+        })
+      } else if (req.body.payment == 'cod') {
+        let codRefId = USER_CART.userId
+        // for COD 
+        await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: USER_CART.userId, status: 'order placed' }).then(async () => {
+         await CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
+        }).then(() => {
+          res.json({ status: 'cod', order: codRefId })
+        })
+      }
+    } catch (error) {
+      res.render('not-found', { layout: false })
     }
   },
   verifyPayment: async (req, res) => {
-    console.log(req.body)
-    const ORDER = await ORDER_MODEL.findOne({ userId: req.session.user, status: 'waiting for payment' })
-    console.log("retrived from db is " + ORDER.payment_order_id)
-
-    const ref_id = ORDER._id
-    const razorpay_payment_id = req.body.razorpay_payment_id
-    const secret = process.env.RAZORPAY_KEY_SECRET
-    const razorpay_signature = req.body.razorpay_signature
-    let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-    hmac.update(req.body.razorpay_order_id + '|' + razorpay_payment_id)
-    hmac = hmac.digest('hex')
-
-    if (hmac == razorpay_signature) {
-      console.log("payment is checked succussfull")
-      res.json({ "signatureIsValid": true, ref_id: ref_id })
-    } else {
-      res.json({ "signatureIsValid": false, ref_id: ref_id })
+    try {
+      const ORDER = await ORDER_MODEL.findOne({ userId: req.session.user, status: 'waiting for payment' }).then(async (ORDER) => {
+        const ref_id = ORDER._id
+        const razorpay_payment_id = req.body.razorpay_payment_id
+        const secret = process.env.RAZORPAY_KEY_SECRET
+        const razorpay_signature = req.body.razorpay_signature
+        let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        hmac.update(req.body.razorpay_order_id + '|' + razorpay_payment_id)
+        hmac = hmac.digest('hex')
+        if (hmac == razorpay_signature) {
+          await ORDER_MODEL.updateOne(
+            { userId: req.session.user, status: 'waiting for payment' },
+            { payment_order_id: req.body.razorpay_order_id, status: "order placed" }).then(() => {
+              res.json({ "signatureIsValid": true, ref_id: ref_id })
+            })
+        } else {
+          res.json({ "signatureIsValid": false, ref_id: ref_id })
+        }
+      })
+    } catch (error) {
+      res.render('not-found', { layout: false })
     }
   },
   showPaymentSuccess: (req, res) => {
-    const REF_ID = req.params.id
-    res.render('userViews/payment-success', { REF_ID, cartItemsCount })
+    try {
+      const REF_ID = req.params.id
+      res.render('userViews/payment-success', { REF_ID, cartItemsCount })
+    } catch (error) {
+      res.render('not-found', { layout: false })
+    }
   },
   showPaymentFailed: (req, res) => {
-    const REF_ID = req.params.id
-    res.render('userViews/payment-fail', { REF_ID, cartItemsCount })
+    try {
+      const REF_ID = req.params.id
+      res.render('userViews/payment-fail', { REF_ID, cartItemsCount })
+    } catch (error) {
+      res.render('not-found', { layout: false })
+    }
   },
   viewProfile: async (req, res) => {
-    const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
-    res.render("userViews/profile", { userData: USER_DATA, cartItemsCount });
+    try {
+      const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
+      res.render("userViews/profile", { userData: USER_DATA, cartItemsCount });
+    } catch (error) {
+      res.render('not-found', { layout: false })
+    }
   },
   viewEditProfile: async (req, res) => {
-    const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
-    res.render("userViews/edit-profile-info", { userData: USER_DATA, cartItemsCount });
+    try {
+      const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
+      res.render("userViews/edit-profile-info", { userData: USER_DATA, cartItemsCount });
+    } catch (error) {
+
+    }
   },
   editProfile: async (req, res) => {
-    await USER_MODEL.updateOne(
-      { _id: req.session.user },
-      {
-        $set: {
-          name: req.body.name,
-          email: req.body.email,
-          phone: req.body.phone,
-        },
-      }
-    );
-    res.redirect("/profile");
+    try {
+      await USER_MODEL.updateOne(
+        { _id: req.session.user },
+        {
+          $set: {
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+          },
+        }
+      );
+      res.redirect("/profile");
+    } catch (error) {
+
+    }
   },
   viewEditAddress: (req, res) => {
-    USER_MODEL.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(req.session.user) } },
-      { $unwind: "$address" },
-      { $match: { "address._id": new mongoose.Types.ObjectId(req.params.id) } },
-    ]).then((doc) => {
-      res.render("userViews/edit-address", { address: doc[0].address, cartItemsCount });
-    });
+    try {
+      USER_MODEL.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(req.session.user) } },
+        { $unwind: "$address" },
+        { $match: { "address._id": new mongoose.Types.ObjectId(req.params.id) } },
+      ]).then((doc) => {
+        res.render("userViews/edit-address", { address: doc[0].address, cartItemsCount });
+      });
+    } catch (error) {
+
+    }
   },
   editAddress: async (req, res) => {
-    // Updates address details inside array using Object id of inner-object to change
-    await USER_MODEL.updateOne(
-      { _id: req.session.user, address: { $elemMatch: { _id: req.body.id } } },
-      {
-        $set: {
-          "address.$.address_line_1": req.body.address_line_1,
-          "address.$.address_line_2": req.body.address_line_2,
-          "address.$.landmark": req.body.landmark,
-          "address.$.town": req.body.town,
-          "address.$.state": req.body.state,
-          "address.$.pin_code": req.body.pin_code,
-        },
-      }
-    ).then(() => {
-      res.redirect("/profile");
-    });
+    try {
+      // Updates address details inside array using Object id of inner-object to change
+      await USER_MODEL.updateOne(
+        { _id: req.session.user, address: { $elemMatch: { _id: req.body.id } } },
+        {
+          $set: {
+            "address.$.address_line_1": req.body.address_line_1,
+            "address.$.address_line_2": req.body.address_line_2,
+            "address.$.landmark": req.body.landmark,
+            "address.$.town": req.body.town,
+            "address.$.state": req.body.state,
+            "address.$.pin_code": req.body.pin_code,
+          },
+        }
+      ).then(() => {
+        res.redirect("/profile");
+      });
+    } catch (error) {
+
+    }
   },
   profileViewAddAddress: (req, res) => {
-    res.render("userViews/profile-add-address", { cartItemsCount });
+    try {
+      res.render("userViews/profile-add-address", { cartItemsCount });
+    } catch (error) {
+
+    }
   },
   addProfileAddress: async (req, res) => {
-    await USER_MODEL.updateOne(
-      { _id: req.session.user },
-      {
-        $push: {
-          address: {
-            address_line_1: req.body.address_line_1,
-            address_line_2: req.body.address_line_2,
-            landmark: req.body.landmark,
-            town: req.body.town,
-            state: req.body.state,
-            pin_code: req.body.pin_code,
+    try {
+      await USER_MODEL.updateOne(
+        { _id: req.session.user },
+        {
+          $push: {
+            address: {
+              address_line_1: req.body.address_line_1,
+              address_line_2: req.body.address_line_2,
+              landmark: req.body.landmark,
+              town: req.body.town,
+              state: req.body.state,
+              pin_code: req.body.pin_code,
+            },
           },
-        },
-      }
-    );
-    res.redirect("/profile");
+        }
+      );
+      res.redirect("/profile");
+    } catch (error) {
+
+    }
   },
   viewOrdersToUser: async (req, res) => {
-    ORDER_MODEL.countDocuments({ userId: req.session.user })
-      .then((count) => {
-        return count;
-      }).then(async (count) => {
-        if (count < 1) {
-          res.render("userViews/no-items", { cartItemsCount });
-        } else {
-          const ORDERS = await ORDER_MODEL.find({ userId: req.session.user })
-            .populate("items.productId")
-            .lean();
-          res.render("userViews/orders", { orderDetails: ORDERS, cartItemsCount });
-        }
-      });
+    try {
+      ORDER_MODEL.countDocuments({ userId: req.session.user })
+        .then((count) => {
+          return count;
+        }).then(async (count) => {
+          if (count < 1) {
+            res.render("userViews/no-items", { cartItemsCount });
+          } else {
+            const ORDERS = await ORDER_MODEL.find({ userId: req.session.user, status: { $ne: "cancelled" } })
+              .populate("items.productId")
+              .lean()
+
+            const CANCELLED_ORDERS = await ORDER_MODEL.find({ userId: req.session.user, status: "cancelled" })
+              .populate("items.productId")
+              .lean()
+
+            return { ORDERS, CANCELLED_ORDERS }
+          }
+        }).then((result) => {
+          const orderDetails = result.ORDERS
+          const cancelledOrderDetails = result.CANCELLED_ORDERS
+
+          res.render("userViews/orders", { orderDetails, cancelledOrderDetails, cartItemsCount });
+        });
+    } catch (error) {
+
+    }
   },
   cancelOrderByUser: async (req, res) => {
-    console.log("cancel order by user");
-    console.log(req.session.user);
-    console.log(req.params.id);
-    await ORDER_MODEL.updateOne(
-      { _id: req.params.id },
-      { $set: { status: "cancelled" } }
-    ).then(() => {
-      res.redirect("/orders");
-    });
+    try {
+      await ORDER_MODEL.updateOne(
+        { _id: req.params.id },
+        { $set: { status: "cancelled" } }
+      ).then(() => {
+        res.redirect("/orders");
+      });
+    } catch (error) {
+
+    }
   },
   viewChangePassword: (req, res) => {
-    res.render("userViews/change-password", { cartItemsCount });
+    try {
+      res.render("userViews/change-password", { cartItemsCount });
+    } catch (error) {
+
+    }
   },
   changePassword: async (req, res) => {
-    await USER_MODEL.updateOne(
-      { _id: req.session.user },
-      { $set: { password: req.body.password } }
-    ).then(() => {
-      res.redirect("/profile");
-    });
-  },
+    try {
+      await USER_MODEL.updateOne(
+        { _id: req.session.user },
+        { $set: { password: req.body.password } }
+      ).then(() => {
+        res.redirect("/profile");
+      });
+    } catch (error) {
 
+    }
+  },
+  showErrorPage: (req, res) => {
+    res.render('not-found', { layout: false })
+  }
 };

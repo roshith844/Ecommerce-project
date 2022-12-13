@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700');
+
 /*
 The Meyer's Reset Code for reseting all of the default browser styles
 */
@@ -149,14 +151,18 @@ body{
 nav,
 main {
   background-color: #fcedda;
+  margin: 0;
+  padding: 0;
 }
 .signup-navigation,
 .login-navigation {
   background-color: #ee4e34;
   height: 30rem;
+  margin: 0;
+  padding: 0;
 }
 
-main.fullScreen {
+.fullScreen {
   min-height: 100vh;
   width:auto;
   margin: 0;

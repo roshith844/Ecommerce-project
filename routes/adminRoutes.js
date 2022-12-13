@@ -57,6 +57,7 @@ router.post("/categories/add", SESSION_MANAGER.verifyLoginAdmin, adminController
 router.get("/categories/edit/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.viewEditCategory);
 router.post("/categories/edit/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.editCategory);
 router.get("/categories/delete/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.deleteCategory);
+
 router.get("/orders", SESSION_MANAGER.verifyLoginAdmin, adminController.viewOrders);
 router.get("/orders/change-status/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.viewChangeStatus);
 router.post("/orders/change-status", SESSION_MANAGER.verifyLoginAdmin, adminController.changeStatus);

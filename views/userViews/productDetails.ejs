@@ -1,40 +1,45 @@
 <main class="fullScreen">
   <div id="alerts"></div>
-  <div class="container">
-    <% info.forEach((info)=>{ %>
-    <div class="row">
-      <div class="col-6">
-        <img class="col-6" src="/<%= info.image %>" alt="" />
+  <% info.forEach((info)=>{ %>
+    <div class="container">
+      <div class="row">
+        <div class="col-6 justify-content-center align-items-center  mt-5">
+          <img class="col-12" src="/<%= info.image %>" alt="" />
+        </div>
+        <div class="col-6 mt-5 ">
+          <h1>
+            <%= info.name %>
+          </h1>
+          <h2>₹ <%= info.price %>
+          </h2>
+          <p>
+            <%= info.description %>
+          </p>
+          <button class="btn btn-primary" onclick="addToCart('<%= info._id %>')">
+            Add to Cart
+          </button>
+        </div>
       </div>
-      <div class="col-6">
-        <h1><%= info.name %></h1>
-        <h2>₹ <%= info.price %></h2>
-        <p><%= info.description %></p>
-        <button class="btn btn-primary" onclick="addToCart('<%= info._id %>')">
-          Add to Cart
-        </button>
-      </div>
+      <% }) %>
     </div>
-    <% }) %>
-  </div>
 
-  <script>
-    function addToCart(productId) {
-      $.ajax({
-        url: "/add-to-cart/" + productId,
-        method: "get",
-        success: (response) => {
-          if (response.status) {
-            let count = $("#cartCount").html();
-            count = parseInt(count) + 1;
-            $("#cartCount").html(count);
-            // alert  messege
-            $("#alerts").append(
-              '<div  class="alert alert-success alert-dismissible fade show" role="alert"> Item Added to Cart! <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
-            );
-          }
-        },
-      });
-    }
-  </script>
+    <script>
+      function addToCart(productId) {
+        $.ajax({
+          url: "/add-to-cart/" + productId,
+          method: "get",
+          success: (response) => {
+            if (response.status) {
+              let count = $("#cartCount").html();
+              count = parseInt(count) + 1;
+              $("#cartCount").html(count);
+              // alert  messege
+              $("#alerts").append(
+                '<div  class="alert alert-success alert-dismissible fade show" role="alert"> Item Added to Cart! <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+              );
+            }
+          },
+        });
+      }
+    </script>
 </main>

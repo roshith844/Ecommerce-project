@@ -1,10 +1,12 @@
-<main class="fullScreen">
-<h1>Otp verification page</h1>
-<form action="verify-otp" method="post">
-    <input name="phone" type="text" value="<%= data %>">
-    <label for="otp">Enter Your OTP
-        <input type="text" name="otp" id="otp">
-    </label>
-    <button  class="btn btn-primary" type="submit">Submit OTP</button>
-</form>
+<main class="fullScreen container">
+    <div class="row">
+        <h1>Otp verification page</h1>
+        <form action="verify-otp" method="post">
+            <input name="phone" type="text" value="<%= data %>"  class="mt-5">
+            <label for="otp" class="form-label">Enter Your OTP
+                <input type="text" name="otp" id="otp" class="form-control">
+            </label>
+            <button  class="btn btn-primary" type="submit">Submit OTP</button>
+        </form>
+    </div> 
 </main>
