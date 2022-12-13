@@ -536,11 +536,10 @@ module.exports = {
           if (err) {
             console.log(err)
           } else {
-            console.log(order)
+            console.log("one: " + order.id)
             ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id }).then(() => {
               res.json({ status: true, order })
             })
-
           }
 
         })
@@ -563,23 +562,24 @@ module.exports = {
   },
   verifyPayment: async (req, res) => {
     try {
-      const ORDER = await ORDER_MODEL.findOne({ userId: req.session.user, status: 'waiting for payment' })
-      console.log("retrived from db is " + ORDER.payment_order_id)
-
-      const ref_id = ORDER._id
-      const razorpay_payment_id = req.body.razorpay_payment_id
-      const secret = process.env.RAZORPAY_KEY_SECRET
-      const razorpay_signature = req.body.razorpay_signature
-      let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-      hmac.update(req.body.razorpay_order_id + '|' + razorpay_payment_id)
-      hmac = hmac.digest('hex')
-
-      if (hmac == razorpay_signature) {
-        console.log("payment is checked succussfull")
-        res.json({ "signatureIsValid": true, ref_id: ref_id })
-      } else {
-        res.json({ "signatureIsValid": false, ref_id: ref_id })
-      }
+      const ORDER = await ORDER_MODEL.findOne({ userId: req.session.user, status: 'waiting for payment' }).then(async (ORDER) => {
+        const ref_id = ORDER._id
+        const razorpay_payment_id = req.body.razorpay_payment_id
+        const secret = process.env.RAZORPAY_KEY_SECRET
+        const razorpay_signature = req.body.razorpay_signature
+        let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        hmac.update(req.body.razorpay_order_id + '|' + razorpay_payment_id)
+        hmac = hmac.digest('hex')
+        if (hmac == razorpay_signature) {
+          await ORDER_MODEL.updateOne(
+            { userId: req.session.user, status: 'waiting for payment' },
+            { payment_order_id: req.body.razorpay_order_id, status: "order placed" }).then(() => {
+              res.json({ "signatureIsValid": true, ref_id: ref_id })
+            })
+        } else {
+          res.json({ "signatureIsValid": false, ref_id: ref_id })
+        }
+      })
     } catch (error) {
       res.render('not-found', { layout: false })
     }
