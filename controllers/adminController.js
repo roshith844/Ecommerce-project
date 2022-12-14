@@ -300,10 +300,10 @@ module.exports = {
     const ALL_COUPONS = await COUPON_MODEL.find({})
     res.render('adminViews/coupons', { layout: "layouts/adminLayout", coupons: ALL_COUPONS })
   },
-  viewEditCoupon: (req, res) => {
+  viewAddCoupon: (req, res) => {
     res.render('adminViews/add-coupon', { layout: "layouts/adminLayout" })
   },
-  editCoupon: async (req, res) => {
+  addCoupon: async (req, res) => {
     // Check coupon Code exists
     const COUPON_EXIST = await COUPON_MODEL.exists({ coupon_code: req.body.couponCode })
     // if Coupon doesn't Exist Add coupon to Database
