@@ -4,32 +4,28 @@ const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
 const CATEGORY_MODEL = require("../model/categorySchema");
 const ORDER_MODEL = require("../model/orderSchema");
+const COUPON_MODEL = require("../model/couponSchema")
 var cartItemsCount;
 module.exports = {
   goToAdminHome: async (req, res) => {
     if (req.session.admin) {
       // Gets count of total Users
-      const USER_COUNT = await USER_MODEL.countDocuments({}).then((count) => {
-        return count;
-      })
+      const USER_COUNT = await USER_MODEL.countDocuments({})
       // Gets count of total Categories
-      const CATEGORY_COUNT = await CATEGORY_MODEL.countDocuments({}).then((count) => {
-        return count;
-      })
+      const CATEGORY_COUNT = await CATEGORY_MODEL.countDocuments({})
       // Gets count of total Products
-      const PRODUCT_COUNT = await PRODUCT_MODEL.countDocuments({ isDeleted: false }).then((count) => {
-        return count;
-      })
+      const PRODUCT_COUNT = await PRODUCT_MODEL.countDocuments({ isDeleted: false })
       // Gets count of total Orders
-      const ORDER_COUNT = await ORDER_MODEL.countDocuments({}).then((count) => {
-        return count;
-      })
+      const ORDER_COUNT = await ORDER_MODEL.countDocuments({})
+      // Gets count of Total Coupons
+      const COUPON_COUNT = await COUPON_MODEL.countDocuments({})
 
       const COUNT = {
         user: USER_COUNT,
         category: CATEGORY_COUNT,
         product: PRODUCT_COUNT,
-        order: ORDER_COUNT
+        order: ORDER_COUNT,
+        coupon: COUPON_COUNT
       }
       res.render("adminViews/adminHome", { count: COUNT, layout: "layouts/adminLayout" });
     } else {
@@ -299,5 +295,8 @@ module.exports = {
       req.session.orderCancelled = true;
       res.redirect("/admin/orders");
     });
+  },
+  viewCoupons: (req, res) => {
+    res.render('adminViews/coupons',{ layout: "layouts/adminLayout"})
   }
 };

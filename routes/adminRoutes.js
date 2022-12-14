@@ -62,6 +62,10 @@ router.get("/orders", SESSION_MANAGER.verifyLoginAdmin, adminController.viewOrde
 router.get("/orders/change-status/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.viewChangeStatus);
 router.post("/orders/change-status", SESSION_MANAGER.verifyLoginAdmin, adminController.changeStatus);
 router.get("/orders/cancel/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.cancelOrder);
+
+// Routes for Coupon Management
+router.get('/coupons', SESSION_MANAGER.verifyLoginAdmin, adminController.viewCoupons)
+
 router.get("/logout", SESSION_MANAGER.verifyLoginAdmin, adminController.doAdminLogout);
 
 module.exports = router;
