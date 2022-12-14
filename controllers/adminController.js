@@ -296,7 +296,21 @@ module.exports = {
       res.redirect("/admin/orders");
     });
   },
-  viewCoupons: (req, res) => {
-    res.render('adminViews/coupons',{ layout: "layouts/adminLayout"})
+  viewCoupons: async (req, res) => {
+    const ALL_COUPONS = await COUPON_MODEL.find({})
+    res.render('adminViews/coupons', { layout: "layouts/adminLayout", coupons: ALL_COUPONS })
+  },
+  viewEditCoupon: (req, res) => {
+    res.render('adminViews/add-coupon', { layout: "layouts/adminLayout" })
+  },
+  editCoupon: async (req, res) => {
+    // Check coupon Code exists
+    const COUPON_EXIST = await COUPON_MODEL.exists({ coupon_code: req.body.couponCode })
+    // if Coupon doesn't Exist Add coupon to Database
+    if (COUPON_EXIST == null) {
+      await COUPON_MODEL.create({ coupon_code: req.body.couponCode, discount: req.body.couponDiscount })
+    }
+    // Redirect to Coupons page
+    res.redirect('/admin/coupons')
   }
-};
+}
