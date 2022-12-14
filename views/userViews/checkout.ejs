@@ -55,9 +55,10 @@
       method: "post",
       data: $("#checkout").serialize(),
       success: (res) => {
+        console.log(res)
         if(res.status == 'cod'){
           location.href = "/payment-success/" + res.order;
-        }else if (res.status) {
+        }else if (res.status == 'online') {
           var options = {
             key: "rzp_test_tN9rva6tbuI8ng", // Key ID generated from the Dashboard
             amount: res.order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise

@@ -523,26 +523,29 @@ module.exports = {
         $unwind: "$product_price"
       },
       { $addFields: { total_price_of_item: { $multiply: ["$product_price", "$quantity"] } } },
-      ]).exec().then((result) => {
-        return result;
-      })
+      ]).exec()
+      // .then((result) => {
+      //   return result;
+      // })
 
-      const TOTAL_AMOUNT = TOTAL_PRICE.reduce((accumulator, itemObj) => {
+      // Calculate total amount
+      let TOTAL_AMOUNT = TOTAL_PRICE.reduce((accumulator, itemObj) => {
         return accumulator + itemObj.total_price_of_item;
       }, 0)
 
       // Checks coupon Code 
       const COUPON_DOC = await COUPON_MODEL.findOne({ coupon_code: req.body.coupon })
-      if (COUPON_DOC) {
-        const DISCOUNT = (COUPON_DOC.discount)
+      if (COUPON_DOC != null) {
+        const DISCOUNT = COUPON_DOC.discount
         TOTAL_AMOUNT = Math.floor(TOTAL_AMOUNT - (TOTAL_AMOUNT * (DISCOUNT / 100)))
+      } else {
+        console.log("doc not found")
       }
 
-      await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" }]).then((result) => {
-        console.log("the result is" + result)
-      })
+      // await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" }]).then((result) => {
+      //   console.log("the result is" + result)
+      // })
       const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }) //Finds user cart
-
       // Creates new Order
       await ORDER_MODEL.create({
         userId: USER_CART.userId,
@@ -559,8 +562,8 @@ module.exports = {
         payment_method: req.body.payment,
         amount: TOTAL_AMOUNT,
         status: 'waiting for payment'
-      }).then( () => {
-       CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+      }).then(() => {
+        CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
           if (err) {
             console.log(err);
           }
@@ -570,36 +573,36 @@ module.exports = {
       if (req.body.payment == 'razorpay') {
         console.log("checked razorpay")
         var options = {
-          amount: PRODUCT_SUM * 100,  // amount in the smallest currency unit
+          amount: TOTAL_AMOUNT * 100,  // amount in the smallest currency unit
           currency: "INR",
           receipt: "order_rcptid_11"
         };
-
-        const order = await instance.orders.create(options, async (err, order)=>{
+        console.log("debug : order created")
+        const order = await instance.orders.create(options, async (err, order) => {
           if (err) {
             console.log(err)
           } else {
             console.log("one: " + order.id)
             await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id }).then(() => {
-              res.json({ status: true, order })
+              res.json({ status: 'online', order })
             })
           }
-
         })
       } else if (req.body.payment == 'cod') {
-        let codRefId = USER_CART.userId
+        let codRefId = (USER_CART.userId).toString()
         // for COD 
-        await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: USER_CART.userId, status: 'order placed' }).then(async () => {
-         await CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
-            if (err) {
-              console.log(err);
-            }
-          });
-        }).then(() => {
+        await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: USER_CART.userId, status: 'order placed' })
+        // await CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+        //   if (err) {
+        //     console.log(err);
+        //   }else{
+        //     console.log("deleted cart")
+        //   }
+        // })
           res.json({ status: 'cod', order: codRefId })
-        })
       }
     } catch (error) {
+      console.log(error)
       res.render('not-found', { layout: false })
     }
   },
