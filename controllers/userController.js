@@ -583,7 +583,7 @@ module.exports = {
             console.log(err)
           } else {
             console.log("one: " + order.id)
-            await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id }).then(() => {
+            await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id, amount: TOTAL_AMOUNT }).then(() => {
               res.json({ status: 'online', order })
             })
           }
