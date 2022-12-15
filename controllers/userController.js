@@ -239,12 +239,10 @@ module.exports = {
         }
       }
     } catch {
-      res
-        .status(400)
-        .render("userViews/login", {
-          msg: "invalid credentials!! Try Again",
-          cartItemsCount: 0,
-        });
+      res.status(400).render("userViews/login", {
+        msg: "invalid credentials!! Try Again",
+        cartItemsCount: 0,
+      });
     }
   },
   // shows page for OTP
@@ -593,13 +591,16 @@ module.exports = {
         coupon_code: req.body.coupon,
       });
       if (COUPON_DOC != null) {
+        const DISCOUNT = COUPON_DOC.discount;
+        const DISCOUNT_AMOUNT = Math.floor(TOTAL_AMOUNT * (DISCOUNT / 100));
+
         // Checks Total amount is less than or Equal to purchase Limit for Coupon
-        if (TOTAL_AMOUNT <= COUPON_DOC.purchaseLimit) {
-          console.log("you are eligible amouont purcahsed is less than purchase amount");
-          const DISCOUNT = COUPON_DOC.discount;
-          TOTAL_AMOUNT = Math.floor(
-            TOTAL_AMOUNT - TOTAL_AMOUNT * (DISCOUNT / 100)
-          );
+        if (
+          TOTAL_AMOUNT <= COUPON_DOC.purchaseLimit &&
+          DISCOUNT_AMOUNT <= COUPON_DOC.discountLimit
+        ) {
+          // Calculates Total Amount to Discount
+          TOTAL_AMOUNT = Math.floor(TOTAL_AMOUNT - DISCOUNT_AMOUNT);
         } else {
         }
       } else {
