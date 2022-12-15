@@ -18,7 +18,7 @@ module.exports = {
       // Gets count of total Orders
       const ORDER_COUNT = await ORDER_MODEL.countDocuments({})
       // Gets count of Total Coupons
-      const COUPON_COUNT = await COUPON_MODEL.countDocuments({})
+      const COUPON_COUNT = await COUPON_MODEL.countDocuments({isDeleted: false})
 
       const COUNT = {
         user: USER_COUNT,
@@ -297,7 +297,7 @@ module.exports = {
     });
   },
   viewCoupons: async (req, res) => {
-    const ALL_COUPONS = await COUPON_MODEL.find({})
+    const ALL_COUPONS = await COUPON_MODEL.find({isDeleted: false})
     res.render('adminViews/coupons', { layout: "layouts/adminLayout", coupons: ALL_COUPONS })
   },
   viewAddCoupon: (req, res) => {
@@ -311,6 +311,10 @@ module.exports = {
       await COUPON_MODEL.create({ coupon_code: req.body.couponCode, discount: req.body.couponDiscount })
     }
     // Redirect to Coupons page
+    res.redirect('/admin/coupons')
+  },
+  deleteCoupon : async (req, res) => {
+    await COUPON_MODEL.updateOne({_id: req.params.id},{ $set: {isDeleted: true} })
     res.redirect('/admin/coupons')
   }
 }

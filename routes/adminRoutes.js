@@ -67,6 +67,7 @@ router.get("/orders/cancel/:id", SESSION_MANAGER.verifyLoginAdmin, adminControll
 router.get('/coupons', SESSION_MANAGER.verifyLoginAdmin, adminController.viewCoupons)
 router.get('/coupons/add', SESSION_MANAGER.verifyLoginAdmin, adminController.viewAddCoupon)
 router.post('/coupons/add', SESSION_MANAGER.verifyLoginAdmin, adminController.addCoupon)
+router.get('/coupons/:id', SESSION_MANAGER.verifyLoginAdmin, adminController.deleteCoupon )
 
 router.get("/logout", SESSION_MANAGER.verifyLoginAdmin, adminController.doAdminLogout);
 

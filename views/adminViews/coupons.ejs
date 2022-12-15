@@ -28,13 +28,17 @@
                                              <%= item.discount %>
                                         </td>
                                         <td>
-                                             <!-- <a
+                                             <a class="btn btn-primary" href="/admin/coupons/<%= item._id %> "
+                                                  class="btn btn-danger"
+                                                  onclick="return confirm('Delete coupon?')">Delete</a>
+                                        </td>
+                                        <!-- <a
                             class="btn btn-primary"
                             href="/admin/categories/edit"
                             class="btn btn-primary"
                             >Edit</a
-                          > -->
-                                        </td>
+                          >
+                                        </td> -->
 
                                         <!-- <a
                             class="btn btn-primary"
