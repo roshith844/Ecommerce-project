@@ -7,6 +7,12 @@ const couponSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  discountLimit: {
+     type: Number, default: 10000
+  },
+  purchaseLimit: {
+    type: Number, default: 10000
+  },
   isDeleted: {
     type: Boolean,
     default: "false",
