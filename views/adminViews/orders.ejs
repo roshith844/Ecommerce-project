@@ -1,62 +1,93 @@
 <main class="fullScreen">
- <!-- alert message -->
- <% if(message.length> 0){ %>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="alert"
-      aria-label="Close"
-    ></button>
-    <p><%= message %></p>
-  </div>
-  <% }else{ %> <% } %>
- 
+  <!-- alert message -->
+  <% if(message.length> 0){ %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <p>
+        <%= message %>
+      </p>
+    </div>
+    <% }else{ %>
+      <% } %>
 
-  <h1>Orders</h1>
-  <table class="table" id="orderTable">
-    <thead>
-      <tr>
-        <th scope="col">No</th>
-        <th scope="col">Date</th>
-        <th scope="col">order ID</th>
-        <th scope="col">Name</th>
-        <th scope="col">Email</th>
-        <th scope="col">Payment Method</th>
-        <th scope="col">Amount (₹)</th>
-        <th scope="col">Status</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% let count=1; %> <% orders.forEach((order)=>{%>
-      <tr>
-        <td><%= count %></td>
-        <td><%= order.date %></td>
-        <td><%= order._id %></td>
-        <td><%= order.userId.name %></td>
-        <td><%= order.userId.email %></td>
-        <td><%= order.payment_method %></td>
-        <td><%= order.amount %></td>
-        <td><%= order.status %></td>
-        <td>
-          
-<% if(order.status != 'cancelled'){ %> 
-  <a href="/admin/orders/change-status/<%= order._id %>"
-    ><button class="btn btn-primary">Change Order Status</button>
-  </a>
-  <a
-            href="/admin/orders/cancel/<%= order._id %>"
-            onclick="confirm('Cancel Order <%= order._id %>?')"
-            class="btn btn-danger"
-            >Cancel Order
-          </a>
-  <%  } %> 
-        </td>
-      </tr>
-      <% count++; %> <% }) %>
-    </tbody>
-  </table>
+
+        <h1>Orders</h1>
+        <table class="table" id="orderTable">
+          <thead>
+            <tr>
+              <th scope="col">No</th>
+              <th scope="col">Date</th>
+              <th scope="col">order ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Items</th>
+              <th scope="col">Payment Method</th>
+              <th scope="col">Amount (₹)</th>
+              <th scope="col">Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% let count=1; %>
+              <% orders.forEach((order)=>{%>
+                <tr>
+                  <td>
+                    <%= count %>
+                  </td>
+                  <td>
+                    <%= order.date %>
+                  </td>
+                  <td>
+                    <%= order._id %>
+                  </td>
+                  <td>
+                    <%= order.userId.name %>
+                  </td>
+                  <td>
+                    <%= order.userId.email %>
+                  </td>
+                  <td>
+                    <% order.items.forEach((item)=>{ %>
+                      <div>
+                        <ul class="list-group">
+                          <li class="list-group-item">product Name: <%= item.productId.name %>
+                          </li>
+                          <li class="list-group-item">Price : ₹ <%= item.productId.price %>
+                          </li>
+                          <li class="list-group-item">Quantity: <%= item.quantity %>
+                          </li>
+                          <% const TOTAL_PRICE=(item.productId.price)*(item.quantity) %>
+                            <li class="list-group-item list-group-item-dark">Total Price : <%= TOTAL_PRICE %>
+                            </li>
+                        </ul>
+                      </div>
+                      <% }) %>
+                  </td>
+                  <td>
+                    <%= order.payment_method %>
+                  </td>
+                  <td>
+                    <%= order.amount %>
+                  </td>
+                  <td>
+                    <%= order.status %>
+                  </td>
+                  <td>
+
+                    <% if(order.status !='cancelled' ){ %>
+                      <a href="/admin/orders/change-status/<%= order._id %>"><button class="btn btn-primary">Change
+                          Order Status</button>
+                      </a>
+                      <a href="/admin/orders/cancel/<%= order._id %>"
+                        onclick="confirm('Cancel Order <%= order._id %>?')" class="btn btn-danger">Cancel Order
+                      </a>
+                      <% } %>
+                  </td>
+                </tr>
+                <% count++; %>
+                  <% }) %>
+          </tbody>
+        </table>
 </main>
 <script>
   $(document).ready(function () {
