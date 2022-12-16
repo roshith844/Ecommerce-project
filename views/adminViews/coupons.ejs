@@ -11,6 +11,9 @@
                               <th scope="col">No.</th>
                               <th scope="col">Coupon Code</th>
                               <th scope="col">Discount ( % )</th>
+                              <th scope="col">Limit of Discount</th>
+                              <th scope="col">Purchase Limit</th>
+                              <th scope="col">Expiry Date</th>
                               <th scope="col"></th>
                          </tr>
                     </thead>
@@ -26,6 +29,15 @@
                                         </td>
                                         <td>
                                              <%= item.discount %>
+                                        </td>
+                                        <td>
+                                             <%= item.discountLimit %>
+                                        </td>
+                                        <td>
+                                             <%= item.purchaseLimit %>
+                                        </td>
+                                        <td>
+                                             <%= item.expiryDate.toDateString() %>
                                         </td>
                                         <td>
                                              <a class="btn btn-primary" href="/admin/coupons/<%= item._id %> "
