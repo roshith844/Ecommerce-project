@@ -13,7 +13,7 @@ const COUPON_MODEL = require("../model/couponSchema");
 const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 const Razorpay = require("razorpay");
-var cartItemsCount = 0;
+var cartItemsCount;
 var instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -341,12 +341,12 @@ module.exports = {
           cartItemsCount = USER_CART.items.length;
           res.render("userViews/home", {
             products: products,
-            cartItemsCount: 0,
+            cartItemsCount,
           });
         } else {
           res.render("userViews/home", {
             products: products,
-            cartItemsCount: 0,
+            cartItemsCount,
           });
         }
       } else {
@@ -403,21 +403,17 @@ module.exports = {
 
   addToCart: async (req, res) => {
     try {
-      const USER_ID = req.session.user;
+     const USER_ID = req.session.user
       const USER = await CART_MODEL.findOne({ userId: USER_ID }); // checks user on db
-
       // Checking weather user has a cart or not
       if (USER) {
         // checks product exists on cart
-        const PRODUCT_EXIST = await CART_MODEL.findOne({
-          items: { $elemMatch: { productId: req.params.id } },
+        const PRODUCT_EXIST = await CART_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
         });
         if (PRODUCT_EXIST) {
           addOneProduct(USER_ID, req.params.id);
-
           // if product is not there, Adds the product to cart
         } else {
-          console.log("product not there");
           await CART_MODEL.updateOne(
             { userId: USER_ID },
             { $push: { items: { productId: req.params.id } } }
@@ -439,7 +435,9 @@ module.exports = {
       }
       res.json({ status: true });
       // res.redirect("/cart");
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   },
 
   incrementProduct: async (req, res) => {
