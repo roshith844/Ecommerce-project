@@ -1,5 +1,5 @@
 const session = require("express-session");
-const crypto = require('crypto')
+const crypto = require("crypto");
 const cookieParser = require("cookie-parser");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
@@ -8,13 +8,14 @@ const USER_MODEL = require("../model/userSchema");
 const OTP_LOGIN_MODEL = require("../model/otpLoginSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
+const WISHLIST_MODEL = require("../model/wishlistSchema");
+//wishlistSchema
 const ORDER_MODEL = require("../model/orderSchema");
-const COUPON_MODEL = require("../model/couponSchema")
+const COUPON_MODEL = require("../model/couponSchema");
 const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
-const PASSWORD_REGEX =
-  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
-const Razorpay = require('razorpay');
-var cartItemsCount = 0;
+const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
+const Razorpay = require("razorpay");
+var cartItemsCount;
 var instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -32,9 +33,20 @@ async function addOneProduct(userId, productId) {
 
 // To Decrement by one on cart
 async function removeOneProduct(userId, productId) {
-  const QUANTITY = await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(userId), items: { $elemMatch: { productId: mongoose.Types.ObjectId(productId) } } } }, { $unwind: "$items" }, { $match: { "items.productId": mongoose.Types.ObjectId(productId) } }]).then((result) => {
+  const QUANTITY = await CART_MODEL.aggregate([
+    {
+      $match: {
+        userId: mongoose.Types.ObjectId(userId),
+        items: {
+          $elemMatch: { productId: mongoose.Types.ObjectId(productId) },
+        },
+      },
+    },
+    { $unwind: "$items" },
+    { $match: { "items.productId": mongoose.Types.ObjectId(productId) } },
+  ]).then((result) => {
     return result;
-  })
+  });
   if (QUANTITY[0].items.quantity != 1) {
     await CART_MODEL.updateOne(
       { userId: userId, items: { $elemMatch: { productId: productId } } },
@@ -42,30 +54,94 @@ async function removeOneProduct(userId, productId) {
     ).then(() => {
       console.log("updated Decremented");
     });
-
   } else {
-    return false
+    return false;
   }
 }
 
 // Calculates Total Price of Cart items
 function getTotalPrice(userId) {
   return new Promise((resolve, reject) => {
-    CART_MODEL.findOne({ userId: userId }).populate("items.productId").lean().then((result) => {
-      let totalPrice = 0;
-      for (let i = 0; i < result.items.length; i++) {
-        totalPrice += (result.items[i].quantity) * (result.items[i].productId.price)
-      }
-      resolve(totalPrice)
-    })
-
-
-  })
+    CART_MODEL.findOne({ userId: userId })
+      .populate("items.productId")
+      .lean()
+      .then((result) => {
+        let totalPrice = 0;
+        for (let i = 0; i < result.items.length; i++) {
+          totalPrice +=
+            result.items[i].quantity * result.items[i].productId.price;
+        }
+        resolve(totalPrice);
+      });
+  });
   //  .then((totalPrice)=>{
   //   console.log(totalPrice)
 
   // })
 }
+
+/*
+Functions for wishlist
+*/
+// To increment by one on Wishlist
+async function addOneProductWishlist(userId, productId) {
+  await WISHLIST_MODEL.updateOne(
+    { userId: userId, items: { $elemMatch: { productId: productId } } },
+    { $inc: { "items.$.quantity": 1 } }
+  ).then(() => {
+    console.log("updated incremented");
+  });
+}
+
+// To Decrement by one on Wishlist
+async function removeOneProductWishlist(userId, productId) {
+  const QUANTITY = await WISHLIST_MODEL.aggregate([
+    {
+      $match: {
+        userId: mongoose.Types.ObjectId(userId),
+        items: {
+          $elemMatch: { productId: mongoose.Types.ObjectId(productId) },
+        },
+      },
+    },
+    { $unwind: "$items" },
+    { $match: { "items.productId": mongoose.Types.ObjectId(productId) } },
+  ]).then((result) => {
+    return result;
+  });
+  if (QUANTITY[0].items.quantity != 1) {
+    await WISHLIST_MODEL.updateOne(
+      { userId: userId, items: { $elemMatch: { productId: productId } } },
+      { $inc: { "items.$.quantity": -1 } }
+    ).then(() => {
+      console.log("updated Decremented");
+    });
+  } else {
+    return false;
+  }
+}
+
+// Calculates Total Price of Wishlist items
+function getTotalPriceWishlist(userId) {
+  return new Promise((resolve, reject) => {
+    WISHLIST_MODEL.findOne({ userId: userId })
+      .populate("items.productId")
+      .lean()
+      .then((result) => {
+        let totalPrice = 0;
+        for (let i = 0; i < result.items.length; i++) {
+          totalPrice +=
+            result.items[i].quantity * result.items[i].productId.price;
+        }
+        resolve(totalPrice);
+      });
+  });
+  //  .then((totalPrice)=>{
+  //   console.log(totalPrice)
+
+  // })
+}
+
 
 // checks Phone Number exists on database
 async function checkPhoneNumber(userPhoneNumber) {
@@ -86,19 +162,22 @@ module.exports = {
   // Renders Login Page
   goToLogin: (req, res) => {
     try {
-      res.render("userViews/login", { msg: "", cartItemsCount: 0, layout: "layouts/guest-layout" });
-    } catch (error) {
-
-    }
+      res.render("userViews/login", {
+        msg: "",
+        cartItemsCount: 0,
+        layout: "layouts/guest-layout",
+      });
+    } catch (error) {}
   },
   // Renders Signup page
   goTosignUp: (req, res) => {
     try {
-      res.render("userViews/signup", { msg: "", cartItemsCount: 0, layout: "layouts/guest-layout" });
-    } catch (error) {
-
-    }
-
+      res.render("userViews/signup", {
+        msg: "",
+        cartItemsCount: 0,
+        layout: "layouts/guest-layout",
+      });
+    } catch (error) {}
   },
   // Sends user data to database for Registration
   sendToDatabase: async (req, res) => {
@@ -113,19 +192,25 @@ module.exports = {
 
         if (userExist == true) {
           res.render("userViews/signup", {
-            msg: "Phone Number already exists! Try again", cartItemsCount: 0
+            msg: "Phone Number already exists! Try again",
+            cartItemsCount: 0,
           });
         } else {
           if (!validEmail && !validPassword) {
             res.render("userViews/signup", {
-              msg: "Invalid Email Format & Password", cartItemsCount: 0
+              msg: "Invalid Email Format & Password",
+              cartItemsCount: 0,
             });
           } else if (!validEmail) {
-            res.render("userViews/signup", { msg: "Invalid Email Format", cartItemsCount: 0 });
+            res.render("userViews/signup", {
+              msg: "Invalid Email Format",
+              cartItemsCount: 0,
+            });
           } else if (!validPassword) {
             res.render("userViews/signup", {
-              msg: "password= should be Minimum eight characters, at least one letter, one number and one special character",
-              cartItemsCount: 0
+              msg:
+                "password= should be Minimum eight characters, at least one letter, one number and one special character",
+              cartItemsCount: 0,
             });
           } else {
             if (
@@ -144,8 +229,9 @@ module.exports = {
               });
             } else {
               res.render("userViews/signup", {
-                msg: "Something went wrong!! Try Again", cartItemsCount: 0,
-                layout: "layouts/guest-layout"
+                msg: "Something went wrong!! Try Again",
+                cartItemsCount: 0,
+                layout: "layouts/guest-layout",
               });
             }
           }
@@ -153,11 +239,17 @@ module.exports = {
       } else {
         console.log("password doesn't match");
         res.render("userViews/signup", {
-          msg: "password doesn't match. Try Again", cartItemsCount: 0, layout: "layouts/guest-layout"
+          msg: "password doesn't match. Try Again",
+          cartItemsCount: 0,
+          layout: "layouts/guest-layout",
         });
       }
     } catch (error) {
-      res.render("userViews/signup", { msg: error, cartItemsCount: 0, layout: "layouts/guest-layout" });
+      res.render("userViews/signup", {
+        msg: error,
+        cartItemsCount: 0,
+        layout: "layouts/guest-layout",
+      });
     }
   },
   doLogin: async (req, res) => {
@@ -170,46 +262,62 @@ module.exports = {
         const userDoc = await USER_MODEL.findOne({ email: req.body.email });
         if (userDoc.password == req.body.password) {
           if (userDoc.blockStatus == true) {
-            res.render("userViews/login", { msg: "You were blocked by Admin", cartItemsCount: 0 });
+            res.render("userViews/login", {
+              msg: "You were blocked by Admin",
+              cartItemsCount: 0,
+            });
           } else {
             req.session.user = userDoc._id;
             res.redirect("/");
           }
         } else {
-          res.render("userViews/login", { msg: "Invalid credentials!!", cartItemsCount: 0 });
+          res.render("userViews/login", {
+            msg: "Invalid credentials!!",
+            cartItemsCount: 0,
+          });
         }
       } else {
         if (
           EMAIL_REGEX.test(req.body.email) == false &&
           PASSWORD_REGEX.test(req.body.password) == false
         ) {
-          res.render("userViews/login", { msg: "Invalid email or Password", cartItemsCount: 0 });
+          res.render("userViews/login", {
+            msg: "Invalid email or Password",
+            cartItemsCount: 0,
+          });
         } else if (EMAIL_REGEX.test(req.body.email) == false) {
           res.render("userViews/login", {
-            msg: "Invalid credentials!! Enter a valid email Address", cartItemsCount: 0
+            msg: "Invalid credentials!! Enter a valid email Address",
+            cartItemsCount: 0,
           });
         } else if (PASSWORD_REGEX.test(req.body.password) == false) {
           res.render("userViews/login", {
-            msg: "password should be Minimum eight characters, at least one letter, one number and one special character",
-            cartItemsCount: 0
+            msg:
+              "password should be Minimum eight characters, at least one letter, one number and one special character",
+            cartItemsCount: 0,
           });
         } else {
-          res.render("userViews/login", { msg: "Something went wrong", cartItemsCount: 0 });
+          res.render("userViews/login", {
+            msg: "Something went wrong",
+            cartItemsCount: 0,
+          });
         }
       }
     } catch {
-      res
-        .status(400)
-        .render("userViews/login", { msg: "invalid credentials!! Try Again", cartItemsCount: 0 });
+      res.status(400).render("userViews/login", {
+        msg: "invalid credentials!! Try Again",
+        cartItemsCount: 0,
+      });
     }
   },
   // shows page for OTP
   getPhoneNumber: (req, res) => {
     try {
-      res.render("userViews/otpLogin", { cartItemsCount: 0, layout: "layouts/guest-layout" });
-    } catch (error) {
-
-    }
+      res.render("userViews/otpLogin", {
+        cartItemsCount: 0,
+        layout: "layouts/guest-layout",
+      });
+    } catch (error) {}
   },
   generateOtp: async (req, res) => {
     try {
@@ -247,7 +355,10 @@ module.exports = {
 
         MY_OTP_SENDER(randomCode, USER_PHONE_NUMBER); // Sends email to user
 
-        res.render("userViews/verify-otp", { data: req.body.phone, cartItemsCount: 0 }); // Renders page to verify OTP
+        res.render("userViews/verify-otp", {
+          data: req.body.phone,
+          cartItemsCount: 0,
+        }); // Renders page to verify OTP
       }
     } catch (error) {
       console.log(error);
@@ -267,7 +378,10 @@ module.exports = {
       console.log("code from db Is:" + userCodeObj.code);
       if (req.body.otp == userCodeObj.code) {
         if (userCodeObj.blockStatus == true) {
-          res.render("userViews/login", { msg: "You were blocked by Admin", cartItemsCount: 0 });
+          res.render("userViews/login", {
+            msg: "You were blocked by Admin",
+            cartItemsCount: 0,
+          });
         } else {
           req.session.user = userDoc._id;
           res.redirect("/");
@@ -276,7 +390,7 @@ module.exports = {
         console.log("otp is Invalid");
         res.redirect("/login");
       }
-    } catch (error) { }
+    } catch (error) {}
   },
   goHome: async (req, res) => {
     try {
@@ -284,30 +398,34 @@ module.exports = {
         const products = await PRODUCT_MODEL.find({ isDeleted: false });
         // const CART_ITEMS_COUNT = await CART_MODEL.countDocuments
         // Checks user Cart Exists
-        const USER_CART = await CART_MODEL.findOne({ userId: req.session.user })
+        const USER_CART = await CART_MODEL.findOne({
+          userId: req.session.user,
+        });
 
         if (USER_CART) {
-          cartItemsCount = USER_CART.items.length
-          res.render("userViews/home", { products: products, cartItemsCount: 0 });
+          cartItemsCount = USER_CART.items.length;
+          res.render("userViews/home", {
+            products: products,
+            cartItemsCount,
+          });
         } else {
-          res.render("userViews/home", { products: products, cartItemsCount: 0 });
+          res.render("userViews/home", {
+            products: products,
+            cartItemsCount,
+          });
         }
       } else {
         res.redirect("/login");
       }
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   getProductInfo: (req, res) => {
     try {
       PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
-        console.log(info)
+        console.log(info);
         res.render("userViews/productDetails", { info: info, cartItemsCount });
       });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   doLogout: (req, res) => {
     try {
@@ -320,11 +438,137 @@ module.exports = {
           res.redirect("/login");
         }
       });
-    } catch (error) {
+    } catch (error) {}
+  },
+  viewWishlist: async (req, res) => {
+    const USER_ID = req.session.user;
+    try {
+      // checks for products available in cart or not
+      const RESULT = WISHLIST_MODEL.countDocuments({ userId: USER_ID })
+        .then((count) => {
+          return count;
+        })
+        .then(async (count) => {
+          if (count < 1) {
+            res.render("userViews/no-items", { cartItemsCount });
+          } else {
+            // Shows cart items
+            let products = await WISHLIST_MODEL.findOne({ userId: USER_ID })
+              .populate("items.productId")
+              .lean();
+            res.render("userViews/wishlist", {
+              productDetails: products.items,
+              cartItemsCount,
+            });
+          }
+        });
+    } catch (error) {}
+  },
+  addToWishlist:async (req, res) => {
+    try {
+     const USER_ID = req.session.user
+      const USER = await WISHLIST_MODEL.findOne({ userId: USER_ID }); // checks user on db
+      // Checking weather user has a cart or not
+      if (USER) {
+        // checks product exists on cart
+        const PRODUCT_EXIST = await WISHLIST_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
+        });
+        if (PRODUCT_EXIST) {
+          addOneProductWishlist(USER_ID, req.params.id);
+          // if product is not there, Adds the product to cart
+        } else {
+          await WISHLIST_MODEL.updateOne(
+            { userId: USER_ID },
+            { $push: { items: { productId: req.params.id } } }
+          );
+        }
 
+        // if user doesnot has a cart, Create new cart
+      } else {
+        console.log("user is not here");
+        await WISHLIST_MODEL.create({
+          userId: USER_ID,
+          items: [
+            {
+              productId: req.params.id,
+              quantity: 1,
+            },
+          ],
+        });
+      }
+      res.json({ status: true });
+      // res.redirect("/cart");
+    } catch (error) {
+      console.log(error)
     }
   },
-
+  incrementWishlistProduct: async (req, res) => {
+    try {
+      await addOneProductWishlist(req.session.user, req.params.id).then(() => {
+        getTotalPriceWishlist(req.session.user).then((totalPrice) => {
+          console.log(totalPrice);
+          res.json({
+            status: true,
+            productId: req.params.id,
+            totalPrice: totalPrice,
+          });
+        });
+      });
+    } catch (error) {}
+  },
+  decrementWishlistProduct:  async (req, res) => {
+    try {
+      await removeOneProductWishlist(req.session.user, req.params.id).then((result) => {
+        getTotalPriceWishlist(req.session.user).then((totalPrice) => {
+          res.json({
+            status: true,
+            productId: req.params.id,
+            totalPrice: totalPrice,
+          });
+        });
+      });
+    } catch (error) {}
+  },
+  viewWishlistEditQuantity: async (req, res) => {
+    try {
+      await WISHLIST_MODEL.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(req.session.user) } },
+        { $unwind: "$items" },
+        {
+          $match: {
+            "items.productId": new mongoose.Types.ObjectId(req.params.id),
+          },
+        },
+      ]).then((result) => {
+        res.render("userViews/edit-wishlist", {
+          productInfo: result,
+          cartItemsCount,
+        });
+      });
+    } catch (error) {}
+  },
+  updateWishlistQuantity:async (req, res) => {
+    try {
+      await WISHLIST_MODEL.updateOne(
+        {
+          userId: req.session.user,
+          items: { $elemMatch: { productId: req.body.productId } },
+        },
+        { $set: { "items.$.quantity": req.body.quantity } }
+      );
+      res.redirect("/wishlist");
+    } catch (error) {}
+  } ,
+  deleteWishlistItem: async (req, res) => {
+    try {
+      await WISHLIST_MODEL.updateMany(
+        { userId: req.session.user },
+        { $pull: { items: { productId: req.params.id } } }
+      ).then(() => {
+        res.redirect("/wishlist");
+      });
+    } catch (error) {}
+  },
   viewCart: async (req, res) => {
     const USER_ID = req.session.user;
     try {
@@ -341,31 +585,27 @@ module.exports = {
             let products = await CART_MODEL.findOne({ userId: USER_ID })
               .populate("items.productId")
               .lean();
-            res.render("userViews/cart", { productDetails: products.items, cartItemsCount });
+            res.render("userViews/cart", {
+              productDetails: products.items,
+              cartItemsCount,
+            });
           }
         });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
-
-  addToCart: async (req, res) => {
+ addToCart: async (req, res) => {
     try {
-      const USER_ID = req.session.user;
+     const USER_ID = req.session.user
       const USER = await CART_MODEL.findOne({ userId: USER_ID }); // checks user on db
-
       // Checking weather user has a cart or not
       if (USER) {
         // checks product exists on cart
-        const PRODUCT_EXIST = await CART_MODEL.findOne({
-          items: { $elemMatch: { productId: req.params.id } },
+        const PRODUCT_EXIST = await CART_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
         });
         if (PRODUCT_EXIST) {
           addOneProduct(USER_ID, req.params.id);
-
           // if product is not there, Adds the product to cart
         } else {
-          console.log("product not there");
           await CART_MODEL.updateOne(
             { userId: USER_ID },
             { $push: { items: { productId: req.params.id } } }
@@ -385,10 +625,10 @@ module.exports = {
           ],
         });
       }
-      res.json({ status: true })
+      res.json({ status: true });
       // res.redirect("/cart");
     } catch (error) {
-
+      console.log(error)
     }
   },
 
@@ -396,24 +636,28 @@ module.exports = {
     try {
       await addOneProduct(req.session.user, req.params.id).then(() => {
         getTotalPrice(req.session.user).then((totalPrice) => {
-          console.log(totalPrice)
-          res.json({ status: true, productId: req.params.id, totalPrice: totalPrice })
-        })
-      })
-    } catch (error) {
-
-    }
+          console.log(totalPrice);
+          res.json({
+            status: true,
+            productId: req.params.id,
+            totalPrice: totalPrice,
+          });
+        });
+      });
+    } catch (error) {}
   },
   decrementProduct: async (req, res) => {
     try {
       await removeOneProduct(req.session.user, req.params.id).then((result) => {
         getTotalPrice(req.session.user).then((totalPrice) => {
-          res.json({ status: true, productId: req.params.id, totalPrice: totalPrice })
-        })
-      })
-    } catch (error) {
-
-    }
+          res.json({
+            status: true,
+            productId: req.params.id,
+            totalPrice: totalPrice,
+          });
+        });
+      });
+    } catch (error) {}
   },
   viewEditQuantity: async (req, res) => {
     try {
@@ -426,11 +670,12 @@ module.exports = {
           },
         },
       ]).then((result) => {
-        res.render("userViews/edit-cart", { productInfo: result, cartItemsCount });
+        res.render("userViews/edit-cart", {
+          productInfo: result,
+          cartItemsCount,
+        });
       });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   updateQuantity: async (req, res) => {
     try {
@@ -442,9 +687,7 @@ module.exports = {
         { $set: { "items.$.quantity": req.body.quantity } }
       );
       res.redirect("/cart");
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   deleteCartItem: async (req, res) => {
     try {
@@ -454,27 +697,24 @@ module.exports = {
       ).then(() => {
         res.redirect("/cart");
       });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   viewCheckout: async (req, res) => {
     try {
-      const USER_INFO = await USER_MODEL.findOne({ _id: req.session.user }).then(
-        (userInfo) => {
-          res.render("userViews/checkout", { address: userInfo.address, cartItemsCount });
-        }
-      );
-    } catch (error) {
-
-    }
+      const USER_INFO = await USER_MODEL.findOne({
+        _id: req.session.user,
+      }).then((userInfo) => {
+        res.render("userViews/checkout", {
+          address: userInfo.address,
+          cartItemsCount,
+        });
+      });
+    } catch (error) {}
   },
   viewAddAddress: (req, res) => {
     try {
       res.render("userViews/add-address", { cartItemsCount });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   addAddress: async (req, res) => {
     try {
@@ -494,55 +734,73 @@ module.exports = {
         }
       );
       res.redirect("/checkout");
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
 
   placeOrder: async (req, res) => {
     try {
-
       // Find Total Price of products on the Cart
-      const TOTAL_PRICE = await CART_MODEL.aggregate([{ $match: { userId: new mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" },
-      {
-        $lookup: {
-          from: "products",
-          localField: "items.productId",
-          foreignField: "_id",
-          as: "product"
-        }
-      },
-      {
-        $project: {
-          userId: 1,
-          product_price: "$product.price",
-          quantity: "$items.quantity"
-        }
-      },
-      {
-        $unwind: "$product_price"
-      },
-      { $addFields: { total_price_of_item: { $multiply: ["$product_price", "$quantity"] } } },
-      ]).exec().then((result) => {
-        return result;
-      })
+      const TOTAL_PRICE = await CART_MODEL.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(req.session.user) } },
+        { $unwind: "$items" },
+        {
+          $lookup: {
+            from: "products",
+            localField: "items.productId",
+            foreignField: "_id",
+            as: "product",
+          },
+        },
+        {
+          $project: {
+            userId: 1,
+            product_price: "$product.price",
+            quantity: "$items.quantity",
+          },
+        },
+        {
+          $unwind: "$product_price",
+        },
+        {
+          $addFields: {
+            total_price_of_item: { $multiply: ["$product_price", "$quantity"] },
+          },
+        },
+      ]).exec();
+      // .then((result) => {
+      //   return result;
+      // })
 
-      const TOTAL_AMOUNT = TOTAL_PRICE.reduce((accumulator, itemObj) => {
+      // Calculate total amount
+      let TOTAL_AMOUNT = TOTAL_PRICE.reduce((accumulator, itemObj) => {
         return accumulator + itemObj.total_price_of_item;
-      }, 0)
+      }, 0);
 
-      // Checks coupon Code 
-      const COUPON_DOC = await COUPON_MODEL.findOne({ coupon_code: req.body.coupon })
-      if (COUPON_DOC) {
-        const DISCOUNT = (COUPON_DOC.discount)
-        TOTAL_AMOUNT = Math.floor(TOTAL_AMOUNT - (TOTAL_AMOUNT * (DISCOUNT / 100)))
+      // Checks coupon Code
+      const COUPON_DOC = await COUPON_MODEL.findOne({
+        coupon_code: req.body.coupon,
+      });
+      if (COUPON_DOC != null) {
+        const DISCOUNT = COUPON_DOC.discount;
+        const DISCOUNT_AMOUNT = Math.floor(TOTAL_AMOUNT * (DISCOUNT / 100));
+        const CURRENT_DATE = new Date();
+        if (
+          TOTAL_AMOUNT <= COUPON_DOC.purchaseLimit &&
+          DISCOUNT_AMOUNT <= COUPON_DOC.discountLimit &&
+          CURRENT_DATE <= COUPON_DOC.expiryDate
+        ) {
+          // Calculates Total Amount to Discount
+          TOTAL_AMOUNT = Math.floor(TOTAL_AMOUNT - DISCOUNT_AMOUNT);
+        } else {
+        }
+      } else {
+        console.log("doc not found");
       }
 
-      await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" }]).then((result) => {
-        console.log("the result is" + result)
-      })
-      const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }) //Finds user cart
-
+      // await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" }]).then((result) => {
+      //   console.log("the result is" + result)
+      // })
+      const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }); //Finds user cart
       // Creates new Order
       await ORDER_MODEL.create({
         userId: USER_CART.userId,
@@ -558,89 +816,105 @@ module.exports = {
         },
         payment_method: req.body.payment,
         amount: TOTAL_AMOUNT,
-        status: 'waiting for payment'
-      }).then( () => {
-       CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+        status: "waiting for payment",
+      }).then(() => {
+        CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
           if (err) {
             console.log(err);
           }
         });
-      })
+      });
 
-      if (req.body.payment == 'razorpay') {
-        console.log("checked razorpay")
+      if (req.body.payment == "razorpay") {
+        console.log("checked razorpay");
         var options = {
-          amount: PRODUCT_SUM * 100,  // amount in the smallest currency unit
+          amount: TOTAL_AMOUNT * 100, // amount in the smallest currency unit
           currency: "INR",
-          receipt: "order_rcptid_11"
+          receipt: "order_rcptid_11",
         };
-
-        const order = await instance.orders.create(options, async (err, order)=>{
-          if (err) {
-            console.log(err)
-          } else {
-            console.log("one: " + order.id)
-            await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: order.id }).then(() => {
-              res.json({ status: true, order })
-            })
-          }
-
-        })
-      } else if (req.body.payment == 'cod') {
-        let codRefId = USER_CART.userId
-        // for COD 
-        await ORDER_MODEL.updateOne({ userId: USER_CART.userId, status: 'waiting for payment' }, { payment_order_id: USER_CART.userId, status: 'order placed' }).then(async () => {
-         await CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+        console.log("debug : order created");
+        const order = await instance.orders.create(
+          options,
+          async (err, order) => {
             if (err) {
               console.log(err);
+            } else {
+              console.log("one: " + order.id);
+              await ORDER_MODEL.updateOne(
+                { userId: USER_CART.userId, status: "waiting for payment" },
+                { payment_order_id: order.id, amount: TOTAL_AMOUNT }
+              ).then(() => {
+                res.json({ status: "online", order });
+              });
             }
-          });
-        }).then(() => {
-          res.json({ status: 'cod', order: codRefId })
-        })
+          }
+        );
+      } else if (req.body.payment == "cod") {
+        let codRefId = USER_CART.userId.toString();
+        // for COD
+        await ORDER_MODEL.updateOne(
+          { userId: USER_CART.userId, status: "waiting for payment" },
+          { payment_order_id: USER_CART.userId, status: "order placed" }
+        );
+        // await CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
+        //   if (err) {
+        //     console.log(err);
+        //   }else{
+        //     console.log("deleted cart")
+        //   }
+        // })
+        res.json({ status: "cod", order: codRefId });
       }
     } catch (error) {
-      res.render('not-found', { layout: false })
+      console.log(error);
+      res.render("not-found", { layout: false });
     }
   },
   verifyPayment: async (req, res) => {
     try {
-      const ORDER = await ORDER_MODEL.findOne({ userId: req.session.user, status: 'waiting for payment' }).then(async (ORDER) => {
-        const ref_id = ORDER._id
-        const razorpay_payment_id = req.body.razorpay_payment_id
-        const secret = process.env.RAZORPAY_KEY_SECRET
-        const razorpay_signature = req.body.razorpay_signature
-        let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-        hmac.update(req.body.razorpay_order_id + '|' + razorpay_payment_id)
-        hmac = hmac.digest('hex')
+      const ORDER = await ORDER_MODEL.findOne({
+        userId: req.session.user,
+        status: "waiting for payment",
+      }).then(async (ORDER) => {
+        const ref_id = ORDER._id;
+        const razorpay_payment_id = req.body.razorpay_payment_id;
+        const secret = process.env.RAZORPAY_KEY_SECRET;
+        const razorpay_signature = req.body.razorpay_signature;
+        let hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+        hmac.update(req.body.razorpay_order_id + "|" + razorpay_payment_id);
+        hmac = hmac.digest("hex");
         if (hmac == razorpay_signature) {
           await ORDER_MODEL.updateOne(
-            { userId: req.session.user, status: 'waiting for payment' },
-            { payment_order_id: req.body.razorpay_order_id, status: "order placed" }).then(() => {
-              res.json({ "signatureIsValid": true, ref_id: ref_id })
-            })
+            { userId: req.session.user, status: "waiting for payment" },
+            {
+              payment_order_id: req.body.razorpay_order_id,
+              status: "order placed",
+            }
+          ).then(() => {
+            res.json({ signatureIsValid: true, ref_id: ref_id });
+          });
         } else {
-          res.json({ "signatureIsValid": false, ref_id: ref_id })
+          res.json({ signatureIsValid: false, ref_id: ref_id });
         }
-      })
+      });
     } catch (error) {
-      res.render('not-found', { layout: false })
+      res.render("not-found", { layout: false });
     }
   },
   showPaymentSuccess: (req, res) => {
     try {
-      const REF_ID = req.params.id
-      res.render('userViews/payment-success', { REF_ID, cartItemsCount })
+      const REF_ID = req.params.id;
+      res.render("userViews/payment-success", { REF_ID, cartItemsCount });
     } catch (error) {
-      res.render('not-found', { layout: false })
+      res.render("not-found", { layout: false });
     }
   },
   showPaymentFailed: (req, res) => {
     try {
-      const REF_ID = req.params.id
-      res.render('userViews/payment-fail', { REF_ID, cartItemsCount })
+      const REF_ID = req.params.id;
+      res.render("userViews/payment-fail", { REF_ID, cartItemsCount });
     } catch (error) {
-      res.render('not-found', { layout: false })
+      res.render("not-found", { layout: false });
     }
   },
   viewProfile: async (req, res) => {
@@ -648,16 +922,17 @@ module.exports = {
       const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
       res.render("userViews/profile", { userData: USER_DATA, cartItemsCount });
     } catch (error) {
-      res.render('not-found', { layout: false })
+      res.render("not-found", { layout: false });
     }
   },
   viewEditProfile: async (req, res) => {
     try {
       const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
-      res.render("userViews/edit-profile-info", { userData: USER_DATA, cartItemsCount });
-    } catch (error) {
-
-    }
+      res.render("userViews/edit-profile-info", {
+        userData: USER_DATA,
+        cartItemsCount,
+      });
+    } catch (error) {}
   },
   editProfile: async (req, res) => {
     try {
@@ -672,28 +947,32 @@ module.exports = {
         }
       );
       res.redirect("/profile");
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   viewEditAddress: (req, res) => {
     try {
       USER_MODEL.aggregate([
         { $match: { _id: new mongoose.Types.ObjectId(req.session.user) } },
         { $unwind: "$address" },
-        { $match: { "address._id": new mongoose.Types.ObjectId(req.params.id) } },
+        {
+          $match: { "address._id": new mongoose.Types.ObjectId(req.params.id) },
+        },
       ]).then((doc) => {
-        res.render("userViews/edit-address", { address: doc[0].address, cartItemsCount });
+        res.render("userViews/edit-address", {
+          address: doc[0].address,
+          cartItemsCount,
+        });
       });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   editAddress: async (req, res) => {
     try {
       // Updates address details inside array using Object id of inner-object to change
       await USER_MODEL.updateOne(
-        { _id: req.session.user, address: { $elemMatch: { _id: req.body.id } } },
+        {
+          _id: req.session.user,
+          address: { $elemMatch: { _id: req.body.id } },
+        },
         {
           $set: {
             "address.$.address_line_1": req.body.address_line_1,
@@ -707,16 +986,12 @@ module.exports = {
       ).then(() => {
         res.redirect("/profile");
       });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   profileViewAddAddress: (req, res) => {
     try {
       res.render("userViews/profile-add-address", { cartItemsCount });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   addProfileAddress: async (req, res) => {
     try {
@@ -736,38 +1011,46 @@ module.exports = {
         }
       );
       res.redirect("/profile");
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   viewOrdersToUser: async (req, res) => {
     try {
       ORDER_MODEL.countDocuments({ userId: req.session.user })
         .then((count) => {
           return count;
-        }).then(async (count) => {
+        })
+        .then(async (count) => {
           if (count < 1) {
             res.render("userViews/no-items", { cartItemsCount });
           } else {
-            const ORDERS = await ORDER_MODEL.find({ userId: req.session.user, status: { $ne: "cancelled" } })
+            const ORDERS = await ORDER_MODEL.find({
+              userId: req.session.user,
+              status: { $ne: "cancelled" },
+            })
               .populate("items.productId")
-              .lean()
+              .lean();
 
-            const CANCELLED_ORDERS = await ORDER_MODEL.find({ userId: req.session.user, status: "cancelled" })
+            const CANCELLED_ORDERS = await ORDER_MODEL.find({
+              userId: req.session.user,
+              status: "cancelled",
+            })
               .populate("items.productId")
-              .lean()
+              .lean();
 
-            return { ORDERS, CANCELLED_ORDERS }
+            return { ORDERS, CANCELLED_ORDERS };
           }
-        }).then((result) => {
-          const orderDetails = result.ORDERS
-          const cancelledOrderDetails = result.CANCELLED_ORDERS
+        })
+        .then((result) => {
+          const orderDetails = result.ORDERS;
+          const cancelledOrderDetails = result.CANCELLED_ORDERS;
 
-          res.render("userViews/orders", { orderDetails, cancelledOrderDetails, cartItemsCount });
+          res.render("userViews/orders", {
+            orderDetails,
+            cancelledOrderDetails,
+            cartItemsCount,
+          });
         });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   cancelOrderByUser: async (req, res) => {
     try {
@@ -777,16 +1060,12 @@ module.exports = {
       ).then(() => {
         res.redirect("/orders");
       });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   viewChangePassword: (req, res) => {
     try {
       res.render("userViews/change-password", { cartItemsCount });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   changePassword: async (req, res) => {
     try {
@@ -796,11 +1075,9 @@ module.exports = {
       ).then(() => {
         res.redirect("/profile");
       });
-    } catch (error) {
-
-    }
+    } catch (error) {}
   },
   showErrorPage: (req, res) => {
-    res.render('not-found', { layout: false })
-  }
+    res.render("not-found", { layout: false });
+  },
 };

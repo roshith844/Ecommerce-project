@@ -1,19 +1,19 @@
 <main class="fullScreen">
-  <h1>Change Status</h1>
-  <div>
-    <form action="/admin/orders/change-status/" method="post">
-      <input type="text" name="orderId" value="<%= orderId %>" class="d-none" />
-      <div>
-        <input type="radio" name="status" value="pending" />
-        <label for="">pending</label><br />
-        <input type="radio" name="status" value="shipped" />
-        <label for="">shipped</label><br />
-        <input type="radio" name="status" value="delivered" />
-        <label for="">delivered</label>
-      </div>
-      <a href=""
-        ><button class="btn btn-primary" type="submit">Submit</button></a
-      >
-    </form>
+  <div class="container d-flex justify-content-center align-items-center">
+    <div class="row col-6">
+      <h1 class="text-center mt-5">Add Coupon</h1>
+      <form action="/admin/orders/change-status/" method="post" class="mt-3">
+        <input type="text" name="orderId" value="<%= orderId %>" class="d-none" />
+        <div>
+          <input type="radio" name="status" value="pending" />
+          <label for="">pending</label><br />
+          <input type="radio" name="status" value="shipped" />
+          <label for="">shipped</label><br />
+          <input type="radio" name="status" value="delivered" />
+          <label for="">delivered</label>
+        </div>
+        <a href=""><button class="btn btn-primary mt-3" type="submit">Submit</button></a>
+      </form>
+    </div>
   </div>
 </main>

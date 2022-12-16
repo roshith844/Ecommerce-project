@@ -49,6 +49,15 @@ router.post('/verify-otp', userController.verifyOtp)
 router.get('/product-info/:id', userController.getProductInfo)
 router.get('/logout', userController.doLogout)
 
+// Routes for Wishlist Management
+router.get('/wishlist', SESSION_MANAGER.verifyLoginUser, userController.viewWishlist)
+router.get('/add-to-wishlist/:id', userController.addToWishlist)
+router.get('/wishlist-add-one/:id', userController.incrementWishlistProduct)
+router.get('/wishlist-remove-one/:id', userController.decrementWishlistProduct)
+router.get('/wishlist/edit-wishlist/:id', SESSION_MANAGER.verifyLoginUser, userController.viewWishlistEditQuantity)
+router.post('/wishlist/update-quantity', SESSION_MANAGER.verifyLoginUser, userController.updateWishlistQuantity)
+router.get('/wishlist/delete/:id', SESSION_MANAGER.verifyLoginUser, userController.deleteWishlistItem)
+
 // Routes for Cart Management
 router.get('/cart', SESSION_MANAGER.verifyLoginUser, userController.viewCart)
 router.get('/add-to-cart/:id', userController.addToCart)

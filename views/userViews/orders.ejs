@@ -9,6 +9,7 @@
             <th scope="col">Order ID</th>
             <th scope="col">Date</th>
             <th scope="col">Items</th>
+            <th scope="col">Amount (₹)</th>
             <th scope="col">Status</th>
             <th scope="col"></th>
           </tr>
@@ -24,7 +25,7 @@
               </td>
 
               <td>
-                <%= order.date %>
+                <%= order.date.toDateString() %>
               </td>
               <td>
                 <% order.items.forEach((item)=>{ %>
@@ -42,6 +43,9 @@
                     </ul>
                   </div>
                   <% }) %>
+              </td>
+              <td>
+                <%= order.amount %>
               </td>
               <td>
                 <p>

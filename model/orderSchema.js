@@ -29,7 +29,7 @@ const orderSchema = new mongoose.Schema({
   },
   payment_method: String,
   amount: {
-    type: Number
+    type: Number, default : 0
   },
   date: {
     type: Date,

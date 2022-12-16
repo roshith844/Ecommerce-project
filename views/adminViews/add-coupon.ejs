@@ -1,0 +1,37 @@
+<main class="fullScreen">
+     <div class="container d-flex justify-content-center align-items-center">
+       <div class="row col-6">
+         <h1 class="text-center mt-3">Add Coupon</h1>
+         <form action="/admin/coupons/add" method="post" class="">
+           <div class="mb-3">
+             <label for="" class="form-label d-flex flex-column">Coupon Code
+               <input type="text" name="couponCode" class="form-control" />
+             </label>
+           </div>
+           <div class="mb-3">
+             <label for="" class="form-label  d-flex flex-column">Discount
+               <input type="number" name="couponDiscount" class="form-control" />
+             </label>
+           </div>
+           <div class="mb-3">
+            <label for="" class="form-label  d-flex flex-column">Limit for Discount
+              <input type="number" name="discountLimit" class="form-control" />
+            </label>
+          </div>
+          <div class="mb-3">
+            <label for="" class="form-label  d-flex flex-column">Limit for Purchase
+              <input type="number" name="purchaseLimit" class="form-control" />
+            </label>
+          </div>
+          <div class="mb-3">
+            <label for="" class="form-label  d-flex flex-column">Expiry Date
+              <input type="date" name="expiryDate" class="form-control" />
+            </label>
+          </div>
+           <div class="d-flex justify-content-center">
+            <button class="btn btn-primary" type="submit">Submit</button>
+           </div>
+         </form>
+       </div>
+     </div>
+   </main>

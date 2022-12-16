@@ -1,0 +1,75 @@
+<main class="fullScreen">
+     <div class="container">
+          <div class="row">
+               <h1 class="text-center mt-3">Coupons</h1>
+               <div>
+                    <a href="/admin/coupons/add" class="btn btn-primary">Add New Coupon</a>
+               </div>
+               <table class="table" id="couponsTable">
+                    <thead>
+                         <tr>
+                              <th scope="col">No.</th>
+                              <th scope="col">Coupon Code</th>
+                              <th scope="col">Discount ( % )</th>
+                              <th scope="col">Limit of Discount</th>
+                              <th scope="col">Purchase Limit</th>
+                              <th scope="col">Expiry Date</th>
+                              <th scope="col"></th>
+                         </tr>
+                    </thead>
+                    <tbody>
+                         <% let count=1 %>
+                              <% coupons.forEach((item)=>{ %>
+                                   <tr>
+                                        <th scope="row">
+                                             <%= count %>
+                                        </th>
+                                        <td>
+                                             <%= item.coupon_code %>
+                                        </td>
+                                        <td>
+                                             <%= item.discount %>
+                                        </td>
+                                        <td>
+                                             <%= item.discountLimit %>
+                                        </td>
+                                        <td>
+                                             <%= item.purchaseLimit %>
+                                        </td>
+                                        <td>
+                                             <%= item.expiryDate.toDateString() %>
+                                        </td>
+                                        <td>
+                                             <a class="btn btn-primary" href="/admin/coupons/<%= item._id %> "
+                                                  class="btn btn-danger"
+                                                  onclick="return confirm('Delete coupon?')">Delete</a>
+                                        </td>
+                                        <!-- <a
+                            class="btn btn-primary"
+                            href="/admin/categories/edit"
+                            class="btn btn-primary"
+                            >Edit</a
+                          >
+                                        </td> -->
+
+                                        <!-- <a
+                            class="btn btn-primary"
+                            href="/admin/categories/delete/"
+                            class="btn btn-danger"
+                            onclick="return confirm('Delete Category ?')"
+                            >Delete</a
+                          >
+                        </td> -->
+                                   </tr>
+                                   <% count++ %>
+                                        <% }) %>
+                    </tbody>
+               </table>
+          </div>
+     </div>
+</main>
+<script>
+     $(document).ready(function () {
+          $("#couponsTable").DataTable();
+     });
+</script>

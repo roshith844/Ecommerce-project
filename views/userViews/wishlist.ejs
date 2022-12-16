@@ -1,0 +1,128 @@
+<main class="fullScreen col-12">
+     <div class="d-flex justify-content-center">
+       <h1 class="my-3">Wishlist</h1>
+     </div>
+   
+     <div class="row table-responsive">
+       <table class="table align-middle" id="">
+         <thead>
+           <tr class="align-bottom">
+             <th scope="col">No.</th>
+             <th scope="col">Product Name</th>
+             <th scope="col">Product Image</th>
+             <th scope="col">price</th>
+             <th scope="col">Quantity</th>
+             <th scope="col"></th>
+             <th scope="col"></th>
+           </tr>
+         </thead>
+         <tbody>
+           <% let count=1 %>
+             <% let totalPrice=0 %>
+               <% productDetails.forEach((product)=>{ %>
+                 <tr>
+                   <th scope="row">
+                     <%= count %>
+                   </th>
+                   <td>
+                     <%= product.productId.name %>
+                   </td>
+                   <td>
+                     <img class="" src="<%= product.productId.image %>" alt="" style="width: 20rem;" />
+                   </td>
+                   <td>₹ <%= product.productId.price %>
+                   </td>
+                   <td>
+                     <button id="minusButton<%= product.productId._id %>"
+                       onclick="removeOneProduct('<%= product.productId._id %>')">
+                       <i class="fa-solid fa-square-minus"></i>
+                     </button>
+   
+                     <span id="productQuantity<%= product.productId._id %>">
+                       <%= product.quantity %>
+                     </span>
+                     <button onclick="addOneProduct('<%= product.productId._id %>')">
+                       <i class="fa-solid fa-square-plus"></i>
+                     </button>
+                   </td>
+                   <td>
+                     <a href="/wishlist/edit-wishlist/<%= product.productId._id %>" class="btn btn-primary">Edit Quantity</a>
+                   </td>
+                   <td>
+                     <a href="/wishlist/delete/<%= product.productId._id %>" class="btn btn-danger">Delete</a>
+                   </td>
+                 </tr>
+                 <% let itemTotalPrice=(product.productId.price) * (product.quantity) %>
+                   <% totalPrice +=itemTotalPrice %>
+                     <% count++ %>
+                       <% }) %>
+                         <tr>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td>Total</td>
+                           <td>
+                             <div id="totalPrice">₹ <%= totalPrice %>
+                             </div>
+                           </td>
+                         </tr>
+         </tbody>
+       </table>
+     </div>
+   
+     <!-- <div class="d-flex justify-content-end me-5">
+       <a href="/checkout"><button class="btn btn-primary text-bg-success mb-3">
+           Proceed to Check Out
+         </button></a>
+     </div> -->
+   </main>
+   
+   <script>
+     function addOneProduct(productId) {
+       $.ajax({
+         url: "/wishlist-add-one/" + productId,
+         method: "get",
+         success: (response) => {
+           if (response.status) {
+             $("#minusButton" + productId).prop("disabled", false);
+             $("#minusButton" + productId).show();
+             let quantity = $("#productQuantity" + response.productId).html();
+             quantity = parseInt(quantity) + 1;
+             $("#productQuantity" + response.productId).html(quantity);
+   
+             // Select element to show total Price
+             let totalPrice = $("#totalPrice").html();
+   
+             // Shows Total Price
+             $("#totalPrice").html(response.totalPrice);
+           }
+         },
+       });
+     }
+   
+     function removeOneProduct(productId) {
+       $.ajax({
+         url: "/wishlist-remove-one/" + productId,
+         method: "get",
+         success: (response) => {
+           let quantity = $("#productQuantity" + productId).html();
+           if (response.status == true) {
+             $("#minusButton" + productId).prop("disabled", false);
+             if (parseInt(quantity) <= 1) {
+               $("#productQuantity" + productId).html(quantity);
+             } else {
+               quantity = parseInt(quantity) - 1;
+               $("#productQuantity" + productId).html(quantity);
+             }
+           } else {
+             $("#minusButton" + productId).prop("disabled", true);
+           }
+           // Select element to show total Price
+           let totalPrice = $("#totalPrice").html();
+   
+           // Shows Total Price
+           $("#totalPrice").html(response.totalPrice);
+         },
+       });
+     }
+   </script>
