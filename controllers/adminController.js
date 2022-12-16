@@ -341,7 +341,7 @@ module.exports = {
   viewAddCoupon: (req, res) => {
     res.render("adminViews/add-coupon", { layout: "layouts/adminLayout" });
   },
-  addCoupon: async (req, res) => {
+  addCoupon: async (req, res) => {    
     // Check coupon Code exists
     const COUPON_EXIST = await COUPON_MODEL.exists({
       coupon_code: req.body.couponCode,
@@ -353,6 +353,7 @@ module.exports = {
         discount: req.body.couponDiscount,
         discountLimit: req.body.discountLimit,
         purchaseLimit: req.body.purchaseLimit,
+        expiryDate: new Date(req.body.expiryDate)
       });
     }
     // Redirect to Coupons page

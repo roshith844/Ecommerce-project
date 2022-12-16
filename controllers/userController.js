@@ -593,11 +593,11 @@ module.exports = {
       if (COUPON_DOC != null) {
         const DISCOUNT = COUPON_DOC.discount;
         const DISCOUNT_AMOUNT = Math.floor(TOTAL_AMOUNT * (DISCOUNT / 100));
-
-        // Checks Total amount is less than or Equal to purchase Limit for Coupon
+        const CURRENT_DATE = new Date();
         if (
           TOTAL_AMOUNT <= COUPON_DOC.purchaseLimit &&
-          DISCOUNT_AMOUNT <= COUPON_DOC.discountLimit
+          DISCOUNT_AMOUNT <= COUPON_DOC.discountLimit &&
+          CURRENT_DATE <= COUPON_DOC.expiryDate
         ) {
           // Calculates Total Amount to Discount
           TOTAL_AMOUNT = Math.floor(TOTAL_AMOUNT - DISCOUNT_AMOUNT);

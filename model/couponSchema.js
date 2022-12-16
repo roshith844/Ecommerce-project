@@ -8,14 +8,19 @@ const couponSchema = new mongoose.Schema({
     default: 0,
   },
   discountLimit: {
-     type: Number, default: 10000
+    type: Number,
+    default: 10000,
   },
   purchaseLimit: {
-    type: Number, default: 10000
+    type: Number,
+    default: 10000,
+  },
+  expiryDate: {
+    type: Date,
   },
   isDeleted: {
     type: Boolean,
     default: "false",
-  }
+  },
 });
 module.exports = mongoose.model("coupons", couponSchema);
