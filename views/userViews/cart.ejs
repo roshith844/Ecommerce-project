@@ -80,7 +80,7 @@
 <script>
   function addOneProduct(productId) {
     $.ajax({
-      url: "/add-one/" + productId,
+      url: "/wishlist-add-one/" + productId,
       method: "get",
       success: (response) => {
         if (response.status) {
@@ -102,7 +102,7 @@
 
   function removeOneProduct(productId) {
     $.ajax({
-      url: "/remove-one/" + productId,
+      url: "/wishlist-remove-one/" + productId,
       method: "get",
       success: (response) => {
         let quantity = $("#productQuantity" + productId).html();

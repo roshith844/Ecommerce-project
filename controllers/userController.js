@@ -8,6 +8,8 @@ const USER_MODEL = require("../model/userSchema");
 const OTP_LOGIN_MODEL = require("../model/otpLoginSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
+const WISHLIST_MODEL = require("../model/wishlistSchema");
+//wishlistSchema
 const ORDER_MODEL = require("../model/orderSchema");
 const COUPON_MODEL = require("../model/couponSchema");
 const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
@@ -77,6 +79,69 @@ function getTotalPrice(userId) {
 
   // })
 }
+
+/*
+Functions for wishlist
+*/
+// To increment by one on Wishlist
+async function addOneProductWishlist(userId, productId) {
+  await WISHLIST_MODEL.updateOne(
+    { userId: userId, items: { $elemMatch: { productId: productId } } },
+    { $inc: { "items.$.quantity": 1 } }
+  ).then(() => {
+    console.log("updated incremented");
+  });
+}
+
+// To Decrement by one on Wishlist
+async function removeOneProductWishlist(userId, productId) {
+  const QUANTITY = await WISHLIST_MODEL.aggregate([
+    {
+      $match: {
+        userId: mongoose.Types.ObjectId(userId),
+        items: {
+          $elemMatch: { productId: mongoose.Types.ObjectId(productId) },
+        },
+      },
+    },
+    { $unwind: "$items" },
+    { $match: { "items.productId": mongoose.Types.ObjectId(productId) } },
+  ]).then((result) => {
+    return result;
+  });
+  if (QUANTITY[0].items.quantity != 1) {
+    await WISHLIST_MODEL.updateOne(
+      { userId: userId, items: { $elemMatch: { productId: productId } } },
+      { $inc: { "items.$.quantity": -1 } }
+    ).then(() => {
+      console.log("updated Decremented");
+    });
+  } else {
+    return false;
+  }
+}
+
+// Calculates Total Price of Wishlist items
+function getTotalPriceWishlist(userId) {
+  return new Promise((resolve, reject) => {
+    WISHLIST_MODEL.findOne({ userId: userId })
+      .populate("items.productId")
+      .lean()
+      .then((result) => {
+        let totalPrice = 0;
+        for (let i = 0; i < result.items.length; i++) {
+          totalPrice +=
+            result.items[i].quantity * result.items[i].productId.price;
+        }
+        resolve(totalPrice);
+      });
+  });
+  //  .then((totalPrice)=>{
+  //   console.log(totalPrice)
+
+  // })
+}
+
 
 // checks Phone Number exists on database
 async function checkPhoneNumber(userPhoneNumber) {
@@ -375,7 +440,135 @@ module.exports = {
       });
     } catch (error) {}
   },
+  viewWishlist: async (req, res) => {
+    const USER_ID = req.session.user;
+    try {
+      // checks for products available in cart or not
+      const RESULT = WISHLIST_MODEL.countDocuments({ userId: USER_ID })
+        .then((count) => {
+          return count;
+        })
+        .then(async (count) => {
+          if (count < 1) {
+            res.render("userViews/no-items", { cartItemsCount });
+          } else {
+            // Shows cart items
+            let products = await WISHLIST_MODEL.findOne({ userId: USER_ID })
+              .populate("items.productId")
+              .lean();
+            res.render("userViews/wishlist", {
+              productDetails: products.items,
+              cartItemsCount,
+            });
+          }
+        });
+    } catch (error) {}
+  },
+  addToWishlist:async (req, res) => {
+    try {
+     const USER_ID = req.session.user
+      const USER = await WISHLIST_MODEL.findOne({ userId: USER_ID }); // checks user on db
+      // Checking weather user has a cart or not
+      if (USER) {
+        // checks product exists on cart
+        const PRODUCT_EXIST = await WISHLIST_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
+        });
+        if (PRODUCT_EXIST) {
+          addOneProductWishlist(USER_ID, req.params.id);
+          // if product is not there, Adds the product to cart
+        } else {
+          await WISHLIST_MODEL.updateOne(
+            { userId: USER_ID },
+            { $push: { items: { productId: req.params.id } } }
+          );
+        }
 
+        // if user doesnot has a cart, Create new cart
+      } else {
+        console.log("user is not here");
+        await WISHLIST_MODEL.create({
+          userId: USER_ID,
+          items: [
+            {
+              productId: req.params.id,
+              quantity: 1,
+            },
+          ],
+        });
+      }
+      res.json({ status: true });
+      // res.redirect("/cart");
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  incrementWishlistProduct: async (req, res) => {
+    try {
+      await addOneProductWishlist(req.session.user, req.params.id).then(() => {
+        getTotalPriceWishlist(req.session.user).then((totalPrice) => {
+          console.log(totalPrice);
+          res.json({
+            status: true,
+            productId: req.params.id,
+            totalPrice: totalPrice,
+          });
+        });
+      });
+    } catch (error) {}
+  },
+  decrementWishlistProduct:  async (req, res) => {
+    try {
+      await removeOneProductWishlist(req.session.user, req.params.id).then((result) => {
+        getTotalPriceWishlist(req.session.user).then((totalPrice) => {
+          res.json({
+            status: true,
+            productId: req.params.id,
+            totalPrice: totalPrice,
+          });
+        });
+      });
+    } catch (error) {}
+  },
+  viewWishlistEditQuantity: async (req, res) => {
+    try {
+      await WISHLIST_MODEL.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(req.session.user) } },
+        { $unwind: "$items" },
+        {
+          $match: {
+            "items.productId": new mongoose.Types.ObjectId(req.params.id),
+          },
+        },
+      ]).then((result) => {
+        res.render("userViews/edit-wishlist", {
+          productInfo: result,
+          cartItemsCount,
+        });
+      });
+    } catch (error) {}
+  },
+  updateWishlistQuantity:async (req, res) => {
+    try {
+      await WISHLIST_MODEL.updateOne(
+        {
+          userId: req.session.user,
+          items: { $elemMatch: { productId: req.body.productId } },
+        },
+        { $set: { "items.$.quantity": req.body.quantity } }
+      );
+      res.redirect("/wishlist");
+    } catch (error) {}
+  } ,
+  deleteWishlistItem: async (req, res) => {
+    try {
+      await WISHLIST_MODEL.updateMany(
+        { userId: req.session.user },
+        { $pull: { items: { productId: req.params.id } } }
+      ).then(() => {
+        res.redirect("/wishlist");
+      });
+    } catch (error) {}
+  },
   viewCart: async (req, res) => {
     const USER_ID = req.session.user;
     try {
@@ -400,8 +593,7 @@ module.exports = {
         });
     } catch (error) {}
   },
-
-  addToCart: async (req, res) => {
+ addToCart: async (req, res) => {
     try {
      const USER_ID = req.session.user
       const USER = await CART_MODEL.findOne({ userId: USER_ID }); // checks user on db
