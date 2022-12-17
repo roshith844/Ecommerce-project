@@ -403,17 +403,15 @@ module.exports = {
   addToWishlist:async (req, res) => {
     try {
      const USER_ID = req.session.user
-      const USER = await WISHLIST_MODEL.findOne({ userId: USER_ID }); // checks user on db
-      // Checking weather user has a cart or not
-      if (USER) {
-        // checks product exists on cart
-
+     const USER_WISHLIST = await WISHLIST_MODEL.findOne({ userId: USER_ID }); // checks user on db     
+      
+     if (USER_WISHLIST) {
         const PRODUCT_EXIST_ON_CART = await CART_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
         });
         const PRODUCT_EXIST_ON_WISHLIST = await WISHLIST_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
-        });
-        if (!(PRODUCT_EXIST_ON_CART) && !(PRODUCT_EXIST_ON_WISHLIST)) {
-          // addOneProductWishlist(USER_ID, req.params.id);
+        })
+if (!(PRODUCT_EXIST_ON_CART) && !(PRODUCT_EXIST_ON_WISHLIST)) {
+   // addOneProductWishlist(USER_ID, req.params.id);
           // if product is not there, Adds the product to cart
           await WISHLIST_MODEL.updateOne(
             { userId: USER_ID },
@@ -424,17 +422,20 @@ module.exports = {
         }
 
         // if user doesnot has a cart, Create new cart
-      } else {
-        console.log("user is not here");
-        await WISHLIST_MODEL.create({
-          userId: USER_ID,
-          items: [
-            {
-              productId: req.params.id,
-              quantity: 1,
-            },
-          ],
+      } else{
+        const PRODUCT_EXIST_ON_CART = await CART_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
         });
+if(!(PRODUCT_EXIST_ON_CART)){
+  await WISHLIST_MODEL.create({
+    userId: USER_ID,
+    items: [
+      {
+        productId: req.params.id,
+        quantity: 1,
+      },
+    ],
+  });
+}       
       }
       res.json({ status: true });
       // res.redirect("/cart");
@@ -494,7 +495,10 @@ module.exports = {
             { $push: { items: { productId: req.params.id } } }
           );
         }
-
+        await WISHLIST_MODEL.updateMany(
+          { userId: req.session.user },
+          { $pull: { items: { productId: req.params.id } } }
+        )
         // if user doesnot has a cart, Create new cart
       } else {
         console.log("user is not here");
