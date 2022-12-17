@@ -385,7 +385,14 @@ module.exports = {
       description: req.body.description,
       image: IMAGE_PATH,
     });
-    // Redirect to Coupons page
+ 
     res.redirect("/admin/banners");
   },
+  deleteBanner: async (req, res) => {
+   await BANNER_MODEL.updateOne(
+      { _id: req.params.id },
+      { $set: { isDeleted: true } }
+    )
+    res.redirect("/admin/banners");
+   }
 };

@@ -74,6 +74,8 @@ router.get('/coupons/:id', SESSION_MANAGER.verifyLoginAdmin, adminController.del
 router.get('/banners', SESSION_MANAGER.verifyLoginAdmin, adminController.viewBanners)
 router.get('/banners/add', SESSION_MANAGER.verifyLoginAdmin, adminController.viewAddBanner)
 router.post('/banners/add', SESSION_MANAGER.verifyLoginAdmin, uploadBanner.single("image"), adminController.addBanner)
+///banners/delete
+router.get('/banners/delete/:id', SESSION_MANAGER.verifyLoginAdmin, adminController.deleteBanner)
 
 router.get("/logout", SESSION_MANAGER.verifyLoginAdmin, adminController.doAdminLogout);
 
