@@ -91,6 +91,7 @@ router.post('/profile/change-password', SESSION_MANAGER.verifyLoginUser, userCon
 // Routes for orders
 router.get('/orders', SESSION_MANAGER.verifyLoginUser, userController.viewOrdersToUser)
 router.get('/orders/cancel/:id', SESSION_MANAGER.verifyLoginUser, userController.cancelOrderByUser)
+
 // 404page
 router.get('/not', userController.showErrorPage)
 

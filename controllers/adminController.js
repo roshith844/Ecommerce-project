@@ -366,4 +366,8 @@ module.exports = {
     );
     res.redirect("/admin/coupons");
   },
+
+  viewBanners: async (req, res) =>{
+    res.render('adminViews/banners', { layout: "layouts/adminLayout" })
+  }
 };

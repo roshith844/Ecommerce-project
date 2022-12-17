@@ -69,6 +69,9 @@ router.get('/coupons/add', SESSION_MANAGER.verifyLoginAdmin, adminController.vie
 router.post('/coupons/add', SESSION_MANAGER.verifyLoginAdmin, adminController.addCoupon)
 router.get('/coupons/:id', SESSION_MANAGER.verifyLoginAdmin, adminController.deleteCoupon )
 
+// Routes for Banners
+router.get('/banners', SESSION_MANAGER.verifyLoginAdmin, adminController.viewBanners)
+
 router.get("/logout", SESSION_MANAGER.verifyLoginAdmin, adminController.doAdminLogout);
 
 module.exports = router;
