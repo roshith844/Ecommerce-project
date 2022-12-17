@@ -3,7 +3,7 @@ const path = require('path')
 
 const storage = multer.diskStorage({
      destination: (req, file,callback)=>{
-          callback(null, './public/images')
+          callback(null, './public/images/banners')
      },
      filename: (req, file, callback)=>{
           console.log(file)
@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
 })
 
 // upload.single("image")
-// puton data enctype="multipart/form=data"   
+// puton data enctype="multipart/form-data"   
 // tyoe file name image
-const upload = multer({storage: storage})
-module.exports= upload
+const uploadBanner = multer({storage: storage})
+module.exports= uploadBanner

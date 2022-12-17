@@ -7,7 +7,8 @@ const SESSION_MANAGER = require('../middlewares/session-management')
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const multer = require('multer')
-const upload = require('../middlewares/image-upload')
+const uploadProduct = require('../middlewares/product-upload')
+const uploadBanner = require('../middlewares/banner-upload')
 // Middlewares
 router.use(expressLayouts);
 router.use(express.urlencoded({ extended: true }));
@@ -47,7 +48,7 @@ router.get("/users/block/:id", SESSION_MANAGER.verifyLoginAdmin, adminController
 router.get("/users/unblock/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.unblockUser);
 router.get("/products", SESSION_MANAGER.verifyLoginAdmin, adminController.listProducts);
 router.get("/products/add-product", SESSION_MANAGER.verifyLoginAdmin, adminController.viewAddProduct);
-router.post("/products/add-product", SESSION_MANAGER.verifyLoginAdmin, upload.single("image"), adminController.AddProduct);
+router.post("/products/add-product", SESSION_MANAGER.verifyLoginAdmin,uploadProduct.single("image"), adminController.AddProduct);
 router.get("/products/edit-product/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.goToEditProduct);
 router.post("/products/edit-product/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.editProduct);
 router.get("/products/delete-product/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.deleteProduct);
@@ -71,6 +72,8 @@ router.get('/coupons/:id', SESSION_MANAGER.verifyLoginAdmin, adminController.del
 
 // Routes for Banners
 router.get('/banners', SESSION_MANAGER.verifyLoginAdmin, adminController.viewBanners)
+router.get('/banners/add', SESSION_MANAGER.verifyLoginAdmin, adminController.viewAddBanner)
+router.post('/banners/add', SESSION_MANAGER.verifyLoginAdmin, uploadBanner.single("image"), adminController.addBanner)
 
 router.get("/logout", SESSION_MANAGER.verifyLoginAdmin, adminController.doAdminLogout);
 

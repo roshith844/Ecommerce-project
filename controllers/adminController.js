@@ -5,6 +5,7 @@ const CART_MODEL = require("../model/cartSchema");
 const CATEGORY_MODEL = require("../model/categorySchema");
 const ORDER_MODEL = require("../model/orderSchema");
 const COUPON_MODEL = require("../model/couponSchema");
+const BANNER_MODEL = require("../model/bannerSchema");
 var cartItemsCount;
 module.exports = {
   goToAdminHome: async (req, res) => {
@@ -341,7 +342,7 @@ module.exports = {
   viewAddCoupon: (req, res) => {
     res.render("adminViews/add-coupon", { layout: "layouts/adminLayout" });
   },
-  addCoupon: async (req, res) => {    
+  addCoupon: async (req, res) => {
     // Check coupon Code exists
     const COUPON_EXIST = await COUPON_MODEL.exists({
       coupon_code: req.body.couponCode,
@@ -353,7 +354,7 @@ module.exports = {
         discount: req.body.couponDiscount,
         discountLimit: req.body.discountLimit,
         purchaseLimit: req.body.purchaseLimit,
-        expiryDate: new Date(req.body.expiryDate)
+        expiryDate: new Date(req.body.expiryDate),
       });
     }
     // Redirect to Coupons page
@@ -367,7 +368,24 @@ module.exports = {
     res.redirect("/admin/coupons");
   },
 
-  viewBanners: async (req, res) =>{
-    res.render('adminViews/banners', { layout: "layouts/adminLayout" })
-  }
+  viewBanners: async (req, res) => {
+    const BANNERS = await BANNER_MODEL.find({ isDeleted: false });
+    res.render("adminViews/banners", {
+      layout: "layouts/adminLayout",
+      banners: BANNERS,
+    });
+  },
+  viewAddBanner: (req, res) => {
+    res.render("adminViews/add-banner", { layout: "layouts/adminLayout" });
+  },
+  addBanner: async (req, res) => {
+    const IMAGE_PATH = req.file.path.slice(7);
+    await BANNER_MODEL.create({
+      heading: req.body.heading,
+      description: req.body.description,
+      image: IMAGE_PATH,
+    });
+    // Redirect to Coupons page
+    res.redirect("/admin/banners");
+  },
 };

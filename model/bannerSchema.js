@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
-const Schema = new mongoose.Schema({
+const bannerSchema = new mongoose.Schema({
   heading: { type: String },
   description: { type: String },
   image: { type: String },
+  isDeleted: {type: Boolean, default: false}
 });
-module.exports = mongoose.model("carts", cartSchema);
+module.exports = mongoose.model("banners", bannerSchema);
