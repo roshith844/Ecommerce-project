@@ -79,70 +79,6 @@ function getTotalPrice(userId) {
 
   // })
 }
-
-/*
-Functions for wishlist
-*/
-// To increment by one on Wishlist
-async function addOneProductWishlist(userId, productId) {
-  await WISHLIST_MODEL.updateOne(
-    { userId: userId, items: { $elemMatch: { productId: productId } } },
-    { $inc: { "items.$.quantity": 1 } }
-  ).then(() => {
-    console.log("updated incremented");
-  });
-}
-
-// To Decrement by one on Wishlist
-async function removeOneProductWishlist(userId, productId) {
-  const QUANTITY = await WISHLIST_MODEL.aggregate([
-    {
-      $match: {
-        userId: mongoose.Types.ObjectId(userId),
-        items: {
-          $elemMatch: { productId: mongoose.Types.ObjectId(productId) },
-        },
-      },
-    },
-    { $unwind: "$items" },
-    { $match: { "items.productId": mongoose.Types.ObjectId(productId) } },
-  ]).then((result) => {
-    return result;
-  });
-  if (QUANTITY[0].items.quantity != 1) {
-    await WISHLIST_MODEL.updateOne(
-      { userId: userId, items: { $elemMatch: { productId: productId } } },
-      { $inc: { "items.$.quantity": -1 } }
-    ).then(() => {
-      console.log("updated Decremented");
-    });
-  } else {
-    return false;
-  }
-}
-
-// Calculates Total Price of Wishlist items
-function getTotalPriceWishlist(userId) {
-  return new Promise((resolve, reject) => {
-    WISHLIST_MODEL.findOne({ userId: userId })
-      .populate("items.productId")
-      .lean()
-      .then((result) => {
-        let totalPrice = 0;
-        for (let i = 0; i < result.items.length; i++) {
-          totalPrice +=
-            result.items[i].quantity * result.items[i].productId.price;
-        }
-        resolve(totalPrice);
-      });
-  });
-  //  .then((totalPrice)=>{
-  //   console.log(totalPrice)
-
-  // })
-}
-
-
 // checks Phone Number exists on database
 async function checkPhoneNumber(userPhoneNumber) {
   console.log("checking on database for number:" + userPhoneNumber);
@@ -471,16 +407,20 @@ module.exports = {
       // Checking weather user has a cart or not
       if (USER) {
         // checks product exists on cart
-        const PRODUCT_EXIST = await WISHLIST_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
+
+        const PRODUCT_EXIST_ON_CART = await CART_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
         });
-        if (PRODUCT_EXIST) {
-          addOneProductWishlist(USER_ID, req.params.id);
+        const PRODUCT_EXIST_ON_WISHLIST = await WISHLIST_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
+        });
+        if (!(PRODUCT_EXIST_ON_CART) && !(PRODUCT_EXIST_ON_WISHLIST)) {
+          // addOneProductWishlist(USER_ID, req.params.id);
           // if product is not there, Adds the product to cart
-        } else {
           await WISHLIST_MODEL.updateOne(
             { userId: USER_ID },
             { $push: { items: { productId: req.params.id } } }
           );
+        } else {
+         
         }
 
         // if user doesnot has a cart, Create new cart
@@ -502,63 +442,6 @@ module.exports = {
       console.log(error)
     }
   },
-  incrementWishlistProduct: async (req, res) => {
-    try {
-      await addOneProductWishlist(req.session.user, req.params.id).then(() => {
-        getTotalPriceWishlist(req.session.user).then((totalPrice) => {
-          console.log(totalPrice);
-          res.json({
-            status: true,
-            productId: req.params.id,
-            totalPrice: totalPrice,
-          });
-        });
-      });
-    } catch (error) {}
-  },
-  decrementWishlistProduct:  async (req, res) => {
-    try {
-      await removeOneProductWishlist(req.session.user, req.params.id).then((result) => {
-        getTotalPriceWishlist(req.session.user).then((totalPrice) => {
-          res.json({
-            status: true,
-            productId: req.params.id,
-            totalPrice: totalPrice,
-          });
-        });
-      });
-    } catch (error) {}
-  },
-  viewWishlistEditQuantity: async (req, res) => {
-    try {
-      await WISHLIST_MODEL.aggregate([
-        { $match: { userId: new mongoose.Types.ObjectId(req.session.user) } },
-        { $unwind: "$items" },
-        {
-          $match: {
-            "items.productId": new mongoose.Types.ObjectId(req.params.id),
-          },
-        },
-      ]).then((result) => {
-        res.render("userViews/edit-wishlist", {
-          productInfo: result,
-          cartItemsCount,
-        });
-      });
-    } catch (error) {}
-  },
-  updateWishlistQuantity:async (req, res) => {
-    try {
-      await WISHLIST_MODEL.updateOne(
-        {
-          userId: req.session.user,
-          items: { $elemMatch: { productId: req.body.productId } },
-        },
-        { $set: { "items.$.quantity": req.body.quantity } }
-      );
-      res.redirect("/wishlist");
-    } catch (error) {}
-  } ,
   deleteWishlistItem: async (req, res) => {
     try {
       await WISHLIST_MODEL.updateMany(
