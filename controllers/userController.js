@@ -9,6 +9,7 @@ const OTP_LOGIN_MODEL = require("../model/otpLoginSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
 const WISHLIST_MODEL = require("../model/wishlistSchema");
+const BANNER_MODEL = require("../model/bannerSchema");
 //wishlistSchema
 const ORDER_MODEL = require("../model/orderSchema");
 const COUPON_MODEL = require("../model/couponSchema");
@@ -332,6 +333,7 @@ module.exports = {
     try {
       if (req.session.user) {
         const products = await PRODUCT_MODEL.find({ isDeleted: false });
+        const BANNERS = await BANNER_MODEL.find({isDeleted: false})
         // const CART_ITEMS_COUNT = await CART_MODEL.countDocuments
         // Checks user Cart Exists
         const USER_CART = await CART_MODEL.findOne({
@@ -342,11 +344,13 @@ module.exports = {
           cartItemsCount = USER_CART.items.length;
           res.render("userViews/home", {
             products: products,
+            banners: BANNERS,
             cartItemsCount,
           });
         } else {
           res.render("userViews/home", {
             products: products,
+            banners: BANNERS,
             cartItemsCount,
           });
         }
