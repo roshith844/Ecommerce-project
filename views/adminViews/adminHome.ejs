@@ -1,5 +1,5 @@
 <main class="fullScreen">
-  <h1>Admin Home page</h1>
+  <h1 class="text-center">Admin Home page</h1>
   <div class="container">
     <div class="row">
       <div class="col-3">
@@ -51,7 +51,7 @@
           </div>
           <div class="card-body">
             <h2 class="card-title">
-              <%= count.order %>
+              <%= count.order.total %>
             </h2>
             <a class="btn btn-primary" href="/admin/orders">View Orders</a>
           </div>
@@ -71,5 +71,43 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <h1 class="text-center mt-3">Orders</h1>
+      <canvas id="myChart"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <div class="d-none">
+     <h1 id="pending"><%= count.order.pending %> </h1>
+     <h1 id="placed"><%= count.order.placed %> </h1>
+     <h1 id="shipped"><%= count.order.shipped %> </h1>
+     <h1 id="delivered"><%= count.order.delivered %> </h1>
+     <h1 id="cancelled"><%= count.order.cancelled %> </h1>
+   </div>
+   <script>
+    const PENDING_ORDERS = document.getElementById("pending").innerText
+    const PLACED_ORDERS = document.getElementById("placed").innerText
+    const SHIPPED_ORDERS = document.getElementById("shipped").innerText
+    const DELIVERED_ORDERS = document.getElementById("delivered").innerText
+    const CANCELLED_ORDERS = document.getElementById("cancelled").innerText
+      const ctx = document.getElementById('myChart');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['pending', 'placed', 'shipped', 'delivered', 'cancelled'],
+          datasets: [{
+            label: 'Number of Orders',
+            data: [PENDING_ORDERS, PLACED_ORDERS, SHIPPED_ORDERS, DELIVERED_ORDERS, CANCELLED_ORDERS],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
   </div>
 </main>

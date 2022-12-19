@@ -25,13 +25,36 @@ module.exports = {
         isDeleted: false,
       });
 
+      const PENDING_ORDERS = await ORDER_MODEL.countDocuments({
+        status: "pending",
+      });
+     const PLACED_ORDERS =  await ORDER_MODEL.countDocuments({ status: "order placed" });
+
+      const SHIPPED_ORDERS = await ORDER_MODEL.countDocuments({
+        status: "shipped",
+      });
+      const DELIVERED_ORDERS = await ORDER_MODEL.countDocuments({
+        status: "delivered",
+      });
+      const CANCELLED_ORDERS = await ORDER_MODEL.countDocuments({
+        status: "cancelled",
+      });
+
       const COUNT = {
         user: USER_COUNT,
         category: CATEGORY_COUNT,
         product: PRODUCT_COUNT,
-        order: ORDER_COUNT,
+        order: {
+          total : ORDER_COUNT,
+          pending: PENDING_ORDERS,
+          placed: PLACED_ORDERS,
+          shipped: SHIPPED_ORDERS,
+          delivered: DELIVERED_ORDERS,
+          cancelled: CANCELLED_ORDERS,
+        },
         coupon: COUPON_COUNT,
       };
+
       res.render("adminViews/adminHome", {
         count: COUNT,
         layout: "layouts/adminLayout",
@@ -385,14 +408,14 @@ module.exports = {
       description: req.body.description,
       image: IMAGE_PATH,
     });
- 
+
     res.redirect("/admin/banners");
   },
   deleteBanner: async (req, res) => {
-   await BANNER_MODEL.updateOne(
+    await BANNER_MODEL.updateOne(
       { _id: req.params.id },
       { $set: { isDeleted: true } }
-    )
+    );
     res.redirect("/admin/banners");
-   }
+  },
 };

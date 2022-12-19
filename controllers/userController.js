@@ -707,7 +707,7 @@ if(!(PRODUCT_EXIST_ON_CART)){
         },
         payment_method: req.body.payment,
         amount: TOTAL_AMOUNT,
-        status: "waiting for payment",
+        status: "pending",
       }).then(() => {
         CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
           if (err) {
@@ -732,7 +732,7 @@ if(!(PRODUCT_EXIST_ON_CART)){
             } else {
               console.log("one: " + order.id);
               await ORDER_MODEL.updateOne(
-                { userId: USER_CART.userId, status: "waiting for payment" },
+                { userId: USER_CART.userId, status: "pending" },
                 { payment_order_id: order.id, amount: TOTAL_AMOUNT }
               ).then(() => {
                 res.json({ status: "online", order });
@@ -744,7 +744,7 @@ if(!(PRODUCT_EXIST_ON_CART)){
         let codRefId = USER_CART.userId.toString();
         // for COD
         await ORDER_MODEL.updateOne(
-          { userId: USER_CART.userId, status: "waiting for payment" },
+          { userId: USER_CART.userId, status: "pending" },
           { payment_order_id: USER_CART.userId, status: "order placed" }
         );
         // await CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
@@ -765,7 +765,7 @@ if(!(PRODUCT_EXIST_ON_CART)){
     try {
       const ORDER = await ORDER_MODEL.findOne({
         userId: req.session.user,
-        status: "waiting for payment",
+        status: "pending",
       }).then(async (ORDER) => {
         const ref_id = ORDER._id;
         const razorpay_payment_id = req.body.razorpay_payment_id;
@@ -776,7 +776,7 @@ if(!(PRODUCT_EXIST_ON_CART)){
         hmac = hmac.digest("hex");
         if (hmac == razorpay_signature) {
           await ORDER_MODEL.updateOne(
-            { userId: req.session.user, status: "waiting for payment" },
+            { userId: req.session.user, status: "pending" },
             {
               payment_order_id: req.body.razorpay_order_id,
               status: "order placed",
