@@ -77,6 +77,9 @@ router.post('/banners/add', SESSION_MANAGER.verifyLoginAdmin, uploadBanner.singl
 ///banners/delete
 router.get('/banners/delete/:id', SESSION_MANAGER.verifyLoginAdmin, adminController.deleteBanner)
 
+// Routes for sales report
+ router.post('/sales-report', SESSION_MANAGER.verifyLoginAdmin, adminController.getSalesReport )
+
 router.get("/logout", SESSION_MANAGER.verifyLoginAdmin, adminController.doAdminLogout);
 
 module.exports = router;

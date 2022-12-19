@@ -6,6 +6,8 @@ const CATEGORY_MODEL = require("../model/categorySchema");
 const ORDER_MODEL = require("../model/orderSchema");
 const COUPON_MODEL = require("../model/couponSchema");
 const BANNER_MODEL = require("../model/bannerSchema");
+require("fs");
+const ExcelJS = require("exceljs");
 var cartItemsCount;
 module.exports = {
   goToAdminHome: async (req, res) => {
@@ -28,7 +30,9 @@ module.exports = {
       const PENDING_ORDERS = await ORDER_MODEL.countDocuments({
         status: "pending",
       });
-     const PLACED_ORDERS =  await ORDER_MODEL.countDocuments({ status: "order placed" });
+      const PLACED_ORDERS = await ORDER_MODEL.countDocuments({
+        status: "order placed",
+      });
 
       const SHIPPED_ORDERS = await ORDER_MODEL.countDocuments({
         status: "shipped",
@@ -45,7 +49,7 @@ module.exports = {
         category: CATEGORY_COUNT,
         product: PRODUCT_COUNT,
         order: {
-          total : ORDER_COUNT,
+          total: ORDER_COUNT,
           pending: PENDING_ORDERS,
           placed: PLACED_ORDERS,
           shipped: SHIPPED_ORDERS,
@@ -417,5 +421,56 @@ module.exports = {
       { $set: { isDeleted: true } }
     );
     res.redirect("/admin/banners");
+  },
+  getSalesReport: async (req, res) => {
+    try {
+      console.log(req.body);
+      const START_DATE = new Date(req.body.startDate);
+      const END_DATE = new Date(req.body.endDate);
+      const SALES_INFO = await ORDER_MODEL.find({
+        $and: [
+          { date: { $gte: START_DATE } },
+          { status: "delivered" },
+          { date: { $lte: END_DATE } },
+        ],
+      });
+      console.log(SALES_INFO);
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("My Sheet");
+
+      worksheet.columns = [
+        { header: "userId", key: "userId", width: 10 },
+        { header: "payment_order_id", key: "payment_order_id", width: 32 },
+        { header: "items", key: "items", width: 10, outlineLevel: 1 },
+        { header: "address", key: "address", width: 10, outlineLevel: 1 },
+        {
+          header: "payment_method",
+          key: "payment_method",
+          width: 10,
+          outlineLevel: 1,
+        },
+        { header: "date", key: "date", width: 10, outlineLevel: 1 },
+        { header: "status", key: "status", width: 10, outlineLevel: 1 },
+      ];
+
+      SALES_INFO.forEach((order) => {
+        worksheet.addRow({
+          userId: order.userId,
+          payment_order_id: order.payment_order_id,
+          items: order.items,
+          address: order.address,
+          payment_method: order.payment_method,
+          date: order.date,
+          status: order.status,
+        });
+      });
+      const data = await workbook.xlsx.writeFile("order.xlsx").then((data) => {
+        res.send("done");
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    //  res.render('adminViews/add-banner', { layout: 'layouts/adminLayout' })
   },
 };
