@@ -1,0 +1,39 @@
+<main class="fullScreen container-fluid">
+
+     <div class="row justify-content-center">
+          <div class="card" style="width: 34rem;">
+               <div class="card-header">
+                    Your Order Details
+               </div>
+               <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Order Id : <%= orderDetails._id %>
+                    </li>
+                    <li class="list-group-item">Status: <%= orderDetails.status %>
+                    </li>
+                    <li class="list-group-item">Date: <%= orderDetails.date %>
+                    </li>
+                    <li class="list-group-item">Payment Method: <%= orderDetails.payment_method %>
+                    </li>
+               </ul>
+               <h5 class="card-title">Product Details</h5>
+               <div>
+                    <% orderDetails.items.forEach((item)=>{ %>
+                         <img src="/<%= item.productId.image %>" class="card-img-top" alt="..." style="width: 20rem">
+                         <h2>
+                              <%= item.productId.name %>
+                         </h2>
+                         <h3>category: <%= item.productId.category %>
+                         </h3>
+                         <p>Price:<%= item.productId.price %>
+                         </p>
+                         <p>Quantity: <%= item.quantity %>
+                         </p>
+                         <% }) %>
+               </div>
+               <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Total Amount to Pay: <%= orderDetails.amount %>
+                    </li>
+               </ul>
+          </div>
+     </div>
+</main>

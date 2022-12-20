@@ -943,6 +943,13 @@ if(!(PRODUCT_EXIST_ON_CART)){
         });
     } catch (error) {}
   },
+  viewOrderDetails: async (req, res) =>{
+   const ORDERS = await ORDER_MODEL.findOne({ _id: req.params.id}).populate("items.productId").lean()
+       console.log("here order views will be shown"+ req.params.id)
+       console.log(ORDERS)
+       res.render('userViews/orderDetails',{orderDetails: ORDERS, cartItemsCount })
+
+  },
   cancelOrderByUser: async (req, res) => {
     try {
       await ORDER_MODEL.updateOne(

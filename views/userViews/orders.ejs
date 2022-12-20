@@ -21,9 +21,8 @@
                 <%= count %>
               </th>
               <td>
-                <%= order._id %>
+                <a href="/orders/details/<%= order._id %>"><%= order._id %></a>
               </td>
-
               <td>
                 <%= order.date.toDateString() %>
               </td>
