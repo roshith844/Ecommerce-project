@@ -58,7 +58,6 @@
             </tr>
             <% count++ %>
               <% }) %>
-
                 <% cancelledOrderDetails.forEach((order)=>{ %>
                   <tr>
                     <th scope="row">
@@ -86,13 +85,17 @@
                         </div>
                         <% }) %>
                     </td>
+                    <td></td>
                     <td>
                       <p>
                         <%= order.status %>
                       </p>
                     </td>
                     <td>
+
                     </td>
+                    
+                  
                   </tr>
                   <% }) %>
         </tbody>
