@@ -80,7 +80,7 @@
 <script>
   function addOneProduct(productId) {
     $.ajax({
-      url: "/wishlist-add-one/" + productId,
+      url: "/add-one/" + productId,
       method: "get",
       success: (response) => {
         if (response.status) {
@@ -89,20 +89,17 @@
           let quantity = $("#productQuantity" + response.productId).html();
           quantity = parseInt(quantity) + 1;
           $("#productQuantity" + response.productId).html(quantity);
-
           // Select element to show total Price
           let totalPrice = $("#totalPrice").html();
-
           // Shows Total Price
           $("#totalPrice").html(response.totalPrice);
         }
       },
     });
   }
-
   function removeOneProduct(productId) {
     $.ajax({
-      url: "/wishlist-remove-one/" + productId,
+      url: "/remove-one/" + productId,
       method: "get",
       success: (response) => {
         let quantity = $("#productQuantity" + productId).html();
@@ -119,7 +116,6 @@
         }
         // Select element to show total Price
         let totalPrice = $("#totalPrice").html();
-
         // Shows Total Price
         $("#totalPrice").html(response.totalPrice);
       },
