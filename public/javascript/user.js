@@ -25,10 +25,13 @@ function addToCart(productId) {
            let count = $("#wishlistCount").html();
            count = parseInt(count) + 1;
            $("#wishlistCount").html(count);
-           // alert  messege
-           $("#alerts").append(
-             '<div  class="alert alert-success alert-dismissible fade show" role="alert"> Item Added to Wishlist! <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
-           );
+           if(response.isOnCart){
+            swal("Item is Already on Cart!", "Item cannot add if it is on cart!");
+           }else if(response.isOnWishlist){
+            swal("Item is Already on Wishlist!", "Item cannot add if it is on wishlist!");
+           }else{
+            swal("item Added!", "It is now on wishlist!", "success");
+           }
          }
        },
      });

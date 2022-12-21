@@ -408,7 +408,7 @@ module.exports = {
     try {
       const USER_ID = req.session.user;
       const USER_WISHLIST = await WISHLIST_MODEL.findOne({ userId: USER_ID }); // checks user on db
-
+      // Checks if user have a wishlist on database
       if (USER_WISHLIST) {
         const PRODUCT_EXIST_ON_CART = await CART_MODEL.findOne({
           userId: USER_ID,
@@ -418,14 +418,19 @@ module.exports = {
           userId: USER_ID,
           items: { $elemMatch: { productId: req.params.id } },
         });
+        // Checks product exist on cart and wishlist
         if (!PRODUCT_EXIST_ON_CART && !PRODUCT_EXIST_ON_WISHLIST) {
-          // addOneProductWishlist(USER_ID, req.params.id);
-          // if product is not there, Adds the product to cart
           await WISHLIST_MODEL.updateOne(
             { userId: USER_ID },
             { $push: { items: { productId: req.params.id } } }
           );
+          res.json({ status: true, isOnCart: false, isOnWishlist: false });
         } else {
+          if (PRODUCT_EXIST_ON_CART) {
+            res.json({ status: true, isOnCart: true, isOnWishlist: false });
+          } else if (PRODUCT_EXIST_ON_WISHLIST) {
+            res.json({ status: true, isOnCart: false, isOnWishlist: true });
+          }
         }
 
         // if user doesnot has a cart, Create new cart
@@ -444,9 +449,12 @@ module.exports = {
               },
             ],
           });
+          res.json({ status: true, isOnCart: false, isOnWishlist: false });
+        } else {
+          res.json({ status: true, isOnCart: true, isOnWishlist: false });
         }
       }
-      res.json({ status: true });
+      // res.json({ status: true });
       // res.redirect("/cart");
     } catch (error) {
       console.log(error);
