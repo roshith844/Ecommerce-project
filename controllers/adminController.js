@@ -1,3 +1,5 @@
+const PATH = require('path')
+const XLSX = require('xlsx')
 const ADMIN_MODEL = require("../model/adminSchema");
 const USER_MODEL = require("../model/userSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
@@ -465,7 +467,8 @@ module.exports = {
         });
       });
       const data = await workbook.xlsx.writeFile("order.xlsx").then((data) => {
-        res.send("done");
+        const DATA_LOCATION = PATH.join(__dirname, "../order.xlsx");
+       res.download(DATA_LOCATION)
       });
     } catch (error) {
       console.log(error);
