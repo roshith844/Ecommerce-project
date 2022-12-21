@@ -338,6 +338,17 @@ module.exports = {
         }
       });
   },
+  viewOrderDetails: async (req, res) => {
+    const ORDERS = await ORDER_MODEL.findOne({ _id: req.params.id })
+      .populate("items.productId")
+      .lean();
+    console.log("here order views will be shown" + req.params.id);
+    console.log(ORDERS);
+    res.render("userViews/orderDetails", {
+      orderDetails: ORDERS,
+      cartItemsCount,
+    });
+  },
   viewChangeStatus: (req, res) => {
     res.render("adminViews/change-status", {
       orderId: req.params.id,

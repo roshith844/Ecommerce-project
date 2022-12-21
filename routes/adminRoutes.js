@@ -60,6 +60,7 @@ router.post("/categories/edit/:id", SESSION_MANAGER.verifyLoginAdmin, adminContr
 router.get("/categories/delete/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.deleteCategory);
 
 router.get("/orders", SESSION_MANAGER.verifyLoginAdmin, adminController.viewOrders);
+router.get('/orders/details/:id', SESSION_MANAGER.verifyLoginAdmin, adminController.viewOrderDetails)
 router.get("/orders/change-status/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.viewChangeStatus);
 router.post("/orders/change-status", SESSION_MANAGER.verifyLoginAdmin, adminController.changeStatus);
 router.get("/orders/cancel/:id", SESSION_MANAGER.verifyLoginAdmin, adminController.cancelOrder);
