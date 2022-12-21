@@ -333,7 +333,7 @@ module.exports = {
     try {
       if (req.session.user) {
         const products = await PRODUCT_MODEL.find({ isDeleted: false });
-        const BANNERS = await BANNER_MODEL.find({isDeleted: false})
+        const BANNERS = await BANNER_MODEL.find({ isDeleted: false });
         // const CART_ITEMS_COUNT = await CART_MODEL.countDocuments
         // Checks user Cart Exists
         const USER_CART = await CART_MODEL.findOne({
@@ -404,47 +404,52 @@ module.exports = {
         });
     } catch (error) {}
   },
-  addToWishlist:async (req, res) => {
+  addToWishlist: async (req, res) => {
     try {
-     const USER_ID = req.session.user
-     const USER_WISHLIST = await WISHLIST_MODEL.findOne({ userId: USER_ID }); // checks user on db     
-      
-     if (USER_WISHLIST) {
-        const PRODUCT_EXIST_ON_CART = await CART_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
+      const USER_ID = req.session.user;
+      const USER_WISHLIST = await WISHLIST_MODEL.findOne({ userId: USER_ID }); // checks user on db
+
+      if (USER_WISHLIST) {
+        const PRODUCT_EXIST_ON_CART = await CART_MODEL.findOne({
+          userId: USER_ID,
+          items: { $elemMatch: { productId: req.params.id } },
         });
-        const PRODUCT_EXIST_ON_WISHLIST = await WISHLIST_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
-        })
-if (!(PRODUCT_EXIST_ON_CART) && !(PRODUCT_EXIST_ON_WISHLIST)) {
-   // addOneProductWishlist(USER_ID, req.params.id);
+        const PRODUCT_EXIST_ON_WISHLIST = await WISHLIST_MODEL.findOne({
+          userId: USER_ID,
+          items: { $elemMatch: { productId: req.params.id } },
+        });
+        if (!PRODUCT_EXIST_ON_CART && !PRODUCT_EXIST_ON_WISHLIST) {
+          // addOneProductWishlist(USER_ID, req.params.id);
           // if product is not there, Adds the product to cart
           await WISHLIST_MODEL.updateOne(
             { userId: USER_ID },
             { $push: { items: { productId: req.params.id } } }
           );
         } else {
-         
         }
 
         // if user doesnot has a cart, Create new cart
-      } else{
-        const PRODUCT_EXIST_ON_CART = await CART_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
+      } else {
+        const PRODUCT_EXIST_ON_CART = await CART_MODEL.findOne({
+          userId: USER_ID,
+          items: { $elemMatch: { productId: req.params.id } },
         });
-if(!(PRODUCT_EXIST_ON_CART)){
-  await WISHLIST_MODEL.create({
-    userId: USER_ID,
-    items: [
-      {
-        productId: req.params.id,
-        quantity: 1,
-      },
-    ],
-  });
-}       
+        if (!PRODUCT_EXIST_ON_CART) {
+          await WISHLIST_MODEL.create({
+            userId: USER_ID,
+            items: [
+              {
+                productId: req.params.id,
+                quantity: 1,
+              },
+            ],
+          });
+        }
       }
       res.json({ status: true });
       // res.redirect("/cart");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
   deleteWishlistItem: async (req, res) => {
@@ -481,14 +486,16 @@ if(!(PRODUCT_EXIST_ON_CART)){
         });
     } catch (error) {}
   },
- addToCart: async (req, res) => {
+  addToCart: async (req, res) => {
     try {
-     const USER_ID = req.session.user
+      const USER_ID = req.session.user;
       const USER = await CART_MODEL.findOne({ userId: USER_ID }); // checks user on db
       // Checking weather user has a cart or not
       if (USER) {
         // checks product exists on cart
-        const PRODUCT_EXIST = await CART_MODEL.findOne({ userId: USER_ID, items: { $elemMatch: { productId: req.params.id } },
+        const PRODUCT_EXIST = await CART_MODEL.findOne({
+          userId: USER_ID,
+          items: { $elemMatch: { productId: req.params.id } },
         });
         if (PRODUCT_EXIST) {
           addOneProduct(USER_ID, req.params.id);
@@ -502,7 +509,7 @@ if(!(PRODUCT_EXIST_ON_CART)){
         await WISHLIST_MODEL.updateMany(
           { userId: req.session.user },
           { $pull: { items: { productId: req.params.id } } }
-        )
+        );
         // if user doesnot has a cart, Create new cart
       } else {
         console.log("user is not here");
@@ -519,7 +526,7 @@ if(!(PRODUCT_EXIST_ON_CART)){
       res.json({ status: true });
       // res.redirect("/cart");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
 
@@ -673,13 +680,15 @@ if(!(PRODUCT_EXIST_ON_CART)){
       });
       if (COUPON_DOC != null) {
         const DISCOUNT = COUPON_DOC.discount;
-        const DISCOUNT_AMOUNT = Math.floor(TOTAL_AMOUNT * (DISCOUNT / 100));
+        let DISCOUNT_AMOUNT = Math.floor(TOTAL_AMOUNT * (DISCOUNT / 100));
         const CURRENT_DATE = new Date();
         if (
           TOTAL_AMOUNT <= COUPON_DOC.purchaseLimit &&
-          DISCOUNT_AMOUNT <= COUPON_DOC.discountLimit &&
           CURRENT_DATE <= COUPON_DOC.expiryDate
         ) {
+          if (DISCOUNT_AMOUNT >= COUPON_DOC.discountLimit) {
+            DISCOUNT_AMOUNT = COUPON_DOC.discountLimit;
+          }
           // Calculates Total Amount to Discount
           TOTAL_AMOUNT = Math.floor(TOTAL_AMOUNT - DISCOUNT_AMOUNT);
         } else {
@@ -943,12 +952,16 @@ if(!(PRODUCT_EXIST_ON_CART)){
         });
     } catch (error) {}
   },
-  viewOrderDetails: async (req, res) =>{
-   const ORDERS = await ORDER_MODEL.findOne({ _id: req.params.id}).populate("items.productId").lean()
-       console.log("here order views will be shown"+ req.params.id)
-       console.log(ORDERS)
-       res.render('userViews/orderDetails',{orderDetails: ORDERS, cartItemsCount })
-
+  viewOrderDetails: async (req, res) => {
+    const ORDERS = await ORDER_MODEL.findOne({ _id: req.params.id })
+      .populate("items.productId")
+      .lean();
+    console.log("here order views will be shown" + req.params.id);
+    console.log(ORDERS);
+    res.render("userViews/orderDetails", {
+      orderDetails: ORDERS,
+      cartItemsCount,
+    });
   },
   cancelOrderByUser: async (req, res) => {
     try {
