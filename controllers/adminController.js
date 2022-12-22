@@ -1,5 +1,4 @@
 const PATH = require('path')
-const XLSX = require('xlsx')
 const ADMIN_MODEL = require("../model/adminSchema");
 const USER_MODEL = require("../model/userSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
@@ -221,7 +220,6 @@ module.exports = {
     res.redirect("/admin/products");
   },
   deleteProduct: async (req, res) => {
-    //Update isDeleted feild to true
     PRODUCT_MODEL.updateOne(
       { _id: req.params.id },
       { $set: { isDeleted: true } }
@@ -484,7 +482,5 @@ module.exports = {
     } catch (error) {
       console.log(error);
     }
-
-    //  res.render('adminViews/add-banner', { layout: 'layouts/adminLayout' })
   },
 };

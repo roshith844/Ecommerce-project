@@ -1,7 +1,4 @@
-const session = require("express-session");
 const crypto = require("crypto");
-const cookieParser = require("cookie-parser");
-const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const MY_OTP_SENDER = require("../model/sendOTP");
 const USER_MODEL = require("../model/userSchema");
@@ -10,7 +7,6 @@ const PRODUCT_MODEL = require("../model/productSchema");
 const CART_MODEL = require("../model/cartSchema");
 const WISHLIST_MODEL = require("../model/wishlistSchema");
 const BANNER_MODEL = require("../model/bannerSchema");
-//wishlistSchema
 const ORDER_MODEL = require("../model/orderSchema");
 const COUPON_MODEL = require("../model/couponSchema");
 const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
@@ -75,10 +71,6 @@ function getTotalPrice(userId) {
         resolve(totalPrice);
       });
   });
-  //  .then((totalPrice)=>{
-  //   console.log(totalPrice)
-
-  // })
 }
 // checks Phone Number exists on database
 async function checkPhoneNumber(userPhoneNumber) {
@@ -334,7 +326,6 @@ module.exports = {
       if (req.session.user) {
         const products = await PRODUCT_MODEL.find({ isDeleted: false });
         const BANNERS = await BANNER_MODEL.find({ isDeleted: false });
-        // const CART_ITEMS_COUNT = await CART_MODEL.countDocuments
         // Checks user Cart Exists
         const USER_CART = await CART_MODEL.findOne({
           userId: req.session.user,
@@ -673,9 +664,6 @@ module.exports = {
           },
         },
       ]).exec();
-      // .then((result) => {
-      //   return result;
-      // })
 
       // Calculate total amount
       let TOTAL_AMOUNT = TOTAL_PRICE.reduce((accumulator, itemObj) => {
@@ -705,9 +693,6 @@ module.exports = {
         console.log("doc not found");
       }
 
-      // await CART_MODEL.aggregate([{ $match: { userId: mongoose.Types.ObjectId(req.session.user) } }, { $unwind: "$items" }]).then((result) => {
-      //   console.log("the result is" + result)
-      // })
       const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }); //Finds user cart
       // Creates new Order
       await ORDER_MODEL.create({
@@ -764,13 +749,7 @@ module.exports = {
           { userId: USER_CART.userId, status: "pending" },
           { payment_order_id: USER_CART.userId, status: "order placed" }
         );
-        // await CART_MODEL.deleteOne({ userId: req.session.user }, (err) => {
-        //   if (err) {
-        //     console.log(err);
-        //   }else{
-        //     console.log("deleted cart")
-        //   }
-        // })
+        
         res.json({ status: "cod", order: codRefId });
       }
     } catch (error) {
