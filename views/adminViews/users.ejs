@@ -18,8 +18,9 @@
                             <thead>
                                 <tr>
                                     <th scope="col">No</th>
+                                    <th scope="col">Name</th>
                                     <th scope="col">Email</th>
-                                    <th scope="col">Password</th>
+                                    <th scope="col">Phone Number</th>
                                     <th scope="col">block</th>
                                     <th scope="col">unblock</th>
                                 </tr>
@@ -32,10 +33,13 @@
                                                 <%= count %>
                                             </td>
                                             <td>
+                                                <%= user.name %>
+                                            </td>
+                                            <td>
                                                 <%= user.email %>
                                             </td>
                                             <td>
-                                                <%= user.password %>
+                                                <%= user.phone %>
                                             </td>
                                             <td>
                                                 <a href="/admin/users/block/<%=user._id%>" onclick="return confirm('Block <%= user.email %>?')"
