@@ -447,7 +447,7 @@ module.exports = {
           { date: { $lte: END_DATE } },
         ],
       });
-      console.log(SALES_INFO);
+      
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("My Sheet");
 
@@ -455,7 +455,7 @@ module.exports = {
         { header: "userId", key: "userId", width: 10 },
         { header: "payment_order_id", key: "payment_order_id", width: 32 },
         { header: "items", key: "items", width: 10, outlineLevel: 1 },
-        { header: "address", key: "address", width: 10, outlineLevel: 1 },
+        { header: "amount", key: "amount", width: 10, outlineLevel: 1 },
         {
           header: "payment_method",
           key: "payment_method",
