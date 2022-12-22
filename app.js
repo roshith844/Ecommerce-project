@@ -14,6 +14,9 @@ app.use(cors())
 app.use('/', USER_ROUTER);
 app.use('/admin', ADMIN_ROUTER)
 app.use('/', PAYMENT_ROUTER)
+app.use((req, res)=>{
+  res.render("not-found", { layout: false });
+})
 
 // Set EJS as templating engine
 app.set('view engine', 'ejs');
