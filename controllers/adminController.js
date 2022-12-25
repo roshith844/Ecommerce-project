@@ -119,12 +119,10 @@ module.exports = {
     }
   },
   blockUser: async (req, res) => {
-    console.log(req.params.id);
     const updated = await USER_MODEL.findOneAndUpdate(
       { _id: req.params.id },
       { $set: { blockStatus: true } }
     ).then(() => {
-      console.log("user block on db");
       req.session.blockInfo = true;
       req.session.unblockInfo = false;
     });
@@ -136,7 +134,6 @@ module.exports = {
       { _id: req.params.id },
       { $set: { blockStatus: false } }
     ).then(() => {
-      console.log("user unblock on db");
       req.session.unblockInfo = true;
       req.session.blockInfo = false;
     });
@@ -173,7 +170,6 @@ module.exports = {
   },
   viewAddProduct: async (req, res) => {
     await CATEGORY_MODEL.find({}).then((categoryArr) => {
-      console.log("got categories ");
       res.render("adminViews/add-product", {
         categories: categoryArr,
         layout: "layouts/adminLayout",
@@ -181,9 +177,7 @@ module.exports = {
     });
   },
   AddProduct: (req, res) => {
-    console.log("the path is " + req.file.path);
     const IMAGE_PATH = req.file.path.slice(7);
-    console.log("after cut " + IMAGE_PATH);
     PRODUCT_MODEL.create({
       name: req.body.name,
       image: IMAGE_PATH,
@@ -191,13 +185,11 @@ module.exports = {
       price: req.body.price,
       category: req.body.category,
     }).then(() => {
-      console.log("product added");
       res.redirect("/admin/products");
     });
   },
   goToEditProduct: (req, res) => {
     PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
-      console.log(info);
       res.render("adminViews/edit-product", {
         info: info,
         layout: "layouts/adminLayout",
@@ -215,7 +207,6 @@ module.exports = {
       }
     ).then(() => {
       req.session.editProduct = true;
-      console.log("replaced");
     });
     res.redirect("/admin/products");
   },
@@ -224,7 +215,6 @@ module.exports = {
       { _id: req.params.id },
       { $set: { isDeleted: true } }
     ).then(() => {
-      console.log("product soft-deleted");
       req.session.deleteStatus = true;
       res.redirect("/admin/products");
     });
@@ -272,17 +262,13 @@ module.exports = {
     if (CATEGORY_EXIST == null) {
       await CATEGORY_MODEL.create({
         category_name: CATEGORY_IN_SMALL_LETTERS,
-      }).then(() => {
-        console.log("category changed");
-      });
+      })
     } else {
-      console.log("category exists already");
     }
     res.redirect("/admin/categories");
   },
   viewEditCategory: async (req, res) => {
     await CATEGORY_MODEL.findOne({ _id: req.params.id }).then((item) => {
-      console.log(item);
       res.render("adminViews/edit-category", {
         data: item,
         layout: "layouts/adminLayout",
@@ -310,7 +296,6 @@ module.exports = {
       if (error) {
         console.log(error);
       } else {
-        console.log("logout successfully");
         res.redirect("/admin/");
       }
     });
@@ -340,8 +325,6 @@ module.exports = {
     const ORDERS = await ORDER_MODEL.findOne({ _id: req.params.id })
       .populate("items.productId")
       .lean();
-    console.log("here order views will be shown" + req.params.id);
-    console.log(ORDERS);
     res.render("userViews/orderDetails", {
       orderDetails: ORDERS,
       cartItemsCount,
@@ -435,7 +418,6 @@ module.exports = {
   },
   getSalesReport: async (req, res) => {
     try {
-      console.log(req.body);
       const START_DATE = new Date(req.body.startDate);
       const END_DATE = new Date(req.body.endDate);
       const SALES_INFO = await ORDER_MODEL.find({

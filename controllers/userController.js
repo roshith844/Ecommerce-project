@@ -23,9 +23,7 @@ async function addOneProduct(userId, productId) {
   await CART_MODEL.updateOne(
     { userId: userId, items: { $elemMatch: { productId: productId } } },
     { $inc: { "items.$.quantity": 1 } }
-  ).then(() => {
-    console.log("updated incremented");
-  });
+  )
 }
 
 // To Decrement by one on cart
@@ -48,9 +46,7 @@ async function removeOneProduct(userId, productId) {
     await CART_MODEL.updateOne(
       { userId: userId, items: { $elemMatch: { productId: productId } } },
       { $inc: { "items.$.quantity": -1 } }
-    ).then(() => {
-      console.log("updated Decremented");
-    });
+    )
   } else {
     return false;
   }
@@ -74,9 +70,7 @@ function getTotalPrice(userId) {
 }
 // checks Phone Number exists on database
 async function checkPhoneNumber(userPhoneNumber) {
-  console.log("checking on database for number:" + userPhoneNumber);
   const PHONE_NUMBER_AS_INTEGER = Number(userPhoneNumber);
-  console.log(typeof PHONE_NUMBER_AS_INTEGER);
   const Userfound = await USER_MODEL.findOne({
     phone: PHONE_NUMBER_AS_INTEGER,
   });
@@ -116,7 +110,6 @@ module.exports = {
 
       // Validates User input
       if (req.body.password === req.body.repeatPassword) {
-        console.log("valid password");
         const userExist = await checkPhoneNumber(req.body.phone);
 
         if (userExist == true) {
@@ -153,7 +146,6 @@ module.exports = {
                 password: req.body.password,
               });
               newUser.save().then(() => {
-                console.log("user added to database");
                 res.redirect("/");
               });
             } else {
@@ -166,7 +158,6 @@ module.exports = {
           }
         }
       } else {
-        console.log("password doesn't match");
         res.render("userViews/signup", {
           msg: "password doesn't match. Try Again",
           cartItemsCount: 0,
@@ -255,11 +246,9 @@ module.exports = {
       // Generates random code if user Exists
       const randomCode = (function getRandomCode() {
         if (!userExist) {
-          console.log("user does not exist on database");
           res.render("userViews/otpLogin", { cartItemsCount: 0 });
           return false;
         } else {
-          console.log("user exists");
 
           // Generates Random 4 digit Code
           return (() => {
@@ -280,7 +269,6 @@ module.exports = {
         );
 
         const USER_PHONE_NUMBER = `+91` + req.body.phone;
-        console.log(USER_PHONE_NUMBER);
 
         MY_OTP_SENDER(randomCode, USER_PHONE_NUMBER); // Sends email to user
 
@@ -296,15 +284,12 @@ module.exports = {
 
   verifyOtp: async (req, res) => {
     try {
-      console.log(req.body.phone);
-      console.log(req.body.otp);
       const userCodeObj = await OTP_LOGIN_MODEL.findOne({
         phone: req.body.phone,
       });
 
       const userDoc = await USER_MODEL.findOne({ phone: req.body.phone });
 
-      console.log("code from db Is:" + userCodeObj.code);
       if (req.body.otp == userCodeObj.code) {
         if (userCodeObj.blockStatus == true) {
           res.render("userViews/login", {
@@ -316,7 +301,6 @@ module.exports = {
           res.redirect("/");
         }
       } else {
-        console.log("otp is Invalid");
         res.redirect("/login");
       }
     } catch (error) {}
@@ -353,7 +337,6 @@ module.exports = {
   getProductInfo: (req, res) => {
     try {
       PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
-        console.log(info);
         res.render("userViews/productDetails", { info: info, cartItemsCount });
       });
     } catch (error) {}
@@ -365,7 +348,6 @@ module.exports = {
         if (error) {
           console.log(error);
         } else {
-          console.log("logout successfully");
           res.redirect("/login");
         }
       });
@@ -511,7 +493,6 @@ module.exports = {
         );
         // if user doesnot has a cart, Create new cart
       } else {
-        console.log("user is not here");
         await CART_MODEL.create({
           userId: USER_ID,
           items: [
@@ -533,7 +514,6 @@ module.exports = {
     try {
       await addOneProduct(req.session.user, req.params.id).then(() => {
         getTotalPrice(req.session.user).then((totalPrice) => {
-          console.log(totalPrice);
           res.json({
             status: true,
             productId: req.params.id,
@@ -690,7 +670,6 @@ module.exports = {
         } else {
         }
       } else {
-        console.log("doc not found");
       }
 
       const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }); //Finds user cart
@@ -719,20 +698,17 @@ module.exports = {
       });
 
       if (req.body.payment == "razorpay") {
-        console.log("checked razorpay");
         var options = {
           amount: TOTAL_AMOUNT * 100, // amount in the smallest currency unit
           currency: "INR",
           receipt: "order_rcptid_11",
         };
-        console.log("debug : order created");
         const order = await instance.orders.create(
           options,
           async (err, order) => {
             if (err) {
               console.log(err);
             } else {
-              console.log("one: " + order.id);
               await ORDER_MODEL.updateOne(
                 { userId: USER_CART.userId, status: "pending" },
                 { payment_order_id: order.id, amount: TOTAL_AMOUNT }
@@ -943,8 +919,6 @@ module.exports = {
     const ORDERS = await ORDER_MODEL.findOne({ _id: req.params.id })
       .populate("items.productId")
       .lean();
-    console.log("here order views will be shown" + req.params.id);
-    console.log(ORDERS);
     res.render("userViews/orderDetails", {
       orderDetails: ORDERS,
       cartItemsCount,
