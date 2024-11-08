@@ -10,7 +10,8 @@ const BANNER_MODEL = require("../model/bannerSchema");
 const ORDER_MODEL = require("../model/orderSchema");
 const COUPON_MODEL = require("../model/couponSchema");
 const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
-const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
+const PASSWORD_REGEX =
+  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 const Razorpay = require("razorpay");
 var cartItemsCount;
 var instance = new Razorpay({
@@ -23,7 +24,7 @@ async function addOneProduct(userId, productId) {
   await CART_MODEL.updateOne(
     { userId: userId, items: { $elemMatch: { productId: productId } } },
     { $inc: { "items.$.quantity": 1 } }
-  )
+  );
 }
 
 // To Decrement by one on cart
@@ -46,7 +47,7 @@ async function removeOneProduct(userId, productId) {
     await CART_MODEL.updateOne(
       { userId: userId, items: { $elemMatch: { productId: productId } } },
       { $inc: { "items.$.quantity": -1 } }
-    )
+    );
   } else {
     return false;
   }
@@ -130,8 +131,7 @@ module.exports = {
             });
           } else if (!validPassword) {
             res.render("userViews/signup", {
-              msg:
-                "password= should be Minimum eight characters, at least one letter, one number and one special character",
+              msg: "password= should be Minimum eight characters, at least one letter, one number and one special character",
               cartItemsCount: 0,
             });
           } else {
@@ -146,7 +146,12 @@ module.exports = {
                 password: req.body.password,
               });
               newUser.save().then(() => {
-                res.redirect("/");
+                // res.redirect("/");
+                res.render("userViews/signup", {
+                  msg: "Signed Up successfully",
+                  cartItemsCount: 0,
+                  layout: "layouts/guest-layout",
+                });
               });
             } else {
               res.render("userViews/signup", {
@@ -212,8 +217,7 @@ module.exports = {
           });
         } else if (PASSWORD_REGEX.test(req.body.password) == false) {
           res.render("userViews/login", {
-            msg:
-              "password should be Minimum eight characters, at least one letter, one number and one special character",
+            msg: "password should be Minimum eight characters, at least one letter, one number and one special character",
             cartItemsCount: 0,
           });
         } else {
@@ -249,7 +253,6 @@ module.exports = {
           res.render("userViews/otpLogin", { cartItemsCount: 0 });
           return false;
         } else {
-
           // Generates Random 4 digit Code
           return (() => {
             return Math.floor(1000 + Math.random() * 9000);
@@ -725,7 +728,7 @@ module.exports = {
           { userId: USER_CART.userId, status: "pending" },
           { payment_order_id: USER_CART.userId, status: "order placed" }
         );
-        
+
         res.json({ status: "cod", order: codRefId });
       }
     } catch (error) {
@@ -904,14 +907,17 @@ module.exports = {
           }
         })
         .then((result) => {
-          const orderDetails = result.ORDERS;
-          const cancelledOrderDetails = result.CANCELLED_ORDERS;
-
-          res.render("userViews/orders", {
-            orderDetails,
-            cancelledOrderDetails,
-            cartItemsCount,
-          });
+          let orderDetails = [];
+          let cancelledOrderDetails = [];
+          if (result) {
+            orderDetails = result.ORDERS;
+            cancelledOrderDetails = result.CANCELLED_ORDERS;
+            res.render("userViews/orders", {
+              orderDetails,
+              cancelledOrderDetails,
+              cartItemsCount,
+            });
+          }
         });
     } catch (error) {}
   },
