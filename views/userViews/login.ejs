@@ -1,39 +1,45 @@
-<main class="fullScreen">
-  <!-- Alert messege for validation -->
-  <% if(msg.length> 0){ %>
+<main class="fullScreen d-flex flex-column justify-content-center align-items-center">
+  <!-- Alert message for validation -->
+  <% if(msg.length > 0) { %>
     <div class="alert alert-danger" role="alert">
       <%= msg %>
     </div>
-    <% } %>
-      <!--  -->
-      <div class="container-fluid">
-        <div class="d-flex">
-          <div
-            class="signup-navigation col-6 mx-4 my-4 me-3 p-5 d-flex flex-column justify-content-center align-items-center rounded-5 text-wrap">
-            <h1>New to Our Website?</h1>
-            <p>We make Premium Quality Cakes. Experianced Chefs and Unique Recipies Makes Our Cakes Best On Market!!
-            </p>
-            <a href="/signup" class="btn btn-primary col-6 text-wrap">Create An Account</a>
+  <% } %>
+
+  <div class="container-fluid ">
+    <div class="d-flex justify-content-center  px-8 px-lg-4">
+      <!-- Signup Section (Mobile -> below the form) -->
+      <div class="d-none d-lg-flex login-navigation col-12 col-md-5 flex-column justify-content-center align-items-center 
+      rounded-5 p-5 text-wrap bg-gradient shadow-lg text-center">
+      <h1 class="text-white mb-4 font-weight-bold display-4">New to Our Website?</h1>
+      <p class="text-light mb-4 font-italic" style="font-size: 1.1rem;">We make Premium Quality Cakes. Experienced Chefs and Unique Recipes Make Our Cakes the Best on the Market!</p>
+      <a href="/signup" class="btn btn-primary btn-lg col-12 col-md-6 text-wrap transform-hover">Create An Account</a>
+    </div>
+
+      <!-- Login Form Section -->
+      <div class="login-form col-12  col-md-5 mt-4 mt-md-0 p-md-5 d-flex flex-column justify-content-center align-items-center rounded-5">
+        <form action="/login" method="POST" class="w-100" novalidate>
+          <div class="mb-3 w-100">
+            <label for="exampleInputEmail1" class="form-label">Email address</label>
+            <input name="email" type="email" class="form-control w-100" required>
           </div>
-          <div class="login-form col-4 ">
-            <form action="/login" method="POST" class="mt-5 ms-5" novalidate>
-              <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input name="email" type="email" class="form-control">
-              </div>
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input name="password" type="password" class="form-control" id="exampleInputPassword1">
-              </div>
-              <div class="d-flex flex-column text-center justify-content-center align-items-center text-wrap">
-                <button type="submit" class="btn btn-primary mb-2  col-6">Log In</button>
-                <p>OR</p>
-              </div>
-            </form>
-            <div class="ms-5 d-flex flex-column align-items-center ">
-              <a href="/otp-login"><button class="btn btn-primary ms-5 mb-2 col-6">Login With OTP</button></a>
-            </div>
+          <div class="mb-3 w-100">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input name="password" type="password" class="form-control w-100" id="exampleInputPassword1" required>
           </div>
+          <div class="d-flex flex-column text-center justify-content-center align-items-center text-wrap w-100">
+            <button type="submit" class="btn btn-primary mb-2 col-12 col-lg-6">Log In</button>
+            <p>OR</p>
+          </div>
+        </form>
+        <div class=" d-flex flex-column align-items-center w-100">
+          <a href="/otp-login" class="btn btn-primary mb-2 col-12 col-md-6">
+            Login With OTP
+          </a>
         </div>
+        <p class="d-lg-none"><a class="link-opacity-75" href="/signup" >New to Our Website? Sign Up</a></p>
       </div>
+      
+    </div>
+  </div>
 </main>

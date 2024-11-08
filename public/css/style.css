@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700');
 
 /*
-The Meyer's Reset Code for reseting all of the default browser styles
+The Meyer's Reset Code for resetting all of the default browser styles
 */
 /* http://meyerweb.com/eric/tools/css/reset/ 
    v2.0 | 20110126
@@ -140,23 +140,26 @@ table {
 }
 
 /**/
+/* Global Styles */
 * {
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
   box-sizing: border-box;
 }
 
 body{
   overflow-x: hidden;
 }
+
 nav,
 main {
   background-color: #fcedda;
   margin: 0;
   padding: 0;
 }
+
 .signup-navigation,
 .login-navigation {
-  background-color: #ee4e34;
+  background-color: #ff6f00;  /* Dark orange color */
   height: 30rem;
   margin: 0;
   padding: 0;
@@ -164,10 +167,69 @@ main {
 
 .fullScreen {
   min-height: 100vh;
-  width:auto;
+  width: auto;
   margin: 0;
   padding: 0;
 }
-table{
+
+table {
   width: 100%;
+}
+
+/* Tilt effect for signup and login navigation */
+.signup-navigation,
+.login-navigation {
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transform: rotate(-12deg);
+  border: 4px solid #f1c2b8;
+}
+
+.signup-form,
+.login-form {
+  padding: 2rem;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+}
+
+.signup-form input,
+.login-form input,
+.signup-form button,
+.login-form button {
+  border-radius: 25px;
+}
+
+.signup-form button,
+.login-form button {
+  background-color: #f28c82;
+  color: white;
+  font-weight: bold;
+  padding: 0.7rem 2rem;
+}
+
+.signup-form button:hover,
+.login-form button:hover {
+  background-color: #f77b6e;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.text-wrap {
+  word-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+  .signup-navigation,
+  .login-navigation {
+    transform: none;
+    box-shadow: none;
+    background: none;
+    border-radius: 0;
+    margin-bottom: 1rem;
+  }
+
+  .signup-form,
+  .login-form {
+    padding: 1.5rem;
+  }
 }

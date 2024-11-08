@@ -1,50 +1,54 @@
-<main class="fullScreen">
-
-    <!-- Alert messege for validation -->
-    <% if(msg.length> 0){ %>
-        <div class="alert alert-danger" role="alert">
-            <%= msg %>
+<main class="fullScreen d-flex flex-column justify-content-center align-items-center">
+    <!-- Alert message for validation -->
+    <% if(msg.length > 0) { %>
+      <div class="alert alert-danger" role="alert">
+        <%= msg %>
+      </div>
+    <% } %>
+  
+    <div class="container-fluid">
+      <div class="row d-flex justify-content-center px-4">
+        <!-- Signup Navigation (Mobile -> below the form) -->
+        <div class="d-none d-lg-flex signup-navigation col-12 col-md-5 flex-column justify-content-center align-items-center
+          rounded-5 p-5 text-wrap bg-gradient shadow-lg text-center">
+          <h1 class="text-white mb-4 font-weight-bold display-4">Already have an Account?</h1>
+          <p class="text-light mb-4 font-italic" style="font-size: 1.1rem;">Let's deep dive into the Delicious world of Cakes</p>
+          <a href="/login" class="btn btn-primary btn-lg col-12 col-md-6 text-wrap">Login Now</a>
         </div>
-        <% } %>
-            <div class="container-fluid">
-                <div class="d-flex">
-                    <div
-                        class="login-navigation col-6 mx-4 my-4 me-3 p-5 d-flex flex-column justify-content-center align-items-center rounded-5 text-wrap">
-                        <h1>Already have an Account?</h1>
-                        <p>Let's deep dive into the Delicious world of Cakes</p>
-                        <a href="/login" type="button" class="btn btn-primary">Login Now</a>
-                    </div>
-                    <div class="signup-form col-4">
-                        <form action="/signup" method="POST" class="mt-5 ms-5" novalidate>
-                            <div class="mb-3">
-                                <label for="" class="form-label">Name</label>
-                                <input type="text" class="form-control" name="name" id="">
-                            </div>
-                            <div class="mb-3">
-                                <label for="" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" name="phone" id="">
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                                <input name="email" type="email" class="form-control" id="exampleInputEmail1"
-                                    aria-describedby="emailHelp">
-                                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="exampleInputPassword1" class="form-label">Password</label>
-                                <input name="password" type="password" class="form-control" id="exampleInputPassword1">
-                            </div>
-                            <div class="mb-3">
-                                <label for="" class="form-label">Repeat Password</label>
-                                <input name="repeatPassword" type="password" class="form-control" id="">
-                            </div>
-                            <div
-                                class="d-flex flex-column text-center justify-content-center align-items-center text-wrap">
-                                <button class="btn btn-primary" type="submit" class="btn btn-primary">Register</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+  
+        <!-- Signup Form Section -->
+        <div class="signup-form col-12 col-lg-5 mt-4 mt-lg-0 p-lg-5 d-flex flex-column justify-content-center align-items-center rounded-5">
+          <form action="/signup" method="POST" class="w-100" novalidate>
+            <div class="mb-3 w-100">
+              <label for="name" class="form-label">Name</label>
+              <input name="name" type="text" class="form-control w-100" required>
             </div>
-</main>
+            <div class="mb-3 w-100">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input name="phone" type="tel" class="form-control w-100" required>
+            </div>
+            <div class="mb-3 w-100">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input name="email" type="email" class="form-control w-100" required>
+              <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <div class="mb-3 w-100">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input name="password" type="password" class="form-control w-100" id="exampleInputPassword1" required>
+            </div>
+            <div class="mb-3 w-100">
+              <label for="repeatPassword" class="form-label">Repeat Password</label>
+              <input name="repeatPassword" type="password" class="form-control w-100" id="repeatPassword" required>
+            </div>
+            <div class="d-flex flex-column text-center justify-content-center align-items-center text-wrap">
+              <button type="submit" class="btn btn-primary mb-2 col-12 col-lg-6">Register</button>
+            </div>
+          </form>
+          <p class="d-lg-none"><a class="link-opacity-75" href="/login">Already a member? Login</a></p>
+        </div>
+  
+    
+      </div>
+    </div>
+  </main>
+  
