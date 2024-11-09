@@ -1,28 +1,26 @@
-<main class="fullScreen">
+<main class="fullScreen pb-3">
   <div id="alerts"></div>
-  <% info.forEach((info)=>{ %>
+  <% info.forEach((info) => { %>
     <div class="container">
-      <div class="row">
-        <div class="col-6 justify-content-center align-items-center  mt-5">
-          <img class="col-12" src="/<%= info.image %>" alt="" />
+      <div class="row justify-content-center d-flex align-items-center min-vh-100">
+        <div class="col-12 col-sm-6 col-md-6 col-lg-6 d-flex justify-content-center align-items-center mt-5">
+          <img class="img-fluid" src="/<%= info.image %>" alt="" />
         </div>
-        <div class="col-6 mt-5 ">
-          <h1>
-            <%= info.name %>
-          </h1>
-          <h2>₹ <%= info.price %>
-          </h2>
-          <p>
-            <%= info.description %>
-          </p>
-          <button class="btn btn-primary" onclick="addToCart('<%= info._id %>')">
-            Add to Cart
-          </button>
-          <button class="btn btn-primary" onclick="addToWishlist('<%= info._id %>')">
-            Add to Wishlist
-          </button>
+        <div class="col-12 col-sm-6 col-md-6 col-lg-6 mt-5">
+          <h1 class="text-center text-md-left"><%= info.name %></h1>
+          <h2 class="text-center text-md-left">₹ <%= info.price %></h2>
+          <p class="text-center text-md-left"><%= info.description %></p>
+          <div class="d-flex justify-content-center justify-content-md-start">
+            <button class="btn btn-primary mx-2" onclick="addToCart('<%= info._id %>')">
+              Add to Cart
+            </button>
+            <button class="btn btn-primary mx-2" onclick="addToWishlist('<%= info._id %>')">
+              Add to Wishlist
+            </button>
+          </div>
         </div>
       </div>
-      <% }) %>
     </div>
+  <% }) %>
 </main>
+

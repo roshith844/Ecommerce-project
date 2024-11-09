@@ -1,124 +1,185 @@
-<main class="fullScreen col-12">
+<!-- Table Layout (Visible on larger screens) -->
+ <main class="p-3">
   <div class="d-flex justify-content-center">
     <h1 class="my-3">Cart</h1>
   </div>
-
-  <div class="row table-responsive">
-    <table class="table align-middle" id="">
+  <div class="row table-responsive mx-3 d-none d-md-block">
+    <table class="table align-middle">
       <thead>
         <tr class="align-bottom">
           <th scope="col">No.</th>
           <th scope="col">Product Name</th>
           <th scope="col">Product Image</th>
-          <th scope="col">price</th>
+          <th scope="col">Price</th>
           <th scope="col">Quantity</th>
           <th scope="col"></th>
           <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
-        <% let count=1 %>
-          <% let totalPrice=0 %>
-            <% productDetails.forEach((product)=>{ %>
-              <tr>
-                <th scope="row">
-                  <%= count %>
-                </th>
-                <td>
-                  <%= product.productId.name %>
-                </td>
-                <td>
-                  <img class="" src="<%= product.productId.image %>" alt="" style="width: 20rem;" />
-                </td>
-                <td>₹ <%= product.productId.price %>
-                </td>
-                <td>
-                  <button id="minusButton<%= product.productId._id %>"
-                    onclick="removeOneProduct('<%= product.productId._id %>')">
-                    <i class="fa-solid fa-square-minus"></i>
-                  </button>
-
-                  <span id="productQuantity<%= product.productId._id %>">
-                    <%= product.quantity %>
-                  </span>
-                  <button onclick="addOneProduct('<%= product.productId._id %>')">
-                    <i class="fa-solid fa-square-plus"></i>
-                  </button>
-                </td>
-                <td>
-                  <a href="/cart/edit-cart/<%= product.productId._id %>" class="btn btn-primary">Edit Quantity</a>
-                </td>
-                <td>
-                  <a href="/cart/delete/<%= product.productId._id %>" class="btn btn-danger">Delete</a>
-                </td>
-              </tr>
-              <% let itemTotalPrice=(product.productId.price) * (product.quantity) %>
-                <% totalPrice +=itemTotalPrice %>
-                  <% count++ %>
-                    <% }) %>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>Total</td>
-                        <td>
-                          <div id="totalPrice">₹ <%= totalPrice %>
-                          </div>
-                        </td>
-                      </tr>
+        <% let count=1 %> <% let totalPrice=0 %> <%
+        productDetails.forEach((product) => { %>
+        <tr>
+          <th scope="row"><%= count %></th>
+          <td><%= product.productId.name %></td>
+          <td>
+            <img
+              class="img-fluid"
+              src="<%= product.productId.image %>"
+              alt=""
+              style="width: 20rem"
+            />
+          </td>
+          <td>₹ <%= product.productId.price %></td>
+          <td>
+            <button
+              class="minusButton<%= product.productId._id %> btn btn-outline-secondary btn-sm"
+              onclick="removeOneProduct('<%= product.productId._id %>')"
+            >
+              <i class="fa-solid fa-minus"></i>
+            </button>
+            <span class="productQuantity<%= product.productId._id %> mx-2"
+              ><%= product.quantity %></span
+            >
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              onclick="addOneProduct('<%= product.productId._id %>')"
+            >
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </td>
+          <td>
+            <a
+              href="/cart/edit-cart/<%= product.productId._id %>"
+              class="btn btn-primary"
+              >Edit Quantity</a
+            >
+          </td>
+          <td>
+            <a
+              href="/cart/delete/<%= product.productId._id %>"
+              class="btn btn-danger"
+              >Delete</a
+            >
+          </td>
+        </tr>
+        <% let itemTotalPrice = (product.productId.price) * (product.quantity) %>
+        <% totalPrice += itemTotalPrice %> <% count++ %> <% }); %>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Total</td>
+          <td>
+            <div class="totalPrice">₹ <%= totalPrice %></div>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
-
-  <div class="d-flex justify-content-end me-5">
-    <a href="/checkout"><button class="btn btn-primary text-bg-success mb-3">
-        Proceed to Check Out
-      </button></a>
+  
+  <!-- Card Layout (Visible on smaller screens) -->
+  <div class="d-block d-md-none mx-3">
+    <% productDetails.forEach((product) => { %>
+    <div class="card mb-3">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img
+            src="<%= product.productId.image %>"
+            class="img-fluid rounded-start"
+            alt="..."
+          />
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title"><%= product.productId.name %></h5>
+            <p class="card-text">₹ <%= product.productId.price %></p>
+            <div class="d-flex flex-column gap-2 justify-content-between">
+              <div class="d-flex align-items-center ">
+                <button
+                  class="minusButton<%= product.productId._id %> btn btn-outline-secondary btn-sm"
+                  onclick="removeOneProduct('<%= product.productId._id %>')"
+                >
+                  <i class="fa-solid fa-minus"></i>
+                </button>
+                <span class="productQuantity<%= product.productId._id %> mx-2"
+                  ><%= product.quantity %></span
+                >
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  onclick="addOneProduct('<%= product.productId._id %>')"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+              <div class="d-flex justify-content-end gap-2">
+                <a
+                  href="/cart/edit-cart/<%= product.productId._id %>"
+                  class="btn btn-outline-primary btn-sm"
+                  >Edit Quantity</a
+                >
+                <a
+                  href="/cart/delete/<%= product.productId._id %>"
+                  class="btn btn-outline-danger btn-sm"
+                  >Delete</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }); %>
+    <div class="d-flex justify-content-end">
+      <div>Total: ₹ <%= totalPrice %></div>
+    </div>
   </div>
 </main>
 
+
 <script>
-  function addOneProduct(productId) {
-    $.ajax({
-      url: "/add-one/" + productId,
-      method: "get",
-      success: (response) => {
-        if (response.status) {
-          $("#minusButton" + productId).prop("disabled", false);
-          $("#minusButton" + productId).show();
-          let quantity = $("#productQuantity" + response.productId).html();
-          quantity = parseInt(quantity) + 1;
-          $("#productQuantity" + response.productId).html(quantity);
-          // Select element to show total Price
-          let totalPrice = $("#totalPrice").html();
-          // Shows Total Price
-          $("#totalPrice").html(response.totalPrice);
+function addOneProduct(productId) {
+  $.ajax({
+    url: "/add-one/" + productId,
+    method: "get",
+    success: (response) => {
+      if (response.status) {
+        // Update quantity for both screens
+        let quantity = $(".productQuantity" + productId).html();
+        quantity = parseInt(quantity) + 1;
+        $(".productQuantity" + productId).html(quantity);
+
+        // Enable minus button if the quantity is greater than 1
+        if (quantity > 1) {
+          $(".minusButton" + productId).prop("disabled", false);
         }
-      },
-    });
-  }
-  function removeOneProduct(productId) {
-    $.ajax({
-      url: "/remove-one/" + productId,
-      method: "get",
-      success: (response) => {
-        let quantity = $("#productQuantity" + productId).html();
-        if (response.status == true) {
-          $("#minusButton" + productId).prop("disabled", false);
-          if (parseInt(quantity) <= 1) {
-            $("#productQuantity" + productId).html(quantity);
-          } else {
-            quantity = parseInt(quantity) - 1;
-            $("#productQuantity" + productId).html(quantity);
-          }
-        } else {
-          $("#minusButton" + productId).prop("disabled", true);
+
+        // Update total price on both screens
+        $(".totalPrice").html("₹ " + response.totalPrice);
+      }
+    },
+  });
+}
+
+function removeOneProduct(productId) {
+  $.ajax({
+    url: "/remove-one/" + productId,
+    method: "get",
+    success: (response) => {
+      let quantity = $(".productQuantity" + productId).html();
+      if (response.status == true) {
+        if (parseInt(quantity) > 1) {
+          quantity = parseInt(quantity) - 1;
+          $(".productQuantity" + productId).html(quantity);
         }
-        // Select element to show total Price
-        let totalPrice = $("#totalPrice").html();
-        // Shows Total Price
-        $("#totalPrice").html(response.totalPrice);
-      },
-    });
-  }
+      } else {
+        $(".minusButton" + productId).prop("disabled", true);
+      }
+
+      // Update total price on both screens
+      $(".totalPrice").html("₹ " + response.totalPrice);
+    },
+  });
+}
+
 </script>

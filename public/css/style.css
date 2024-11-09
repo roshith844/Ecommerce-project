@@ -233,3 +233,25 @@ table {
     padding: 1.5rem;
   }
 }
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: #ff6f00;
+  border-radius: 50%; /* Optional for a rounded effect */
+}
+
+.carousel-indicators button {
+  background-color: #ff6f00  !important;
+}
+
+.glow-text {
+  color: #ffffff; /* White text for better contrast */
+  text-shadow: 
+    0 0 5px #ff6f00,   /* Inner glow */
+    0 0 10px #ff6f00,  /* Medium glow */
+    0 0 15px #ff6f00,  /* Stronger glow */
+    0 0 20px #ff6f00,  /* Even stronger glow */
+    0 0 30px #ff6f00,  /* Intense glow */
+    0 0 40px #ff6f00;  /* Outer glow */
+}
+
