@@ -2,112 +2,111 @@
   <h1 class="text-center">Admin Home page</h1>
   <div class="container">
     <div class="row">
-      <div class="col-3">
+      <h1 class="text-center mt-3">Orders</h1>
+      <canvas id="myChart"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div class="d-none">
+      <h1 id="pending"><%= count.order.pending %></h1>
+      <h1 id="placed"><%= count.order.placed %></h1>
+      <h1 id="shipped"><%= count.order.shipped %></h1>
+      <h1 id="delivered"><%= count.order.delivered %></h1>
+      <h1 id="cancelled"><%= count.order.cancelled %></h1>
+    </div>
+    <div class="row mt-4">
+      <div class="col-md-6 col-lg-3 mb-2">
         <div class="card">
           <div class="card-header">
             <h1>Total Users</h1>
           </div>
           <div class="card-body">
-            <h2 class="card-title">
-              <%= count.user %>
-            </h2>
+            <h2 class="card-title"><%= count.user %></h2>
             <a class="btn btn-primary" href="/admin/users">View Users</a>
           </div>
         </div>
       </div>
-      <div class="col-3">
+      <div class="col-md-6 col-lg-3 mb-2">
         <div class="card">
           <div class="card-header">
             <h1>Total Categories</h1>
           </div>
           <div class="card-body">
-            <h2 class="card-title">
-              <%= count.category %>
-            </h2>
+            <h2 class="card-title"><%= count.category %></h2>
             <a class="btn btn-primary" href="/admin/categories">
-              View Categories</a>
+              View Categories</a
+            >
           </div>
         </div>
       </div>
 
-      <div class="col-3">
+      <div class="col-md-6 col-lg-3 mb-2">
         <div class="card">
           <div class="card-header">
             <h1>Total Products</h1>
           </div>
           <div class="card-body">
-            <h2 class="card-title">
-              <%= count.product %>
-            </h2>
+            <h2 class="card-title"><%= count.product %></h2>
             <a class="btn btn-primary" href="/admin/products">Products list</a>
           </div>
         </div>
       </div>
 
-      <div class="col-3">
+      <div class="col-md-6 col-lg-3 mb-2">
         <div class="card">
           <div class="card-header">
             <h1>Total Orders</h1>
           </div>
           <div class="card-body">
-            <h2 class="card-title">
-              <%= count.order.total %>
-            </h2>
+            <h2 class="card-title"><%= count.order.total %></h2>
             <a class="btn btn-primary" href="/admin/orders">View Orders</a>
           </div>
         </div>
       </div>
-      <div class="col-3">
+      <div class="col-md-6 col-lg-3 mb-2">
         <div class="card">
           <div class="card-header">
             <h1>Total Coupons</h1>
           </div>
           <div class="card-body">
-            <h2 class="card-title">
-              <%= count.coupon %>
-            </h2>
+            <h2 class="card-title"><%= count.coupon %></h2>
             <a class="btn btn-primary" href="/admin/coupons">Coupons list</a>
           </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <h1 class="text-center mt-3">Orders</h1>
-      <canvas id="myChart"></canvas>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   <div class="d-none">
-     <h1 id="pending"><%= count.order.pending %> </h1>
-     <h1 id="placed"><%= count.order.placed %> </h1>
-     <h1 id="shipped"><%= count.order.shipped %> </h1>
-     <h1 id="delivered"><%= count.order.delivered %> </h1>
-     <h1 id="cancelled"><%= count.order.cancelled %> </h1>
-   </div>
-   <script>
-    const PENDING_ORDERS = document.getElementById("pending").innerText
-    const PLACED_ORDERS = document.getElementById("placed").innerText
-    const SHIPPED_ORDERS = document.getElementById("shipped").innerText
-    const DELIVERED_ORDERS = document.getElementById("delivered").innerText
-    const CANCELLED_ORDERS = document.getElementById("cancelled").innerText
-      const ctx = document.getElementById('myChart');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['pending', 'placed', 'shipped', 'delivered', 'cancelled'],
-          datasets: [{
-            label: 'Number of Orders',
-            data: [PENDING_ORDERS, PLACED_ORDERS, SHIPPED_ORDERS, DELIVERED_ORDERS, CANCELLED_ORDERS],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    </script>
   </div>
 </main>
+<script>
+  const PENDING_ORDERS = document.getElementById("pending").innerText;
+  const PLACED_ORDERS = document.getElementById("placed").innerText;
+  const SHIPPED_ORDERS = document.getElementById("shipped").innerText;
+  const DELIVERED_ORDERS = document.getElementById("delivered").innerText;
+  const CANCELLED_ORDERS = document.getElementById("cancelled").innerText;
+  const ctx = document.getElementById("myChart");
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["pending", "placed", "shipped", "delivered", "cancelled"],
+      datasets: [
+        {
+          label: "Number of Orders",
+          data: [
+            PENDING_ORDERS,
+            PLACED_ORDERS,
+            SHIPPED_ORDERS,
+            DELIVERED_ORDERS,
+            CANCELLED_ORDERS,
+          ],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+</script>
