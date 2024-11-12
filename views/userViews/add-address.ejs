@@ -1,49 +1,44 @@
 <main class="fullScreen">
   <div class="container">
-    <div class="row">
-      <h1 class="my-3">Add Address</h1>
-      <form action="/checkout/add-address" method="post">
-        <div class="d-flex flex-column">
-          <div class="mb-3">
-            <label for="">Flat, House no., Building, Company, Apartment
-              <input type="text" class="form-control" name="address_line_1" style="width: 20rem;" />
-            </label>
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <h1 class="my-3 text-center">Add Address</h1>
+        <form action="/checkout/add-address" method="post">
+          <div class="d-flex flex-column">
+            <div class="mb-3">
+              <label for="address_line_1">Flat, House no., Building, Company, Apartment</label>
+              <input type="text" class="form-control" name="address_line_1" id="address_line_1" />
+            </div>
+
+            <div class="mb-3">
+              <label for="address_line_2">Area, Street, Sector, Village</label>
+              <input type="text" class="form-control" name="address_line_2" id="address_line_2" />
+            </div>
+
+            <div class="mb-3">
+              <label for="landmark">Landmark</label>
+              <input type="text" class="form-control" name="landmark" id="landmark" />
+            </div>
+
+            <div class="mb-3">
+              <label for="town">Town</label>
+              <input type="text" class="form-control" name="town" id="town" />
+            </div>
+
+            <div class="mb-3">
+              <label for="state">State</label>
+              <input type="text" class="form-control" name="state" id="state" />
+            </div>
+
+            <div class="mb-3">
+              <label for="pin_code">PIN code</label>
+              <input type="text" class="form-control" name="pin_code" id="pin_code" />
+            </div>
           </div>
 
-          <div class="mb-3">
-            <label for="">Area, Street, Sector, Village
-              <input type="text" class="form-control" name="address_line_2" style="width: 20rem;" />
-            </label>
-          </div>
-
-          <div class="mb-3">
-            <label for="">Landmark
-              <input type="text" class="form-control" name="landmark" style="width: 20rem;" />
-            </label>
-          </div>
-
-          <div class="mb-3">
-            <label for="">Town
-              <input type="text" class="form-control" name="town" style="width: 20rem;" />
-            </label>
-          </div>
-
-          <div class="mb-3">
-            <label for="">
-              State
-              <input type="text" class="form-control" name="state" style="width: 20rem;" />
-            </label>
-          </div>
-
-          <div class="mb-3">
-            <label for="">PIN code
-              <input type="" class="form-control" name="pin_code" style="width: 20rem;" />
-            </label>
-          </div>
-        </div>
-
-        <button class="btn btn-primary mb-3" type="submit">Submit</button>
-      </form>
+          <button class="btn btn-primary mb-3 w-100" type="submit">Submit</button>
+        </form>
+      </div>
     </div>
   </div>
 </main>

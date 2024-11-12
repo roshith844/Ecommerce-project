@@ -1,39 +1,41 @@
 <main class="fullScreen container-fluid">
-
-     <div class="row justify-content-center">
-          <div class="card" style="width: 34rem;">
-               <div class="card-header">
-                    Order Details
-               </div>
-               <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Order Id : <%= orderDetails._id %>
-                    </li>
-                    <li class="list-group-item">Status: <%= orderDetails.status %>
-                    </li>
-                    <li class="list-group-item">Date: <%= orderDetails.date %>
-                    </li>
-                    <li class="list-group-item">Payment Method: <%= orderDetails.payment_method %>
-                    </li>
-               </ul>
-               <h5 class="card-title">Product Details</h5>
-               <div>
-                    <% orderDetails.items.forEach((item)=>{ %>
-                         <img src="/<%= item.productId.image %>" class="card-img-top" alt="..." style="width: 20rem">
-                         <h2>
-                              <%= item.productId.name %>
-                         </h2>
-                         <h3>category: <%= item.productId.category %>
-                         </h3>
-                         <p>Price:<%= item.productId.price %>
-                         </p>
-                         <p>Quantity: <%= item.quantity %>
-                         </p>
-                         <% }) %>
-               </div>
-               <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Total Amount to Pay: <%= orderDetails.amount %>
-                    </li>
-               </ul>
-          </div>
-     </div>
+  <div class="card-body text-left">
+     <a href="javascript:history.back()" class="btn btn-lg rounded-full">
+         <i class="fa-solid fa-circle-arrow-left fa-2x"></i>
+     </a>
+ </div>
+ 
+  <div class="row justify-content-center">
+    <div class="card" style="width: 34rem">
+      <div class="card-header">Order Details</div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Order Id : <%= orderDetails._id %></li>
+        <li class="list-group-item">Status: <%= orderDetails.status %></li>
+        <li class="list-group-item">Date: <%= orderDetails.date %></li>
+        <li class="list-group-item">
+          Payment Method: <%= orderDetails.payment_method %>
+        </li>
+      </ul>
+      <h5 class="card-title">Product Details</h5>
+      <div>
+        <% orderDetails.items.forEach((item)=>{ %>
+        <img
+          src="/<%= item.productId.image %>"
+          class="card-img-top"
+          alt="..."
+          style="width: 20rem"
+        />
+        <h2><%= item.productId.name %></h2>
+        <h3>category: <%= item.productId.category %></h3>
+        <p>Price:<%= item.productId.price %></p>
+        <p>Quantity: <%= item.quantity %></p>
+        <% }) %>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          Total Amount to Pay: <%= orderDetails.amount %>
+        </li>
+      </ul>
+    </div>
+  </div>
 </main>

@@ -1,9 +1,9 @@
-<main class="fullScreen">
+<main class="fullScreen ">
 
      <div class="container d-flex justify-content-center align-middle">
           <div class="row">
-               <h1 class="m-5">Edit Personal Details</h1>
-               <form action="/profile/edit-info" method="post" class="d-flex flex-column gap-3 ms-5 col-6">
+               <h1 class="mt-3">Edit Personal Details</h1>
+               <form action="/profile/edit-info" method="post" class="d-flex flex-column gap-3">
                     <label for="" class="form-label">Full Name :
                          <input type="text" name="name" value="<%= userData.name %>" class="d-block form-control">
                     </label>
@@ -13,7 +13,10 @@
                     <label for="" class="form-label">Phone :
                          <input type="text" name="phone" value="<%= userData.phone %>" class="d-block form-control">
                     </label>
-                    <button class="btn btn-primary col-6" type="submit">Submit</button>
+                    <div class="d-flex justify-content-center">
+                         <button class="btn btn-primary col-6" type="submit">Submit</button>
+
+                    </div>
                </form>
           </div>
      </div>

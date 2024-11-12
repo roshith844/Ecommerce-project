@@ -1,9 +1,9 @@
-<main class="fullScreen col-12">
+<main class="fullScreen p-3">
   <div class="d-flex justify-content-center">
     <h1 class="my-3">Wishlist</h1>
   </div>
 
-  <div class="row table-responsive">
+  <div class="row table-responsive mx-3 d-none d-md-block">
     <table class="table align-middle" id="">
       <thead>
         <tr class="align-bottom">
@@ -17,53 +17,86 @@
         </tr>
       </thead>
       <tbody>
-        <% let count=1 %>
-          <% let totalPrice=0 %>
-            <% productDetails.forEach((product)=>{ %>
-              <tr>
-                <th scope="row">
-                  <%= count %>
-                </th>
-                <td>
-                  <%= product.productId.name %>
-                </td>
-                <td>
-                  <img class="" src="<%= product.productId.image %>" alt="" style="width: 20rem;" />
-                </td>
-                <td>₹ <%= product.productId.price %>
-                </td>
-                <td>
-                  <button class="btn btn-primary" onclick="addToCart('<%= product.productId._id %>')">
-                Add to Cart
-                  </button>
-                </td>
-                <td>
-                </td>
-                <td>
-                  <a href="/wishlist/delete/<%= product.productId._id %>" class="btn btn-danger">Delete</a>
-                </td>
-              </tr>
-                  <% count++ %>
-                    <% }) %>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>
-                        </td>
-                      </tr>
+        <% let count=1 %> <% let totalPrice=0 %> <%
+        productDetails.forEach((product)=>{ %>
+        <tr>
+          <th scope="row"><%= count %></th>
+          <td><%= product.productId.name %></td>
+          <td>
+            <img
+              class=""
+              src="<%= product.productId.image %>"
+              alt=""
+              style="width: 20rem"
+            />
+          </td>
+          <td>₹ <%= product.productId.price %></td>
+          <td>
+            <button
+              class="btn btn-primary"
+              onclick="addToCart('<%= product.productId._id %>')"
+            >
+              Add to Cart
+            </button>
+          </td>
+          <td></td>
+          <td>
+            <a
+              href="/wishlist/delete/<%= product.productId._id %>"
+              class="btn btn-danger"
+              >Delete</a
+            >
+          </td>
+        </tr>
+        <% count++ %> <% }) %>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
       </tbody>
     </table>
   </div>
+  <div class="d-block d-md-none mx-3">
+    <% productDetails.forEach((product) => { %>
+    <div class="card mb-3">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img
+            src="<%= product.productId.image %>"
+            class="img-fluid rounded-start"
+            alt="..."
+          />
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title"><%= product.productId.name %></h5>
+            <p class="card-text">₹ <%= product.productId.price %></p>
+            <div class="d-flex flex-column gap-2 justify-content-between">
+              <div class="d-flex justify-content-end gap-2">
+                <a
+                  class="btn btn-outline-primary btn-sm"
+                  onclick="addToCart('<%= product.productId._id %>')"
+                >
+                 add to cart</a
+                >
 
-  <!-- <div class="d-flex justify-content-end me-5">
-       <a href="/checkout"><button class="btn btn-primary text-bg-success mb-3">
-           Proceed to Check Out
-         </button></a>
-     </div> -->
+                <a
+                  href="/wishlist/delete/<%= product.productId._id %>"
+                  class="btn btn-outline-danger btn-sm"
+                  >Delete</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% }); %>
+    <div class="d-flex justify-content-end">
+      <div>Total: ₹ <%= totalPrice %></div>
+    </div>
+  </div>
 </main>
-
-<script>
-
-</script>

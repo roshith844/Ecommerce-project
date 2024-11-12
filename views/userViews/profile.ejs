@@ -1,50 +1,52 @@
 <main class="fullScreen container-fluid">
-     <div class="row ms-5">
-          <h1 class="text-center mb-3">User profile</h1>
-          <h2 class="text-start mb-3">Personal Details</h2>
-          <p>Full Name : <%= userData.name %>
-          </p>
-          <p>Email : <%= userData.email %>
-          </p>
-          <p>Phone : <%= userData.phone %>
-          </p>
-          <div class="d-grid gap-2 col-6 mb-3">
-               <a href="/orders"><button class="btn btn-primary col-6">Show Orders</button></a>
-               <a href="/profile/edit-info"><button class="btn btn-primary col-6">Edit personal Details</button></a>
-               <a href="/profile/change-password"><button class="btn btn-primary col-6">Change Password</button></a>
+  <div class="row">
+    <div class="col-12 col-md-10 offset-md-1">
+      <h1 class="text-center mb-3">User Profile</h1>
+      <h2 class="text-start mb-3">Personal Details</h2>
+      <p>Full Name: <%= userData.name %></p>
+      <p>Email: <%= userData.email %></p>
+      <p>Phone: <%= userData.phone %></p>
+
+      <!-- Button Group for Personal Details -->
+      <div class="d-grid gap-2 mb-3">
+        <a href="/orders" class="btn btn-primary w-100">Show Orders</a>
+        <a href="/profile/edit-info" class="btn btn-primary w-100"
+          >Edit Personal Details</a
+        >
+        <a href="/profile/change-password" class="btn btn-primary w-100"
+          >Change Password</a
+        >
+      </div>
+
+      <hr />
+
+      <!-- Address Section -->
+      <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <h2 class="my-3">Your Addresses</h2>
+        <a href="/profile/add-address" class="btn btn-primary my-3"
+          >Add New Address</a
+        >
+      </div>
+
+      <% userData.address.forEach((address) => { %>
+      <div class="card mb-3">
+        <div class="card-body">
+          <p><%= address.address_line_1 %></p>
+          <p><%= address.address_line_2 %></p>
+          <p><%= address.landmark %></p>
+          <p><%= address.town %></p>
+          <p><%= address.state %></p>
+          <p><%= address.pin_code %></p>
+          <div class="d-grid gap-2">
+            <a
+              href="/profile/edit-address/<%= address._id %>"
+              class="btn btn-primary mb-3"
+              >Edit</a
+            >
           </div>
-          <hr>
-          <div class="d-flex justify-content-between align-items-center">
-               <h2 class="text-end my-3 pe-5">Your Addresses</h2>
-               <a href="/profile/add-address"><button class="btn btn-primary  my-3 pe-5">Add new Address</button></a>
-          </div>
-          <div class="d-flex justify-content-end ">
-          </div>
-          <% userData.address.forEach((address)=>{ %>
-               <hr />
-               <p>
-                    <%= address.address_line_1 %>
-               </p>
-               <p>
-                    <%= address.address_line_2 %>
-               </p>
-               <p>
-                    <%= address.landmark %>
-               </p>
-               <p>
-                    <%= address.town %>
-               </p>
-               <p>
-                    <%= address.state %>
-               </p>
-               <p>
-                    <%= address.pin_code %>
-               </p>
-               <div class="d-grid gap-2 col-6">
-                    <a href="/profile/edit-address/<%= address._id %>"><button
-                              class="btn btn-primary col-6 mb-3">Edit</button></a>
-               </div>
-               <hr />
-               <% }) %>
-     </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
 </main>
