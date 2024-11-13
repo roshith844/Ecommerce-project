@@ -78,7 +78,7 @@
               <div class="d-flex justify-content-end gap-2">
                 <a
                   class="btn btn-outline-primary btn-sm"
-                  onclick="addToCart('<%= product.productId._id %>')"
+                  onclick="addToCartAndDelete('<%= product.productId._id %>')"
                 >
                  add to cart</a
                 >
@@ -100,3 +100,24 @@
     </div>
   </div>
 </main>
+
+<script>
+  function addToCartAndDelete(productId) {
+    fetch(`/cart/add/${productId}`, {
+      method: 'POST',
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Product added to the cart successfully, now call the delete action
+        window.location.href = `/wishlist/delete/${productId}`;
+      } else {
+        alert('Failed to add to cart. Please try again.');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again later.');
+    });
+  }
+</script>
