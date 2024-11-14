@@ -465,11 +465,11 @@ module.exports = {
           items: order.items,
           address: order.address,
           payment_method: order.payment_method,
-          date: order.date,
+          date: order.date.toDateString(),
           status: order.status,
         });
       });
-      const data = await workbook.xlsx.writeFile("order.xlsx").then((data) => {
+      await workbook.xlsx.writeFile("order.xlsx").then((data) => {
         const DATA_LOCATION = PATH.join(__dirname, "../order.xlsx");
         res.download(DATA_LOCATION);
       });
