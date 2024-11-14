@@ -1,4 +1,3 @@
-const nodemailer = require('nodemailer')
 require('dotenv').config()
 const twilio = require('twilio')
 
