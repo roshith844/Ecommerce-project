@@ -1,63 +1,55 @@
-<main class="fullScreen">
-<% if(msg.length> 0){ %>
-    <div class="alert alert-info" role="alert">
-        <p>User Blocked Succesfully</p>
-    </div>
-    <% }else{ %>
-        <% } %>
+<main class="fullScreen  p-3">
+  <% if(msg.length> 0){ %>
+  <div class="alert alert-info" role="alert">
+    <p>User Blocked Succesfully</p>
+  </div>
+  <% }else{ %> <% } %> <% if(unblockmsg.length> 0){ %>
+  <div class="alert alert-danger" role="alert">
+    <p>User Un Blocked Succesfully</p>
+  </div>
+  <% }else{ %> <% } %>
 
-            <% if(unblockmsg.length> 0){ %>
-                <div class="alert alert-danger" role="alert">
-                    <p>User Un Blocked Succesfully</p>
-                </div>
-                <% }else{ %>
-                    <% } %>
-
-                        <h1>Users list</h1>
-                        <table class="table table-striped" style="width:100%" id="userTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">No</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Phone Number</th>
-                                    <th scope="col">block</th>
-                                    <th scope="col">unblock</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% let count=1; %>
-                                    <% users.forEach((user)=>{%>
-                                        <tr>
-                                            <td>
-                                                <%= count %>
-                                            </td>
-                                            <td>
-                                                <%= user.name %>
-                                            </td>
-                                            <td>
-                                                <%= user.email %>
-                                            </td>
-                                            <td>
-                                                <%= user.phone %>
-                                            </td>
-                                            <td>
-                                                <a href="/admin/users/block/<%=user._id%>" onclick="return confirm('Block <%= user.email %>?')"
-                                                    class="btn btn-danger">Block</a>
-                                            </td>
-                                            <td>
-                                                <a href="/admin/users/unblock/<%=user._id%>"
-                                                    class="btn btn-primary">Unblock</a>
-                                            </td>
-                                        </tr>
-                                        <% count++; %>
-                                            <% }) %>
-                            </tbody>
-                        </table>
-                    </main>
-                    <script>   
-                        $(document).ready(function () {
-                       $('#userTable').DataTable();
-                   });
-                   </script>
-                        
+  <h1>Users list</h1>
+  <div class="table-responsive">
+    <table class="table table-striped" style="width: 100%" id="userTable">
+      <thead>
+        <tr>
+          <th scope="col">No</th>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Phone Number</th>
+          <th scope="col">block</th>
+          <th scope="col">unblock</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let count=1; %> <% users.forEach((user)=>{%>
+        <tr>
+          <td><%= count %></td>
+          <td><%= user.name %></td>
+          <td><%= user.email %></td>
+          <td><%= user.phone %></td>
+          <td>
+            <a
+              href="/admin/users/block/<%=user._id%>"
+              onclick="return confirm('Block <%= user.email %>?')"
+              class="btn btn-danger"
+              >Block</a
+            >
+          </td>
+          <td>
+            <a href="/admin/users/unblock/<%=user._id%>" class="btn btn-primary"
+              >Unblock</a
+            >
+          </td>
+        </tr>
+        <% count++; %> <% }) %>
+      </tbody>
+    </table>
+  </div>
+</main>
+<script>
+  $(document).ready(function () {
+    $("#userTable").DataTable();
+  });
+</script>

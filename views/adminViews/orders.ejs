@@ -1,148 +1,179 @@
-<main class="fullScreen">
+<main class="fullScreen p-3">
   <!-- alert message -->
   <% if(message.length> 0){ %>
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      <p>
-        <%= message %>
-      </p>
-    </div>
-    <% }else{ %>
-      <% } %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+    <p><%= message %></p>
+  </div>
+  <% }else{ %> <% } %>
 
+  <h1>Orders</h1>
 
-        <h1>Orders</h1>
-        <table class="table" id="orderTable">
-          <thead>
-            <tr>
-              <th scope="col">No</th>
-              <th scope="col">Date</th>
-              <th scope="col">order ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Items</th>
-              <th scope="col">Payment Method</th>
-              <th scope="col">Amount (₹)</th>
-              <th scope="col">Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% let count=1; %>
-              <% orders.forEach((order)=>{%>
-                <tr>
-                  <td>
-                    <%= count %>
-                  </td>
-                  <td>
-                    <%= order.date.toDateString() %>
-                  </td>
-                  <td>
-                    <a href="/admin/orders/details/<%= order._id %>"><%= order._id %></a>
-                  </td>
-                  <td>
-                    <%= order.userId.name %>
-                  </td>
-                  <td>
-                    <%= order.userId.email %>
-                  </td>
-                  <td>
-                    <% order.items.forEach((item)=>{ %>
-                      <div>
-                        <ul class="list-group">
-                          <li class="list-group-item">product Name: <%= item.productId.name %>
-                          </li>
-                          <li class="list-group-item">Price : ₹ <%= item.productId.price %>
-                          </li>
-                          <li class="list-group-item">Quantity: <%= item.quantity %>
-                          </li>
-                          <% const TOTAL_PRICE=(item.productId.price)*(item.quantity) %>
-                            <li class="list-group-item list-group-item-dark">Total Price : <%= TOTAL_PRICE %>
-                            </li>
-                        </ul>
-                      </div>
-                      <% }) %>
-                  </td>
-                  <td>
-                    <%= order.payment_method %>
-                  </td>
-                  <td>
-                    <%= order.amount %>
-                  </td>
-                  <td>
-                    <%= order.status %>
-                  </td>
-                  <td>
+  <div class="table-responsive">
+    <table class="table" id="orderTable">
+      <thead>
+        <tr>
+          <th scope="col">No</th>
+          <th scope="col">Date</th>
+          <th scope="col">order ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Items</th>
+          <th scope="col">Payment Method</th>
+          <th scope="col">Amount (₹)</th>
+          <th scope="col">Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let count=1; %> <% orders.forEach((order)=>{%>
+        <tr>
+          <td><%= count %></td>
+          <td><%= order.date.toDateString() %></td>
+          <td>
+            <a href="/admin/orders/details/<%= order._id %>"
+              ><%= order._id %></a
+            >
+          </td>
+          <td><%= order.userId.name %></td>
+          <td><%= order.userId.email %></td>
+          <td>
+            <% order.items.forEach((item)=>{ %>
+            <div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  product Name: <%= item.productId.name %>
+                </li>
+                <li class="list-group-item">
+                  Price : ₹ <%= item.productId.price %>
+                </li>
+                <li class="list-group-item">Quantity: <%= item.quantity %></li>
+                <% const TOTAL_PRICE=(item.productId.price)*(item.quantity) %>
+                <li class="list-group-item list-group-item-dark">
+                  Total Price : <%= TOTAL_PRICE %>
+                </li>
+              </ul>
+            </div>
+            <% }) %>
+          </td>
+          <td><%= order.payment_method %></td>
+          <td><%= order.amount %></td>
+          <td><%= order.status %></td>
+          <td>
+            <% if(order.status !='cancelled' ){ %>
 
-                    <% if(order.status !='cancelled' ){ %>
+            <!-- Change order status  -->
+            <!-- Button trigger modal -->
+            <a>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#modal-<%= order._id %>"
+              >
+                Change Order Status
+              </button>
+            </a>
 
-                      <!-- Change order status  -->
-                      <!-- Button trigger modal -->
-                      <a>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                          data-bs-target="#modal-<%= order._id %>">
-                          Change Order Status
-                        </button>
-                      </a>
-
-                      <!-- Modal -->
-                      <div class="modal fade" id="modal-<%= order._id %>" tabindex="-1"
-                        aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h1 class="modal-title fs-5">Change Order Status</h1>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                            </div>
-                            <form action="/admin/orders/change-status/" method="post" class="mt-3">
-                              <div class="modal-body">
-
-                                <div class="container d-flex justify-content-center align-items-center">
-                                  <div class="row col-6">
-                                    <h1 class="text-center mt-5">Select Option</h1>
-                                    <input type="text" name="orderId" value="<%= order._id %>" class="d-none" />
-                                    <div>
-
-                                      <% if(order.status =='pending'  ){ %>
-                                        <input type="radio" name="status" value="order placed" />
-                                        <label for="">order placed</label><br />
-                                      <% } %>
-
-                                      <% if( order.status =='pending' || order.status =='order placed'){ %>
-                                            <input type="radio" name="status" value="shipped" />
-                                            <label for="">shipped</label><br />
-                                      <% } %>
-                                      <% if( order.status =='pending' || order.status =='order placed' || order.status =='shipped'   ){ %>
-                                                <input type="radio" name="status" value="delivered" />
-                                                <label for="">delivered</label>
-                                      <% } %>
-                                    </div>
-
-
-                                  </div>
-                                </div>
-
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <a><button type="submit" class="btn btn-primary">Save changes</button></a>
-                              </div>
-                            </form>
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              id="modal-<%= order._id %>"
+              tabindex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5">Change Order Status</h1>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <form
+                    action="/admin/orders/change-status/"
+                    method="post"
+                    class="mt-3"
+                  >
+                    <div class="modal-body">
+                      <div
+                        class="container d-flex justify-content-center align-items-center"
+                      >
+                        <div class="row col-6">
+                          <h1 class="text-center mt-5">Select Option</h1>
+                          <input
+                            type="text"
+                            name="orderId"
+                            value="<%= order._id %>"
+                            class="d-none"
+                          />
+                          <div>
+                            <% if(order.status =='pending' ){ %>
+                            <input
+                              type="radio"
+                              name="status"
+                              value="order placed"
+                            />
+                            <label for="">order placed</label><br />
+                            <% } %> <% if( order.status =='pending' ||
+                            order.status =='order placed'){ %>
+                            <input type="radio" name="status" value="shipped" />
+                            <label for="">shipped</label><br />
+                            <% } %> <% if( order.status =='pending' ||
+                            order.status =='order placed' || order.status
+                            =='shipped' ){ %>
+                            <input
+                              type="radio"
+                              name="status"
+                              value="delivered"
+                            />
+                            <label for="">delivered</label>
+                            <% } %>
                           </div>
                         </div>
                       </div>
-                      <!--  -->
-                      <a href="/admin/orders/cancel/<%= order._id %>"
-                        onclick="confirm('Cancel Order <%= order._id %>?')" class="btn btn-danger">Cancel Order
-                      </a>
-                      <% } %>
-                  </td>
-                </tr>
-                <% count++; %>
-                  <% }) %>
-          </tbody>
-        </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <a
+                        ><button type="submit" class="btn btn-primary">
+                          Save changes
+                        </button></a
+                      >
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <!--  -->
+            <a
+              href="/admin/orders/cancel/<%= order._id %>"
+              onclick="confirm('Cancel Order <%= order._id %>?')"
+              class="btn btn-danger"
+              >Cancel Order
+            </a>
+            <% } %>
+          </td>
+        </tr>
+        <% count++; %> <% }) %>
+      </tbody>
+    </table>
+  </div>
 </main>
 <script>
   $(document).ready(function () {

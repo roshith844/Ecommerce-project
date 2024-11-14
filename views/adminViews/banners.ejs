@@ -1,59 +1,57 @@
-<main class="fullScreen">
-     <div class="container">
-          <div class="row">
-               <h1 class="text-center mt-3">Banners</h1>
-               <div>
-                    <a href="/admin/banners/add" class="btn btn-primary">Add New Banner</a>
-               </div>
-               <table class="table" id="couponsTable">
-                    <thead>
-                         <tr>
-                              <th scope="col">No.</th>
-                              <th scope="col">Id</th>
-                              <th scope="col">Heading</th>
-                              <th scope="col">Description</th>
-                              <th scope="col">image</th>
-                              <th scope="col">Delete</th>
-                         </tr>
-                    </thead>
-                    <tbody>
-                         <% let count=1 %>
-                              <% banners.forEach((item)=>{ %>
-                                   <tr>
-                                        <th scope="row">
-                                             <%= count %>
-                                        </th>
-                                        <td>
-                                             <%= item._id %>
-                                        </td>
-                                        <td>
-                                             <%= item.heading %>
-                                        </td>
-                                        <td>
-                                             <%= item.description %>
-                                        </td>
-                                        
-                                        <td>
-                                             <div>
-                                                  <img src="/<%= item.image %>" alt="image of <%= item.heading %>"  style="width: 100px; height: 100px"/>
-                                                </div>
-                                        </td>
-                                        <td>
-                                             <a
-            href="/admin/banners/delete/<%= item._id%>"
-            class="btn btn-danger"
-            onclick="return confirm('Delete Banner?')">Delete</a>
-                                        </td>
-                                   </tr>
-                                   <% count++ %>
-                                        <% }) %>
-                    </tbody>
-               </table>
-          </div>
-     </div>
+<main class="fullScreen p-3">
+  <div class="container">
+    <div class="row">
+      <h1 class="text-center mt-3">Banners</h1>
+      <div>
+        <a href="/admin/banners/add" class="btn btn-primary">Add New Banner</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table" id="couponsTable">
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th scope="col">Id</th>
+              <th scope="col">Heading</th>
+              <th scope="col">Description</th>
+              <th scope="col">image</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% let count=1 %> <% banners.forEach((item)=>{ %>
+            <tr>
+              <th scope="row"><%= count %></th>
+              <td><%= item._id %></td>
+              <td><%= item.heading %></td>
+              <td><%= item.description %></td>
+
+              <td>
+                <div>
+                  <img
+                    src="/<%= item.image %>"
+                    alt="image of <%= item.heading %>"
+                    style="width: 100px; height: 100px"
+                  />
+                </div>
+              </td>
+              <td>
+                <a
+                  href="/admin/banners/delete/<%= item._id%>"
+                  class="btn btn-danger"
+                  onclick="return confirm('Delete Banner?')"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            <% count++ %> <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </main>
 <script>
-     $(document).ready(function () {
-          $("#couponsTable").DataTable();
-     });
+  $(document).ready(function () {
+    $("#couponsTable").DataTable();
+  });
 </script>
