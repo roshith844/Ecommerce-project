@@ -69,17 +69,16 @@
 
             <!-- Change order status  -->
             <!-- Button trigger modal -->
-            <a>
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#modal-<%= order._id %>"
-              >
-                Change Order Status
-              </button>
-            </a>
-
+            <% if(order.status !== 'delivered' ){ %>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#modal-<%= order._id %>"
+            >
+              Change Order Status
+            </button>
+            <% } %>
             <!-- Modal -->
             <div
               class="modal fade"
