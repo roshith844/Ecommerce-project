@@ -314,6 +314,7 @@ module.exports = {
   },
   viewOrders: (req, res) => {
     ORDER_MODEL.find({})
+      .sort({ date: -1 })
       .populate("userId")
       .populate("items.productId")
       .then((orders) => {
