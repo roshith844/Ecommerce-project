@@ -1,4 +1,4 @@
-const PATH = require('path')
+const PATH = require("path");
 const ADMIN_MODEL = require("../model/adminSchema");
 const USER_MODEL = require("../model/userSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
@@ -69,21 +69,33 @@ module.exports = {
     }
   },
   goToAdminLogin: (req, res) => {
-    res.render("adminViews/adminLogin", { layout: "layouts/adminLayout" });
+    res.render("adminViews/adminLogin", {
+      layout: "layouts/adminLayout",
+      msg: "",
+    });
   },
   doAdminLogin: async (req, res) => {
     try {
       const adminDoc = await ADMIN_MODEL.findOne({ email: req.body.email });
-      if (adminDoc.password == req.body.password) {
+      if (!adminDoc) {
+        res.render("adminViews/adminLogin", {
+          layout: "layouts/adminLayout",
+          msg: "invalid credentials",
+        });
+      } else if (adminDoc.password === req.body.password) {
         req.session.admin = req.body.email;
         res.redirect("/admin");
       } else {
-        res.render("adminViews/adminLogin", { layout: "layouts/adminLayout" });
+        res.render("adminViews/adminLogin", {
+          layout: "layouts/adminLayout",
+          msg: "invalid credentials",
+        });
       }
     } catch (error) {
-      res
-        .status(400)
-        .render("adminViews/adminLogin", { layout: "layouts/adminLayout" });
+      res.status(400).render("adminViews/adminLogin", {
+        layout: "layouts/adminLayout",
+        msg: "something went wrong",
+      });
     }
   },
   listUsers: async (req, res) => {
@@ -262,7 +274,7 @@ module.exports = {
     if (CATEGORY_EXIST == null) {
       await CATEGORY_MODEL.create({
         category_name: CATEGORY_IN_SMALL_LETTERS,
-      })
+      });
     } else {
     }
     res.redirect("/admin/categories");
@@ -427,7 +439,7 @@ module.exports = {
           { date: { $lte: END_DATE } },
         ],
       });
-      
+
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("My Sheet");
 
@@ -459,7 +471,7 @@ module.exports = {
       });
       const data = await workbook.xlsx.writeFile("order.xlsx").then((data) => {
         const DATA_LOCATION = PATH.join(__dirname, "../order.xlsx");
-       res.download(DATA_LOCATION)
+        res.download(DATA_LOCATION);
       });
     } catch (error) {
       console.log(error);
