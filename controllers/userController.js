@@ -676,6 +676,7 @@ module.exports = {
       }
 
       const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }); //Finds user cart
+      console.log(USER_CART)
       // Creates new Order
       await ORDER_MODEL.create({
         userId: USER_CART.userId,
@@ -716,7 +717,7 @@ module.exports = {
                 { userId: USER_CART.userId, status: "pending" },
                 { payment_order_id: order.id, amount: TOTAL_AMOUNT }
               ).then(() => {
-                res.json({ status: "online", order });
+                res.json({ status: "online", order, key: process.env.RAZORPAY_KEY_ID });
               });
             }
           }
@@ -744,7 +745,6 @@ module.exports = {
       }).then(async (ORDER) => {
         const ref_id = ORDER._id;
         const razorpay_payment_id = req.body.razorpay_payment_id;
-        const secret = process.env.RAZORPAY_KEY_SECRET;
         const razorpay_signature = req.body.razorpay_signature;
         let hmac = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
         hmac.update(req.body.razorpay_order_id + "|" + razorpay_payment_id);
