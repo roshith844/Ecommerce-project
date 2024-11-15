@@ -676,7 +676,6 @@ module.exports = {
       }
 
       const USER_CART = await CART_MODEL.findOne({ userId: req.session.user }); //Finds user cart
-      console.log(USER_CART)
       // Creates new Order
       await ORDER_MODEL.create({
         userId: USER_CART.userId,
@@ -717,7 +716,11 @@ module.exports = {
                 { userId: USER_CART.userId, status: "pending" },
                 { payment_order_id: order.id, amount: TOTAL_AMOUNT }
               ).then(() => {
-                res.json({ status: "online", order, key: process.env.RAZORPAY_KEY_ID });
+                res.json({
+                  status: "online",
+                  order,
+                  key: process.env.RAZORPAY_KEY_ID,
+                });
               });
             }
           }

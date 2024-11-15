@@ -11,7 +11,7 @@ function sendOTP(randomCode, userNumber) {
       from: process.env.TWILIO_PHONE_NUMBER,
       body: 'Cake shop Otp' + randomCode,
     })
-    .then((message) => console.log(`Message SID ${message.sid}`))
+    .then((message) => console.error(`Message SID ${message.sid}`))
     .catch((error) => console.error(error));
 }
 

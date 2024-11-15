@@ -64,7 +64,6 @@
       method: "post",
       data: $("#checkout").serialize(),
       success: (res) => {
-        console.log(res);
         if (res.status == "cod") {
           location.href = "/payment-success/" + res.order;
         } else if (res.status == "online") {
@@ -75,7 +74,6 @@
             order_id: res.order.id,
             name: "Roshith",
             handler: function (response) {
-              console.log(response);
               var verifyPayment = $.post("/verify-payment", response);
               verifyPayment.done(function (response) {
                 if (response.signatureIsValid == true) {
