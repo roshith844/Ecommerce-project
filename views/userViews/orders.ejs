@@ -46,9 +46,11 @@
             <p class="badge bg-info text-dark"><%= order.status %></p>
           </td>
           <td>
+            <% if(order.status !== "delivered" || order.status !== "shipped" ){ %>
             <a href="/orders/cancel/<%= order._id %>"
               ><button class="btn btn-danger">Cancel Order</button></a
             >
+            <% } %>
           </td>
         </tr>
         <% count++ %> <% }) %> <% cancelledOrderDetails.forEach((order)=>{ %>
@@ -59,21 +61,21 @@
           <td><%= order.date %></td>
           <td>
             <% order.items.forEach((item)=>{ %>
-              <div>
-                <ul class="list-group">
-                  <li class="list-group-item">
-                    product Name: <%= item.productId.name %>
-                  </li>
-                  <li class="list-group-item">
-                    Price : ₹ <%= item.productId.price %>
-                  </li>
-                  <li class="list-group-item">Quantity: <%= item.quantity %></li>
-                  <% const TOTAL_PRICE=(item.productId.price)*(item.quantity) %>
-                  <li class="list-group-item list-group-item-dark">
-                    Total Price : <%= TOTAL_PRICE %>
-                  </li>
-                </ul>
-              </div>
+            <div>
+              <ul class="list-group">
+                <li class="list-group-item">
+                  product Name: <%= item.productId.name %>
+                </li>
+                <li class="list-group-item">
+                  Price : ₹ <%= item.productId.price %>
+                </li>
+                <li class="list-group-item">Quantity: <%= item.quantity %></li>
+                <% const TOTAL_PRICE=(item.productId.price)*(item.quantity) %>
+                <li class="list-group-item list-group-item-dark">
+                  Total Price : <%= TOTAL_PRICE %>
+                </li>
+              </ul>
+            </div>
             <% }) %>
           </td>
           <td></td>
