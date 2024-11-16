@@ -1,5 +1,5 @@
 <!-- Table Layout (Visible on larger screens) -->
- <main class="p-3">
+<main class="p-3">
   <div class="d-flex justify-content-center">
     <h1 class="my-3">Cart</h1>
   </div>
@@ -63,8 +63,8 @@
             >
           </td>
         </tr>
-        <% let itemTotalPrice = (product.productId.price) * (product.quantity) %>
-        <% totalPrice += itemTotalPrice %> <% count++ %> <% }); %>
+        <% let itemTotalPrice = (product.productId.price) * (product.quantity)
+        %> <% totalPrice += itemTotalPrice %> <% count++ %> <% }); %>
         <tr>
           <td></td>
           <td></td>
@@ -77,7 +77,7 @@
       </tbody>
     </table>
   </div>
-  
+
   <!-- Card Layout (Visible on smaller screens) -->
   <div class="d-block d-md-none mx-3">
     <% productDetails.forEach((product) => { %>
@@ -95,7 +95,7 @@
             <h5 class="card-title"><%= product.productId.name %></h5>
             <p class="card-text">₹ <%= product.productId.price %></p>
             <div class="d-flex flex-column gap-2 justify-content-between">
-              <div class="d-flex align-items-center ">
+              <div class="d-flex align-items-center">
                 <button
                   class="minusButton<%= product.productId._id %> btn btn-outline-secondary btn-sm"
                   onclick="removeOneProduct('<%= product.productId._id %>')"
@@ -135,56 +135,58 @@
     </div>
   </div>
   <div class="d-flex justify-content-end me-5">
-    <a href="/checkout"><button class="btn btn-primary text-bg-success mb-3">
+    <% if(productDetails.length !== 0){ %>
+    <a href="/checkout"
+      ><button class="btn btn-primary text-bg-success mb-3">
         Proceed to Check Out
-      </button></a>
+      </button></a
+    >
+    <% } %>
   </div>
 </main>
 
-
 <script>
-function addOneProduct(productId) {
-  $.ajax({
-    url: "/add-one/" + productId,
-    method: "get",
-    success: (response) => {
-      if (response.status) {
-        // Update quantity for both screens
-        let quantity = $(".productQuantity" + productId).html();
-        quantity = parseInt(quantity) + 1;
-        $(".productQuantity" + productId).html(quantity);
+  function addOneProduct(productId) {
+    $.ajax({
+      url: "/add-one/" + productId,
+      method: "get",
+      success: (response) => {
+        if (response.status) {
+          // Update quantity for both screens
+          let quantity = $(".productQuantity" + productId).html();
+          quantity = parseInt(quantity) + 1;
+          $(".productQuantity" + productId).html(quantity);
 
-        // Enable minus button if the quantity is greater than 1
-        if (quantity > 1) {
-          $(".minusButton" + productId).prop("disabled", false);
+          // Enable minus button if the quantity is greater than 1
+          if (quantity > 1) {
+            $(".minusButton" + productId).prop("disabled", false);
+          }
+
+          // Update total price on both screens
+          $(".totalPrice").html("₹ " + response.totalPrice);
+        }
+      },
+    });
+  }
+
+  function removeOneProduct(productId) {
+    $.ajax({
+      url: "/remove-one/" + productId,
+      method: "get",
+      success: (response) => {
+        let quantity = $(".productQuantity" + productId).html();
+        if (response.status == true) {
+          if (parseInt(quantity) > 1) {
+            quantity = parseInt(quantity) - 1;
+            $(".productQuantity" + productId).html(quantity);
+          }
+        } else {
+          $(".minusButton" + productId).prop("disabled", true);
         }
 
         // Update total price on both screens
         $(".totalPrice").html("₹ " + response.totalPrice);
-      }
-    },
-  });
-}
-
-function removeOneProduct(productId) {
-  $.ajax({
-    url: "/remove-one/" + productId,
-    method: "get",
-    success: (response) => {
-      let quantity = $(".productQuantity" + productId).html();
-      if (response.status == true) {
-        if (parseInt(quantity) > 1) {
-          quantity = parseInt(quantity) - 1;
-          $(".productQuantity" + productId).html(quantity);
-        }
-      } else {
-        $(".minusButton" + productId).prop("disabled", true);
-      }
-
-      // Update total price on both screens
-      $(".totalPrice").html("₹ " + response.totalPrice);
-    },
-  });
-}
-
+      },
+    });
+  }
 </script>
