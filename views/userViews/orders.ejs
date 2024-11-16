@@ -46,7 +46,7 @@
             <p class="badge bg-info text-dark"><%= order.status %></p>
           </td>
           <td>
-            <% if(order.status !== "delivered" || order.status !== "shipped" ){ %>
+            <% if(order.status !== "delivered" && order.status !== "shipped" ){ %>
             <a href="/orders/cancel/<%= order._id %>"
               ><button class="btn btn-danger">Cancel Order</button></a
             >
