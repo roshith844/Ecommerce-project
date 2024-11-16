@@ -70,7 +70,7 @@ module.exports = {
   },
   goToAdminLogin: (req, res) => {
     res.render("adminViews/adminLogin", {
-      layout: "layouts/adminLayout",
+      layout: false,
       msg: "",
     });
   },
@@ -79,7 +79,7 @@ module.exports = {
       const adminDoc = await ADMIN_MODEL.findOne({ email: req.body.email });
       if (!adminDoc) {
         res.render("adminViews/adminLogin", {
-          layout: "layouts/adminLayout",
+          layout: false,
           msg: "invalid credentials",
         });
       } else if (adminDoc.password === req.body.password) {
@@ -87,13 +87,13 @@ module.exports = {
         res.redirect("/admin");
       } else {
         res.render("adminViews/adminLogin", {
-          layout: "layouts/adminLayout",
+          layout: false,
           msg: "invalid credentials",
         });
       }
     } catch (error) {
       res.status(400).render("adminViews/adminLogin", {
-        layout: "layouts/adminLayout",
+        layout: false,
         msg: "something went wrong",
       });
     }
