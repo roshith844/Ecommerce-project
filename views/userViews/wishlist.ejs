@@ -2,7 +2,14 @@
   <div class="d-flex justify-content-center">
     <h1 class="my-3">Wishlist</h1>
   </div>
-
+  <% if( productDetails.length === 0 ){ %>
+  <div class="container">
+    <div class="row">
+      <h1 class="mt-5 mb-3">There is Nothing Here!!</h1>
+    </div>
+    <a href="/" class="btn btn-primary">go to home</a>
+  </div>
+  <% }else { %>
   <div class="row table-responsive mx-3 d-none d-md-block">
     <table class="table align-middle" id="">
       <thead>
@@ -80,7 +87,7 @@
                   class="btn btn-outline-primary btn-sm"
                   onclick="addToCartAndDelete('<%= product.productId._id %>')"
                 >
-                 add to cart</a
+                  add to cart</a
                 >
 
                 <a
@@ -99,25 +106,27 @@
       <div>Total: ₹ <%= totalPrice %></div>
     </div>
   </div>
+
+  <% } %>
 </main>
 
 <script>
   function addToCartAndDelete(productId) {
     fetch(`/cart/add/${productId}`, {
-      method: 'POST',
+      method: "POST",
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        // Product added to the cart successfully, now call the delete action
-        window.location.href = `/wishlist/delete/${productId}`;
-      } else {
-        alert('Failed to add to cart. Please try again.');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again later.');
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Product added to the cart successfully, now call the delete action
+          window.location.href = `/wishlist/delete/${productId}`;
+        } else {
+          alert("Failed to add to cart. Please try again.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again later.");
+      });
   }
 </script>

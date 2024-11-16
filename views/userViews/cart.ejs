@@ -3,6 +3,14 @@
   <div class="d-flex justify-content-center">
     <h1 class="my-3">Cart</h1>
   </div>
+  <% if( productDetails.length === 0 ){ %>
+  <div class="container">
+    <div class="row">
+      <h1 class="mt-5 mb-3">There is Nothing Here!!</h1>
+    </div>
+    <a href="/" class="btn btn-primary">go to home</a>
+  </div>
+  <% }else { %>
   <div class="row table-responsive mx-3 d-none d-md-block">
     <table class="table align-middle">
       <thead>
@@ -17,7 +25,7 @@
         </tr>
       </thead>
       <tbody>
-        <% let count=1 %> <% let totalPrice=0 %> <%
+        <% let totalPrice=0 %> <% let count=1 %> <%
         productDetails.forEach((product) => { %>
         <tr>
           <th scope="row"><%= count %></th>
@@ -143,6 +151,7 @@
     >
     <% } %>
   </div>
+  <% } %>
 </main>
 
 <script>
