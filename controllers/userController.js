@@ -13,7 +13,6 @@ const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 const Razorpay = require("razorpay");
-var cartItemsCount;
 var instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -88,7 +87,6 @@ module.exports = {
     try {
       res.render("userViews/login", {
         msg: "",
-        cartItemsCount: 0,
         layout: "layouts/guest-layout",
       });
     } catch (error) {}
@@ -98,7 +96,6 @@ module.exports = {
     try {
       res.render("userViews/signup", {
         msg: "",
-        cartItemsCount: 0,
         layout: "layouts/guest-layout",
       });
     } catch (error) {}
@@ -116,23 +113,19 @@ module.exports = {
         if (userExist == true) {
           res.render("userViews/signup", {
             msg: "Phone Number already exists! Try again",
-            cartItemsCount: 0,
           });
         } else {
           if (!validEmail && !validPassword) {
             res.render("userViews/signup", {
               msg: "Invalid Email Format & Password",
-              cartItemsCount: 0,
             });
           } else if (!validEmail) {
             res.render("userViews/signup", {
               msg: "Invalid Email Format",
-              cartItemsCount: 0,
             });
           } else if (!validPassword) {
             res.render("userViews/signup", {
               msg: "password= should be Minimum eight characters, at least one letter, one number and one special character",
-              cartItemsCount: 0,
             });
           } else {
             if (
@@ -149,14 +142,12 @@ module.exports = {
                 // res.redirect("/");
                 res.render("userViews/signup", {
                   msg: "Signed Up successfully",
-                  cartItemsCount: 0,
                   layout: "layouts/guest-layout",
                 });
               });
             } else {
               res.render("userViews/signup", {
                 msg: "Something went wrong!! Try Again",
-                cartItemsCount: 0,
                 layout: "layouts/guest-layout",
               });
             }
@@ -165,14 +156,12 @@ module.exports = {
       } else {
         res.render("userViews/signup", {
           msg: "password doesn't match. Try Again",
-          cartItemsCount: 0,
           layout: "layouts/guest-layout",
         });
       }
     } catch (error) {
       res.render("userViews/signup", {
         msg: error,
-        cartItemsCount: 0,
         layout: "layouts/guest-layout",
       });
     }
@@ -189,7 +178,6 @@ module.exports = {
           if (userDoc.blockStatus == true) {
             res.render("userViews/login", {
               msg: "You were blocked by Admin",
-              cartItemsCount: 0,
             });
           } else {
             req.session.user = userDoc._id;
@@ -198,7 +186,6 @@ module.exports = {
         } else {
           res.render("userViews/login", {
             msg: "Invalid credentials!!",
-            cartItemsCount: 0,
           });
         }
       } else {
@@ -208,29 +195,24 @@ module.exports = {
         ) {
           res.render("userViews/login", {
             msg: "Invalid email or Password",
-            cartItemsCount: 0,
           });
         } else if (EMAIL_REGEX.test(req.body.email) == false) {
           res.render("userViews/login", {
             msg: "Invalid credentials!! Enter a valid email Address",
-            cartItemsCount: 0,
           });
         } else if (PASSWORD_REGEX.test(req.body.password) == false) {
           res.render("userViews/login", {
             msg: "password should be Minimum eight characters, at least one letter, one number and one special character",
-            cartItemsCount: 0,
           });
         } else {
           res.render("userViews/login", {
             msg: "Something went wrong",
-            cartItemsCount: 0,
           });
         }
       }
     } catch {
       res.status(400).render("userViews/login", {
         msg: "invalid credentials!! Try Again",
-        cartItemsCount: 0,
       });
     }
   },
@@ -238,7 +220,6 @@ module.exports = {
   getPhoneNumber: (req, res) => {
     try {
       res.render("userViews/otpLogin", {
-        cartItemsCount: 0,
         layout: "layouts/guest-layout",
       });
     } catch (error) {}
@@ -250,7 +231,7 @@ module.exports = {
       // Generates random code if user Exists
       const randomCode = (function getRandomCode() {
         if (!userExist) {
-          res.render("userViews/otpLogin", { cartItemsCount: 0 });
+          res.render("userViews/otpLogin");
           return false;
         } else {
           // Generates Random 4 digit Code
@@ -277,7 +258,6 @@ module.exports = {
 
         res.render("userViews/verify-otp", {
           data: req.body.phone,
-          cartItemsCount: 0,
         }); // Renders page to verify OTP
       }
     } catch (error) {
@@ -297,7 +277,6 @@ module.exports = {
         if (userCodeObj.blockStatus == true) {
           res.render("userViews/login", {
             msg: "You were blocked by Admin",
-            cartItemsCount: 0,
           });
         } else {
           req.session.user = userDoc._id;
@@ -319,17 +298,14 @@ module.exports = {
         });
 
         if (USER_CART) {
-          cartItemsCount = USER_CART.items.length;
           res.render("userViews/home", {
             products: products,
             banners: BANNERS,
-            cartItemsCount,
           });
         } else {
           res.render("userViews/home", {
             products: products,
             banners: BANNERS,
-            cartItemsCount,
           });
         }
       } else {
@@ -340,7 +316,7 @@ module.exports = {
   getProductInfo: (req, res) => {
     try {
       PRODUCT_MODEL.find({ _id: req.params.id }).then((info) => {
-        res.render("userViews/productDetails", { info: info, cartItemsCount });
+        res.render("userViews/productDetails", { info: info });
       });
     } catch (error) {}
   },
@@ -366,7 +342,7 @@ module.exports = {
         })
         .then(async (count) => {
           if (count < 1) {
-            res.render("userViews/no-items", { cartItemsCount });
+            res.render("userViews/no-items");
           } else {
             // Shows cart items
             let products = await WISHLIST_MODEL.findOne({ userId: USER_ID })
@@ -374,7 +350,6 @@ module.exports = {
               .lean();
             res.render("userViews/wishlist", {
               productDetails: products.items,
-              cartItemsCount,
             });
           }
         });
@@ -456,7 +431,7 @@ module.exports = {
         })
         .then(async (count) => {
           if (count < 1) {
-            res.render("userViews/no-items", { cartItemsCount });
+            res.render("userViews/no-items");
           } else {
             // Shows cart items
             let products = await CART_MODEL.findOne({ userId: USER_ID })
@@ -464,7 +439,6 @@ module.exports = {
               .lean();
             res.render("userViews/cart", {
               productDetails: products.items,
-              cartItemsCount,
             });
           }
         });
@@ -552,7 +526,6 @@ module.exports = {
       ]).then((result) => {
         res.render("userViews/edit-cart", {
           productInfo: result,
-          cartItemsCount,
         });
       });
     } catch (error) {}
@@ -586,14 +559,13 @@ module.exports = {
       }).then((userInfo) => {
         res.render("userViews/checkout", {
           address: userInfo.address,
-          cartItemsCount,
         });
       });
     } catch (error) {}
   },
   viewAddAddress: (req, res) => {
     try {
-      res.render("userViews/add-address", { cartItemsCount });
+      res.render("userViews/add-address");
     } catch (error) {}
   },
   addAddress: async (req, res) => {
@@ -773,7 +745,7 @@ module.exports = {
   showPaymentSuccess: (req, res) => {
     try {
       const REF_ID = req.params.id;
-      res.render("userViews/payment-success", { REF_ID, cartItemsCount });
+      res.render("userViews/payment-success", { REF_ID });
     } catch (error) {
       res.render("not-found", { layout: false });
     }
@@ -781,7 +753,7 @@ module.exports = {
   showPaymentFailed: (req, res) => {
     try {
       const REF_ID = req.params.id;
-      res.render("userViews/payment-fail", { REF_ID, cartItemsCount });
+      res.render("userViews/payment-fail", { REF_ID });
     } catch (error) {
       res.render("not-found", { layout: false });
     }
@@ -789,7 +761,7 @@ module.exports = {
   viewProfile: async (req, res) => {
     try {
       const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
-      res.render("userViews/profile", { userData: USER_DATA, cartItemsCount });
+      res.render("userViews/profile", { userData: USER_DATA });
     } catch (error) {
       res.render("not-found", { layout: false });
     }
@@ -799,7 +771,6 @@ module.exports = {
       const USER_DATA = await USER_MODEL.findOne({ _id: req.session.user });
       res.render("userViews/edit-profile-info", {
         userData: USER_DATA,
-        cartItemsCount,
       });
     } catch (error) {}
   },
@@ -829,7 +800,6 @@ module.exports = {
       ]).then((doc) => {
         res.render("userViews/edit-address", {
           address: doc[0].address,
-          cartItemsCount,
         });
       });
     } catch (error) {}
@@ -859,7 +829,7 @@ module.exports = {
   },
   profileViewAddAddress: (req, res) => {
     try {
-      res.render("userViews/profile-add-address", { cartItemsCount });
+      res.render("userViews/profile-add-address");
     } catch (error) {}
   },
   addProfileAddress: async (req, res) => {
