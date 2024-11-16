@@ -867,12 +867,13 @@ module.exports = {
               status: { $ne: "cancelled" },
             })
               .populate("items.productId")
+              .sort({ date: -1 })
               .lean();
 
             const CANCELLED_ORDERS = await ORDER_MODEL.find({
               userId: req.session.user,
               status: "cancelled",
-            })
+            }).sort({ date: -1 })
               .populate("items.productId")
               .lean();
 
