@@ -860,7 +860,7 @@ module.exports = {
         })
         .then(async (count) => {
           if (count < 1) {
-            res.render("userViews/no-items", { cartItemsCount });
+            res.render("userViews/no-items");
           } else {
             const ORDERS = await ORDER_MODEL.find({
               userId: req.session.user,
@@ -888,7 +888,6 @@ module.exports = {
             res.render("userViews/orders", {
               orderDetails,
               cancelledOrderDetails,
-              cartItemsCount,
             });
           }
         });
@@ -900,7 +899,6 @@ module.exports = {
       .lean();
     res.render("userViews/orderDetails", {
       orderDetails: ORDERS,
-      cartItemsCount,
     });
   },
   cancelOrderByUser: async (req, res) => {
@@ -915,7 +913,7 @@ module.exports = {
   },
   viewChangePassword: (req, res) => {
     try {
-      res.render("userViews/change-password", { cartItemsCount });
+      res.render("userViews/change-password");
     } catch (error) {}
   },
   changePassword: async (req, res) => {
