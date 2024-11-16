@@ -160,12 +160,14 @@
               </div>
             </div>
             <!--  -->
+            <% if(order.status !== "delivered" && order.status !== "shipped" ){ %>
             <a
               href="/admin/orders/cancel/<%= order._id %>"
               onclick="confirm('Cancel Order <%= order._id %>?')"
               class="btn btn-danger"
               >Cancel Order
             </a>
+            <% } %>
             <% } %>
           </td>
         </tr>
