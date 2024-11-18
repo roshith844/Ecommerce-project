@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const mongoose = require("mongoose");
-const MY_OTP_SENDER = require("../model/sendOTP");
+// const MY_OTP_SENDER = require("../model/sendOTP");
 const USER_MODEL = require("../model/userSchema");
 const OTP_LOGIN_MODEL = require("../model/otpLoginSchema");
 const PRODUCT_MODEL = require("../model/productSchema");
@@ -13,10 +13,10 @@ const EMAIL_REGEX = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/;
 const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; // Pattern for Minimum eight characters, at least one letter, one number and one special character
 const Razorpay = require("razorpay");
-var instance = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// var instance = new Razorpay({
+//   key_id: process.env.RAZORPAY_KEY_ID,
+//   key_secret: process.env.RAZORPAY_KEY_SECRET,
+// });
 
 // To increment by one on cart
 async function addOneProduct(userId, productId) {
